@@ -1,0 +1,21 @@
+<header class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+            </a>
+            {{#branding}}
+            <a class="brand" href="/">
+                <img src="{{src}}" width="30" height="30" alt="{{alt}}" />
+            </a>
+            {{/branding}}
+            <div class="nav-collapse">
+                <ul class="nav"> <!-- li class="active" -->
+                    {{#nav}}
+                    <li><a href="{{link}}">{{page}}</a></li>
+                    {{/nav}}
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</header>
