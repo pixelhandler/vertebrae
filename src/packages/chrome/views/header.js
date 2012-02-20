@@ -23,7 +23,7 @@ function (
       HeaderView = BaseView.extend({
 
           initialize: function (options) {
-              this.template: headerTemplate;
+              this.template = headerTemplate;
           },
 
           model: new HeaderModel(),

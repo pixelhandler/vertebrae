@@ -9,7 +9,7 @@ define(['vendor', 'syncs'], function (vendor, syncs) {
       , Backbone = vendor.Backbone
       , Channel = utils.lib.Channel
       , store = syncs.localstorage
-      , sync - syncs.sync;
+      , sync = syncs.sync;
 
     BaseModel = Backbone.Model.extend({
 
