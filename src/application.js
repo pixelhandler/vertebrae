@@ -26,7 +26,7 @@ function (vendor, utils, chromeBootstrap, productsBootstrap) {
         },
 
         defaultRoute: function () {
-            this.navigate("products/", {trigger: true});
+            this.navigate("products", {trigger: true});
         },
 
         showProducts: function () {

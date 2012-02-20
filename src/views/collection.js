@@ -34,7 +34,7 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
 
             view = new this._view({
                 "tagName": this._tagName,
-                "model": model,
+                "model": model
             });
             this._views.push(view);
             if (this._rendered) {

@@ -3,7 +3,7 @@
 // Requires `define`  
 // Return {Backbone.Collection} object as constructor
 
-define(['vendor', 'utils'], function (vendor, utils) {
+define(['vendor', 'syncs', 'utils'], function (vendor, syncs, utils) {
 
     var BaseCollection
       , _ = vendor._
@@ -22,9 +22,9 @@ define(['vendor', 'utils'], function (vendor, utils) {
         // Pub/Sub object
         Channel: Channel,
 
-        localStorage: store,
+        // localStorage: store,
 
-        sync: sync
+        // sync: sync
     });
 
     return BaseCollection;

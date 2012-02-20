@@ -9,7 +9,7 @@ define( ['chrome/views/header'], function (HeaderView) {
 
     chromeBootstrap = function () {
         var header = new HeaderView();
-        header.render().$el.preprendTo('body');
+        header.render().$el.prependTo('body');
     };
 
     return chromeBootstrap;

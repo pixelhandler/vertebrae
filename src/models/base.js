@@ -3,7 +3,7 @@
 // Requires `define`  
 // Return {Backbone.Model} object as constructor
 
-define(['vendor', 'syncs'], function (vendor, syncs) {
+define(['vendor', 'syncs', 'utils'], function (vendor, syncs, utils) {
 
     var BaseModel
       , Backbone = vendor.Backbone

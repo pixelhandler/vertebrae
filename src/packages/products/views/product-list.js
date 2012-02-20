@@ -3,15 +3,25 @@
 // Requires `define`
 // Return {ProductListView} object as constructor
 
-define([ 'vendor', 'utils', 'products/views/product-list-item'], 
-function (vendor,   utils,   ProductListItemView) {
+define([
+        'vendor',
+        'views',
+        'utils',
+        'products/views/product-list-item'
+        ], 
+function (
+        vendor,
+        views,
+        utils,
+        ProductListItemView
+        ) {
 
     var ProductListView
       , $ = vendor.$
-      , Mustache = vendor.Mustache
-      , Channel = utils.lib.Channel;
+      , BaseView = views.BaseView
+      , Mustache = vendor.Mustache;
 
-      ProductListView = Backbone.View.extend({
+      ProductListView = BaseView.extend({
 
           tagName: "ul",
 

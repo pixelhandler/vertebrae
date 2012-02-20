@@ -4,13 +4,24 @@
 // Requires `define`
 // Return {ProductContainerView} object as constructor
 
-define([ 'vendor', 'text!packages/products/templates/container.html'], 
-function (vendor,   productContainerTemplate) {
+define([ 
+        'vendor', 
+        'views',
+        'text!packages/products/templates/container.html'
+        ], 
+function (
+        vendor,
+        views,
+        productContainerTemplate
+        ) {
 
     var ProductContainerView
+      , BaseView = views.BaseView
       , $ = vendor.$;
 
-      ProductView = BaseView.extend({
+      ProductContainerView = BaseView.extend({
+
+          className: 'container-fluid',
 
           initialize: function (options) {
               this.render().$el.appendTo('body');

@@ -9,8 +9,8 @@ require.config({
     paths: {
 
         // Libraries
-        'json2'        : '/vendor/json2.min',
-        'modernizr'    : '/vendor/modernizr.min',
+        'json2'        : '/vendor/json2',
+        'modernizr'    : '/vendor/modernizr',
         'jquery'       : '/vendor/require-jquery',
         'underscore'   : '/vendor/underscore',
         'mustache'     : '/vendor/mustache',
@@ -50,7 +50,7 @@ require.config({
     },
     priority: ['text', 'modernizr', 'json2', 'vendor', 'utils'],
     jquery: '1.7.1',
-    waitSeconds: 30
+    waitSeconds: 10
 });
 
 require(['vendor', 'application', 'utils'], function (vendor, App, utils) {

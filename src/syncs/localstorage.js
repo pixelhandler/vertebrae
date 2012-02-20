@@ -3,9 +3,10 @@
 // A simple module to replace `Backbone.sync` with *localStorage*-based persistence. 
 // Models are given GUIDS, and saved into a JSON object. 
 
-define(['vendor/underscore'], function (_) {
+define(['vendor'], function (vendor) {
 
-    var Store;
+    var Store
+      , _ = vendor._;
 
     // Generate four random hex digits.
     function S4() {

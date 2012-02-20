@@ -5,7 +5,6 @@
 
 define( [
         "vendor", 
-        "chrome", 
         "collections", 
         "products/views/container",
         "products/views/product-list",
@@ -13,7 +12,6 @@ define( [
         ],
 function (
         vendor,
-        chrome,
         collections,
         ProductContainerView,
         ProductListView,
@@ -21,7 +19,7 @@ function (
         ) {
 
     var productsBootstrap
-      , products = collections.products
+      , products = new collections.products()
       , $ = vendor.$
       , _ = vendor._
       , Channel = utils.lib.Channel
@@ -32,11 +30,12 @@ function (
 
         new ProductContainerView();
         productsList = new ProductListView({
-            "container": $('#products'),
+            "container": $('#products .main'),
             "collection": products
         });
         products.deferred.done(function () {
             productsList.render();
+            productsList.options.container.removeClass('hide');
         });
     };
 

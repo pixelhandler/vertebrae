@@ -7,20 +7,25 @@ define([
         'vendor', 
         'views',
         'text!chrome/templates/header.html',
-        'chrome/views/header'
+        'chrome/models/header'
         ], 
 function (
         vendor,
         views,
-        HeaderModel,
-        headerTemplate
+        headerTemplate,
+        HeaderModel
         ) {
 
     var HeaderView
       , BaseView = views.BaseView
-      , $ = vendor.$;
+      , $ = vendor.$
+      , Mustache = vendor.Mustache;
 
       HeaderView = BaseView.extend({
+
+          tagName: 'header',
+
+          className: 'container-fluid',
 
           initialize: function (options) {
               this.template = headerTemplate;

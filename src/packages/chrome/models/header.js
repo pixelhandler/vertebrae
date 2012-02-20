@@ -13,7 +13,7 @@ define( ["models/base"], function (BaseModel) {
 
             branding: {
                 alt: "Pixelhandler",
-                src: "images/pixelhandler-logo.png"
+                src: "/images/pixelhandler-logo.png"
             },
 
             nav: [
