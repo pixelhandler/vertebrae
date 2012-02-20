@@ -1,7 +1,7 @@
 ({
     appDir: './src',
     baseUrl: './',
-    dir: './build',
+    dir: './public',
     inlineText: true,
     optimize: 'uglify',
     paths: {

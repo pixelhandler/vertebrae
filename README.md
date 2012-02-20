@@ -1,1 +1,3 @@
-# Build and optimize using node and r.js script
+# Build and optimize using:
+
+> r.js -o build.js
