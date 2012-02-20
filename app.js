@@ -1,7 +1,7 @@
 var application_root = __dirname
   , express = require("express")
   , path = require("path")
-  , docroot = path.join(application_root, "src")
+  , docroot = path.join(application_root, "public")
   , fs = require('fs')
   , app = express.createServer()
   , port = process.env.PORT || 4242;

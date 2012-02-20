@@ -16,7 +16,7 @@ function (vendor, models,  BaseCollection,     utils) {
 
         model: Product,
 
-        url: 'test/fixtures/products.js', //'/api/products',
+        url: '/test/fixtures/products.js', //'/api/products',
 
         initialize: function () {
             this.deferred = new $.Deferred();
