@@ -15,7 +15,8 @@ app.configure(function () {
 
 // Any Route loads index.html like a 404 that just loads the index
 app.get(/^.*$/, function(req, res) {
-  res.redirect('/', 301);
+  //res.redirect('/', 301);
+  fs.createReadStream("./index.html").pipe(res);
 });
 
 // launch server
