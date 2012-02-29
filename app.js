@@ -2,6 +2,7 @@ var application_root = __dirname
   , express = require("express")
   , path = require("path")
   , docroot = path.join(application_root, "public")
+  , indexdoc = path.join(docroot,"index.html")
   , fs = require('fs')
   , app = express.createServer()
   , port = process.env.PORT || 4242;
@@ -16,10 +17,11 @@ app.configure(function () {
 // Any Route loads index.html like a 404 that just loads the index
 app.get(/^.*$/, function(req, res) {
   //res.redirect('/', 301);
-  fs.createReadStream("./index.html").pipe(res);
+  fs.createReadStream(indexdoc).pipe(res);
 });
 
 // launch server
 app.listen(port, function() {
-    console.log("Listening on " + port);
+    console.log("Listening on: " + port);
+    console.log("Page: " + indexdoc);
 });

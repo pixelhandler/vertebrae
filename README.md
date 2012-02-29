@@ -8,6 +8,8 @@
 
 runs at : http://localhost:4242/
 
-following build some files in /src are re-written, need to checkout clean copies:
+The app.js is the node.js script that runs the server and expects the "public" directory to have the application. 
 
-> git checkout src/collections.js src/models.js src/packages/chrome.js src/packages/products.js src/utils.js src/views.js
+The build.js should be configured to build to the "public" directory. 
+
+So after you run `r.js -o build.js` to populate the "public" directory then you can use `node app.js` to view the site at : http://localhost:4242
