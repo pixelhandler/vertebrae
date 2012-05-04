@@ -1,0 +1,57 @@
+<!doctype html>
+<!--[if IE 7]><html class="ie7 oldie" lang="en"><![endif]-->
+<!--[if IE 8]><html class="ie8 oldie" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
+<head>
+  <title>Jasmine : HL Model Spec Runner</title>
+
+  <!-- include Jasmine files here... -->
+  <link rel="stylesheet" type="text/css" href="/frontend/test/lib/jasmine.css">
+  <script type="text/javascript" src="/frontend/test/lib/jasmine.js"></script>
+  <script type="text/javascript" src="/frontend/test/lib/jasmine-html.js"></script>
+
+  <script type="text/javascript">
+    // global HL for namespace
+    if (!window.HL) { var HL = {}; }
+  </script>
+
+  <!-- include lib files here with spec loading via data-main attr -->
+  <script data-main="/frontend/test/models/base/spec" src="/frontend/vendor/require.js"></script>
+  <!-- include source files here... (if not loaded via main above) -->
+
+  <script type="text/javascript">
+    (function() {
+      var jasmineEnv = jasmine.getEnv();
+      jasmineEnv.updateInterval = 1000;
+
+      var trivialReporter = new jasmine.TrivialReporter();
+
+      jasmineEnv.addReporter(trivialReporter);
+
+      jasmineEnv.specFilter = function(spec) {
+        return trivialReporter.specFilter(spec);
+      };
+
+      var currentWindowOnload = window.onload;
+
+      window.onload = function() {
+        if (currentWindowOnload) {
+          currentWindowOnload();
+        }
+        execJasmine();
+      };
+
+      function execJasmine() {
+        jasmineEnv.execute();
+      }
+
+    })();
+  </script>
+
+</head>
+
+<body>
+
+</body>
+</html>
+

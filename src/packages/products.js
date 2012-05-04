@@ -18,12 +18,12 @@ function (
         utils
         ) {
 
-    var productsBootstrap
-      , products = new collections.products()
-      , $ = vendor.$
-      , _ = vendor._
-      , Channel = utils.lib.Channel
-      , debug = utils.debug;
+    var productsBootstrap,
+        products = new collections.products(),
+        $ = vendor.$,
+        _ = vendor._,
+        Channel = utils.lib.Channel,
+        debug = utils.debug;
 
     productsBootstrap = function () {
         var productsList;

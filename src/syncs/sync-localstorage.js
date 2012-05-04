@@ -9,8 +9,8 @@ define(function () {
 
     sync = function (method, model, options) {
 
-        var resp
-          , store = model.localStorage || model.collection.localStorage;
+        var resp,
+            store = model.localStorage || model.collection.localStorage;
 
         switch (method) {
           case "read": resp = model.id ? store.find(model) : store.findAll();
