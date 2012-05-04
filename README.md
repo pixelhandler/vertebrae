@@ -14,7 +14,16 @@ The build.js should be configured to build to the "public" directory.
 
 So after you run `r.js -o build.js` to populate the "public" directory then you can use `node app.js` to view the site at : http://localhost:4242
 
-# Overview of Hello World "Layout"
+# Hello World example using a Backbone View as a Layout Manager
+
+Routes in the hello package 
+
+    /hello  
+    /hello:name  
+
+without the name parameter only one the 'about' view is rendered in the layout; with the parameter e.g. /hello/bill two views are rendered in the layout a 'welcome' and an 'about' view
+
+## Part 1
 
 Using a Layout view involves: adding a route, route handler function in App, new "hello" package with a template and view. The package controller file *hello.js* extends the Controller.prototype and is based on a (template) copy of the Controller.prototype in *src/controller.js*. The WelcomeSectionView prototype extends the SectionView prototype (class) and requries both **name** and **destination** properties when instantiated. The *application.js* method 'showHello' is mapped to the route '/hello/:name' and the showHello method instantiates a controller object 
 
@@ -32,20 +41,20 @@ Files added as a new package:
     src/packages/hello/views/welcome.js  [returns: WelcomeSectionView, with article element] 
     src/packages/hello/welcome.css
 
-## New Route added in src/application.js 
+### New Route added in src/application.js 
 
 ```javascript
     'hello/:name': 'showHello'
 ```
 
-## New Package added in src/main.js
+### New Package added in src/main.js
 
 ```javascript
     // ** Packages **
     'hello'        : HL.prependBuild('/packages/hello'),
 ```
 
-## Add dependency to application.js 
+### Add dependency to application.js 
 
 ```javascript
 define([ /*... ,*/ "hello" ], function ( /*... ,*/ HelloController ) {  
@@ -53,7 +62,7 @@ define([ /*... ,*/ "hello" ], function ( /*... ,*/ HelloController ) {
 });
 ```
 
-## Add Method for new '/hello/:name' route handler
+### Add Method for new '/hello/:name' route handler
 
 ```javascript
     showHello: function (name) {  

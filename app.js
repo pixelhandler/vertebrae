@@ -1,7 +1,7 @@
 var application_root = __dirname,
     express = require("express"),
     path = require("path"),
-    docroot = path.join(application_root, "src"),
+    docroot = path.join(application_root, "public"), // or in dev use "src"
     indexdoc = path.join(docroot,"index.html"),
     fs = require('fs'),
     app = express.createServer(),
