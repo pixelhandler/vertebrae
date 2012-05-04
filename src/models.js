@@ -4,15 +4,17 @@
 // Requires `define`  
 // See http://requirejs.org/docs/api.html#define
 
-define(["models/base", "models/product"], 
-function (BaseModel,    ProductModel) {
+define(["models/base", "models/product", "models/messaging", "models/application-state"], 
+function (BaseModel, ProductModel, MessagingModel, ApplicationStateModel) {
 
     // Add models in this same directory to this object, 
     // for use when requiring this module.  
     // grouping site-wide models in this module (object)
     return {
+        "ApplicationStateModel": ApplicationStateModel,
         "BaseModel": BaseModel,
-        "ProductModel": ProductModel
+        "MessagingModel": MessagingModel,
+        "ProductModel": ProductModel,
     };
 
 });

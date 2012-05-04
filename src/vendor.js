@@ -1,17 +1,18 @@
-// vendor.js  
-// ---------  
 // List of vendor libraries, e.g. jQuery, Underscore, Backbone, etc.  
+// See <http://requirejs.org/docs/api.html#define>  
 // Requires `define`  
-// See http://requirejs.org/docs/api.html#define  
+// this module is used with the r.js optimizer tool during build  
+// See http://requirejs.org/docs/faq-optimization.html
 
-define([ "jquery", "underscore", "backbone", "modernizr", "mustache", "jquerycookie" ], 
-function (jQuery,   _,            Backbone,   Modernizr,   Mustache ) {
+define(["jquery", "use!underscore", "use!backbone", "modernizr", "mustache"], 
+function (jQuery, _, Backbone, Modernizr, Mustache) {
 
     jQuery.noConflict();
     _.noConflict();
     Backbone.noConflict();
+    Modernizr = (!Modernizr) ? window.Modernizr : 'undefined';
 
-    // may need to load jQuery plugins here to be sure they are added to the jQuery variable
+    // Load plugins in the facade.js not here
 
     return {
         "jQuery": jQuery,
@@ -19,6 +20,7 @@ function (jQuery,   _,            Backbone,   Modernizr,   Mustache ) {
         "_": _,
         "Backbone": Backbone,
         "Modernizr": Modernizr, 
-        "Mustache": Mustache
+        "Mustache": require("mustache")
     };
+
 });

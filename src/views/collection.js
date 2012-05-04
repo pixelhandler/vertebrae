@@ -1,32 +1,58 @@
 // Collection View
 // ---------------
+
 // Manages rendering many views with a collection,
+// initialize methods expects a child view and tagname  
 // Param {Object} options should have properties: `view`, `tagName` 
 // Requires `define`
 
-define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
+define(['facade','views/base','utils'], function (facade, BaseView, utils) {
 
-    var CollectionView
-      , $ = vendor.$
-      , _ = vendor._
-      , debug = utils.debug;
+    var CollectionView,
+        $ = facade.$,
+        _ = facade._,
+        Backbone = facade.Backbone,
+        debug = utils.debug;
 
     CollectionView = BaseView.extend({
 
-        initialize : function(options) {
-            _(this).bindAll('add', 'remove');
-            if (!options.view) {
-                throw new Error("CollectionView initialize: no view provided");
+        initialize : function (options) {
+            var collection, msg;
+
+            if (!this.collection || !(this.collection instanceof Backbone.Collection)) {
+                msg = "CollectionView initialize: no collection provided.";
+                throw new Error(msg);
             }
-            if (!options.tagName) {
-                throw new Error("CollectionView initialize: no tagName provided.");
+            BaseView.prototype.initialize.call(this, options);
+            this._view = this.options.view || this._view;
+            if (!this._view) {
+                throw new Error("CollectionView initialize: no view provided.");
             }
-            this._view = options.view;
-            this._tagName = options.tagName;
+            this._tagName = this.options.tagName || this._tagName;
+            if (!this._tagName) {
+                throw new Error("CollectionView initialize: no tag name provided.");
+            }
+            this._className = this.options.className;
+            this._decorator = this.options.decorator;
+            this._id = this.options.id;
             this._views = [];
-            this.collection.each(this.add);
-            this.collection.bind('add', this.add);
-            this.collection.bind('remove', this.remove);
+            _(this).bindAll('add', 'remove');
+            this.setupCollection();
+        },
+
+        setupCollection: function () {
+            var collection = this.options.collection || this.collection;
+
+            collection.bind('add', this.add);
+            collection.bind('remove', this.remove);
+            if (!collection.length && !collection.request) {
+                collection.fetch();
+                collection.request.done(function () {
+                    collection.each(this.add);
+                });
+            } else {
+                collection.each(this.add);
+            }
         },
 
         add : function(model) {
@@ -34,11 +60,13 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
 
             view = new this._view({
                 "tagName": this._tagName,
-                "model": model
+                "model": model,
+                "className": this._className,
+                "decorator": this._decorator
             });
             this._views.push(view);
             if (this._rendered) {
-                this.$el.append(view.render().$el);
+                this.$el.append(view.render().el);
             }
         },
 
@@ -50,18 +78,25 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
             })[0];
             this._views = _(this._views).without(viewToRemove);
             if (this._rendered) {
+                $(viewToRemove.el).off();
                 $(viewToRemove.el).remove();
             }
         },
 
         render : function() {
+            this.confirmElement.call(this);
             this._rendered = true;
             this.$el.empty();
 
             _(this._views).each(function(view) {
-                this.$el.append(view.render().$el);
+                this.$el.append(view.render().el);
+                if (view.options.decorator && _.isFunction(view.options.decorator)) {
+                    view.options.decorator(view);
+                }
             }, this);
 
+            this.resolve.call(this);
+            this.callbacks.fire.call(this);
             return this;
         }
     });

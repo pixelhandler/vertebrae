@@ -1,14 +1,16 @@
-// debug.js  
-// --------  
-// debug enabled by single url param like ?debug or perhaps a hash like #!debug
+// debug.js
+// --------
 
-define(function () {
+define(['jquery'], function ($) {
 
-    return {
+    var debug, append;
 
+    debug = {
+        
+        // debug enabled by single url param like ?debug
         mode : function () {
-            return ((typeof console !== "undefined" && console !== null) &&
-                (window.location.href.slice(window.location.href.indexOf('?') + 1) == "debug"))
+            return (typeof console !== "undefined" && console !== null);
+                // (window.location.href.slice(window.location.href.indexOf('?') + 1) == "debug"));
                 // (window.location.hash.match(/!debug/) == "!debug")) 
         },
 
@@ -23,4 +25,24 @@ define(function () {
         }
     };
 
+    append = {
+
+        // debug by logging directy to page, e.g. a mobile phone with no console.
+        mode: function () {
+            $('body').append('<div id="console"/>');
+            return true;
+        },
+
+        msgs: [],
+
+        log: function (msg) {
+            var active = this.mode();
+            if (active) { 
+                this.msgs.push(msg);
+                $('#console').append('<p>'+ msg +'</p>');
+            }
+        }
+    };
+
+    return debug;
 });

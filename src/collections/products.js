@@ -3,12 +3,12 @@
 // Requires `define`  
 // Return {ProductsCollection} constructor
 
-define(['vendor','models','collections/base', 'utils'], 
-function (vendor, models,  BaseCollection,     utils) {
+define(['facade','models','collections/base', 'utils'], 
+function (facade, models,  BaseCollection,     utils) {
 
     var ProductsCollection,
-        $ = vendor.$,
-        _ = vendor._,
+        $ = facade.$,
+        _ = facade._,
         Product = models.ProductModel,
         debug = utils.debug;
 

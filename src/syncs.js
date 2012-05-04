@@ -4,9 +4,8 @@
 // Requires `define`  
 // See http://requirejs.org/docs/api.html#define
 
-define(["syncs/localstorage", "syncs/sync-localstorage"], function (localstorage, sync) {
+define(["syncs/application-state"], function (applicationStateSync) {
     return {
-        "localstorage" : localstorage,
-        "sync": sync
+        "applicationStateSync" : applicationStateSync
     };
 });

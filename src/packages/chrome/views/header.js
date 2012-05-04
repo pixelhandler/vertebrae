@@ -16,10 +16,10 @@ function (
         HeaderModel
         ) {
 
-    var HeaderView
-      , BaseView = views.BaseView
-      , $ = vendor.$
-      , Mustache = vendor.Mustache;
+    var HeaderView,
+        BaseView = views.BaseView,
+        $ = vendor.$,
+        Mustache = vendor.Mustache;
 
       HeaderView = BaseView.extend({
 

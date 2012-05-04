@@ -5,28 +5,56 @@
     inlineText: true,
     optimize: 'uglify',
     paths: {
-        'domready'     : 'vendor/domReady',
-        'order'        : 'vendor/order',
-        'text'         : 'vendor/text',
+
+        // Libraries
+
         'json2'        : 'vendor/json2',
         'modernizr'    : 'vendor/modernizr',
-        'jquery'       : 'vendor/require-jquery',
+        'jquery'       : 'vendor/jquery-1.7.2.min',
+        'zepto'        : 'vendor/zepto',
         'underscore'   : 'vendor/underscore',
         'mustache'     : 'vendor/mustache',
         'backbone'     : 'vendor/backbone',
 
-        'vendor'       : 'vendor',
+        // Plugins
 
-        'jquerycookie' : 'vendor/jquery.cookie',
-        'jquerymobile' : 'vendor/jquery.mobile-1.0.1',
+        // RequireJS
+        'use'          : 'vendor/plugins/use',
+        'domready'     : 'vendor/plugins/domReady',
+        'order'        : 'vendor/plugins/order',
+        'text'         : 'vendor/plugins/text',
+        
+        // Touch events
+        'touch'        : 'vendor/plugins/touch',
 
+        // Vendor libs, packaged group of common dependencies
+        'vendor'       : 'facade',
+
+        // Facade references to vendor / library methods
+        'facade'       : 'facade',
+
+        // Utilities and HauteLook libraries
         'utils'        : 'utils',
+        
+        // Backbone syncs depend on both vendor and utils
+        'syncs'        : 'syncs',
+
+        // Should be used as required dependencies with use of `define`, 
         'models'       : 'models',
         'views'        : 'views',
         'collections'  : 'collections',
+        'controller'   : 'controller',
 
+        // Packages
+
+        'packages'     : 'packages',
         'chrome'       : 'packages/chrome',
-        'products'     : 'packages/products'
+        'products'     : 'packages/products',
+        'hello'        : 'packages/hello',
+
+        // Application - bootstrap for frontend app 
+        'application'  : 'application'
+
     },
     /*
     modules: [
@@ -49,30 +77,34 @@
         },
         {
             name: 'syncs',
-            exclude: ['vendor', 'utils']
+            exclude: ['vendor', 'facade', 'utils']
         },
         {
             name: 'models',
-            exclude: ['vendor', 'utils', 'syncs']
+            exclude: ['vendor', 'facade', 'utils', 'syncs']
         },
         {
             name: 'views',
-            exclude: ['vendor', 'utils', 'syncs', 'models']
+            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models']
         },
         {
             name: 'collections',
-            exclude: ['vendor', 'utils', 'syncs', 'models', 'views']
+            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views']
         },
 
         // Packages
 
         {
             name: 'chrome',
-            exclude: ['vendor', 'utils', 'syncs', 'models', 'views', 'collections']
+            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views', 'collections']
         },
         {
             name: 'products',
-            exclude: ['vendor', 'utils', 'syncs', 'models', 'views', 'collections', 'chrome']
+            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views', 'collections', 'chrome']
+        },
+        {
+            name: 'hello',
+            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views', 'collections', 'chrome']
         }
     ]
 

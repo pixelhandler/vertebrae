@@ -1,9 +1,10 @@
-// shims.js  
-// --------  
+/**
+ * Shims 
+ */
 
 define(function () {
 
-    if (typeof Object.create !== 'function') { 
+    if (typeof Object.create !== 'function') { // ECMA 5 supports Object.create
         Object.create = function(o) {
             function F() {}
             F.prototype = o;
@@ -28,6 +29,12 @@ define(function () {
         Date.now = function now() {
             return +new Date();
         };
+    }
+
+    if(!String.prototype.trim) {
+      String.prototype.trim = function () {
+        return this.replace(/^\s+|\s+$/g,'');
+      };
     }
 
 });

@@ -9,28 +9,35 @@ require.config({
     paths: {
 
         // Libraries
+
         'json2'        : '/vendor/json2',
         'modernizr'    : '/vendor/modernizr',
-        'jquery'       : '/vendor/require-jquery',
+        'jquery'       : '/vendor/jquery-1.7.2.min',
+        'zepto'        : '/vendor/zepto',
         'underscore'   : '/vendor/underscore',
         'mustache'     : '/vendor/mustache',
         'backbone'     : '/vendor/backbone',
 
         // Plugins
-        // RequireJS
-        'domready'     : '/vendor/domReady',
-        'order'        : '/vendor/order',
-        'text'         : '/vendor/text',
-        // jQuery plugins/libs (may be loaded in the vender.js file)
-        'jquerycookie' : '/vendor/jquery.cookie',
-        'jquerymobile' : '/vendor/jquery.mobile-1.0.1.min',
 
-        // Vendor libs and plugin, packaged group of common dependencies
+        // RequireJS
+        'use'          : '/vendor/plugins/use',
+        'domready'     : '/vendor/plugins/domReady',
+        'order'        : '/vendor/plugins/order',
+        'text'         : '/vendor/plugins/text',
+
+        // Touch events
+        'touch'        : '/vendor/plugins/touch',
+
+        // Vendor libs, packaged group of common dependencies
         'vendor'       : '/vendor',
+
+        // Facade references to vendor / library methods
+        'facade'       : '/facade',
 
         // Utilities and HauteLook libraries
         'utils'        : '/utils',
-        
+
         // Backbone syncs depend on both vendor and utils
         'syncs'        : '/syncs',
 
@@ -38,33 +45,50 @@ require.config({
         'models'       : '/models',
         'views'        : '/views',
         'collections'  : '/collections',
+        'controller'   : '/controller',
 
         // Packages
+
         'packages'     : '/packages',
         'chrome'       : '/packages/chrome',
         'products'     : '/packages/products',
+        'hello'        : '/packages/hello',
 
         // Application - bootstrap for frontend app 
         'application'  : '/application'
 
     },
-    priority: ['text', 'modernizr', 'json2', 'vendor', 'utils'],
-    jquery: '1.7.1',
-    waitSeconds: 10
+    use: {
+        "underscore": {
+            attach: "_"
+        },
+        "backbone": {
+            deps: ["use!underscore", "jquery"],
+            attach: function(_, $) {
+                return Backbone;
+            }
+        }
+    },
+    priority: ['text', 'use', 'modernizr', 'json2', 'vendor', 'utils'],
+    jquery: '1.7.2',
+    waitSeconds: 30
 });
 
-require(['vendor', 'application', 'utils'], function (vendor, App, utils) {
+require(['facade', 'application', 'utils'], function (facade, App, utils) {
 
-    var $ = vendor.$
-      , Backbone = vendor.Backbone
-      , debug = utils.debug;
+    var $ = facade.$,
+        Backbone = facade.Backbone,
+        Channel = utils.lib.Channel,
+        debug = utils.debug;
+
+    // load style sheets
+    Channel('load:css').publish(["css/bootstrap.css", "css/bootstrap-responsive.css"]);
 
     $(function () { // doc ready
         var app;
 
         // run the application, it all starts here.
         app = new App();
-        app.loadCss(["css/bootstrap.css", "css/bootstrap-responsive.css"]);
         Backbone.history.start({pushState: true});
         debug.log("app initialized.");
     });
