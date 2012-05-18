@@ -1,0 +1,7 @@
+{
+  "name": "vertebrae-framework",
+  "version": "0.5.0",
+  "dependencies": {
+    "express": "2.5.6"
+  }
+}

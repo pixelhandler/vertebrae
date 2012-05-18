@@ -10,3 +10,4 @@
 # ignore all directories and files in ...
 public/*
 public/**/*
+node_modules/*
