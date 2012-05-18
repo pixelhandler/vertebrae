@@ -14,23 +14,28 @@ define(['facade', 'utils'], function (facade, utils) {
         ajaxOptions = utils.ajaxOptions,
         debug = utils.debug;
 
+    // Constructor `{BaseModel}` extends Backbone.Model.prototype
+    // object literal argument to extend is the prototype for the BaseModel constructor
     BaseModel = Backbone.Model.extend({
 
-        // Param {Object} attributes set on model when creating an instance  
-        // Param {Object} options  
+        // Param {Object} `attributes` set on model when creating an instance  
+        // Param {Object} `options`  
         initialize: function (attributes, options) {
             // debug.log("BaseModel init called");
             if (options) {
                 this.options = options;
-                this.handleOptions();
+                this.setOptions();
             }
             this.deferred = new $.Deferred();
             // Backbone.Model.prototype.initialize.call(this, arguments);
         },
 
-        // assign fetch to request property, fetch returns jQuery ajax promise object
+        // **Property:** `request` - assign fetch return value to this.request property, 
+        // fetch returns (jQuery) ajax promise object
         request: null,
 
+        // **Method:** `fetch`
+        // Wrap Backbone.Model.prototype.fetch with support for deferreds
         fetch: function (options) {
             options = options || {};
             if (!options.success) {
@@ -43,6 +48,9 @@ define(['facade', 'utils'], function (facade, utils) {
             return this.request = Backbone.Model.prototype.fetch.call(this, options);
         },
 
+        // Default success and error handlers used with this.fetch() ...
+
+        // **Method:** `fetchSuccess` - resolve the deferred here in success
         fetchSuccess: function (model, response) {
             if (model.deferred) {
                 if (!model.request) {
@@ -53,12 +61,13 @@ define(['facade', 'utils'], function (facade, utils) {
             debug.log(response);
         },
 
+        // **Method:** `fetchError` - log response on error
         fetchError: function (model, response) {
             model.deferred.reject();
             debug.log(response);
         },
 
-        // override or wrap to add a deferred object to test if resolved
+        // Primarily a tool for unit tests... Don't rely on calling this.isReady!!
         isReady: function () {
             if (this.request) {
                 return this.request.isResolved();
@@ -67,7 +76,8 @@ define(['facade', 'utils'], function (facade, utils) {
             }
         },
 
-        handleOptions: function () {
+        // **Method:** `setOptions` - set urlRoot
+        setOptions: function () {
             if (this.options && this.options.urlRoot) {
                 this.urlRoot = this.options.urlRoot;
             }

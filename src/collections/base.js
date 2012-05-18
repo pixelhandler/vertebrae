@@ -14,18 +14,26 @@ define(['facade', 'utils'], function (facade, utils) {
         ajaxOptions = utils.ajaxOptions,
         debug = utils.debug;
 
+    // Constructor `{BaseCollection}` extends Backbone.Collection.prototype
+    // object literal argument to extend is the prototype for the BaseCollection constructor
     BaseCollection = Backbone.Collection.extend({
 
+        // **Method:** `initialize`  
+        // Param {Object} `models` - added during call to new BaseCollection([/*models*/])  
+        // Param {Object} `options` - add a comparator
         initialize: function (models, options) {
             debug.log("BaseCollection initialize...");
             this.cid = this.cid || _.uniqueId('c');
             this.deferred = new $.Deferred();
-            // Backbone.Collection.prototype.initialize.call(this, arguments);
+            // When overriding use: `Backbone.Collection.prototype.initialize.call(this, arguments);`
         },
 
-        // assign fetch to request property, fetch returns jQuery ajax promise object
+        // **Property:** `request` - assign fetch return value to this.request property, 
+        // fetch returns (jQuery) ajax promise object
         request: null,
 
+        // **Method:** `fetch`  
+        // Wrap Backbone.Collection.prototype.fetch with support for deferreds
         fetch: function (options) {
             options = options || {};
             if (!options.success) {
@@ -42,7 +50,7 @@ define(['facade', 'utils'], function (facade, utils) {
             return this.request;
         },
 
-        // override or wrap to add a deferred object to test if resolved
+        // Primarily a tool for unit tests... Don't rely on calling this.isReady!!
         isReady: function () {
             if (this.request) {
                 return this.request.isResolved();
@@ -51,11 +59,15 @@ define(['facade', 'utils'], function (facade, utils) {
             }
         },
 
+        // Default success and error handlers used with this.fetch() ...
+
+        // **Method:** `fetchSuccess` - resolve the deferred here in success
         fetchSuccess: function (collection, response) {
             this.deferred.resolve(response);
             debug.log(response);
         },
 
+        // **Method:** `fetchError` - log response on error
         fetchError: function (collection, response) {
             debug.log(response);
         }

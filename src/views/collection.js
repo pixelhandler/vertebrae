@@ -1,10 +1,14 @@
 // Collection View
 // ---------------
+// Manages rendering many views with a collection 
+// See: <http://liquidmedia.ca/blog/2011/02/lib-js-part-3/>
 
-// Manages rendering many views with a collection,
-// initialize methods expects a child view and tagname  
-// Param {Object} options should have properties: `view`, `tagName` 
+// The CollectionView extends BaseView and is intended for rendering a collection.
+// A item view is required for rendering withing each iteration over the models.
+
 // Requires `define`
+// Returns {CollectionView} constructor 
+// - instances must have a collection property
 
 define(['facade','views/base','utils'], function (facade, BaseView, utils) {
 
@@ -14,8 +18,13 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
         Backbone = facade.Backbone,
         debug = utils.debug;
 
+    // Constructor `{CollectionView}` extends the BaseView.prototype
+    // object literal argument to extend is the prototype for the CollectionView Constructor
     CollectionView = BaseView.extend({
 
+        // **Method:** `initialize`  
+        // Param {Object} `options` must have a child view and tagname  
+        // - options should have properties: `view`, `tagName` 
         initialize : function (options) {
             var collection, msg;
 
@@ -40,6 +49,8 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             this.setupCollection();
         },
 
+        // **Method:** `setupCollection`  
+        // bindings for adding and removing of models within the collection
         setupCollection: function () {
             var collection = this.options.collection || this.collection;
 
@@ -55,6 +66,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             }
         },
 
+        // **Method:** `add`  
+        // Param {Model} `model` object that extends Backbone.Model
+        // Creates a new view for models added to the collection
         add : function(model) {
             var view;
 
@@ -70,6 +84,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             }
         },
 
+        // **Method:** `remove`  
+        // Param {Model} `model` object that extends Backbone.Model
+        // removes view when model is removed from collection
         remove : function(model) {
             var viewToRemove;
 
@@ -78,11 +95,13 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             })[0];
             this._views = _(this._views).without(viewToRemove);
             if (this._rendered) {
-                $(viewToRemove.el).off();
-                $(viewToRemove.el).remove();
+                viewToRemove.destroy(); // $(viewToRemove.el).off().remove();
             }
         },
 
+        // **Method:** `render`  
+        // Iterates over collection appending views to this.$el
+        // When a {Function} decorator option is available manipulte views' this.$el
         render : function() {
             this.confirmElement.call(this);
             this._rendered = true;

@@ -1,0 +1,12 @@
+# ignore specific files
+.DS_Store
+
+# wildcards
+*~
+*.lock
+*.DS_Store
+*.swp
+
+# ignore all directories and files in ...
+public/*
+public/**/*

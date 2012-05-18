@@ -1,7 +1,7 @@
 // Cookie interface
 // ----------------
-// See https://developer.mozilla.org/en/DOM/document.cookie
-// return {Object} docCookies - interface: getItem, setItem, removeItem, hasItem
+// See <https://developer.mozilla.org/en/DOM/document.cookie>
+// return {Object} `docCookies` - interface: getItem, setItem, removeItem, hasItem
 
 define(function () {
 
@@ -13,19 +13,19 @@ define(function () {
             return (!this.isExpired(data)) ? data : null;
         },
 
-        // docCookies.setItem(sKey, sValue, vEnd, sPath, sDomain, bSecure)
+        // `docCookies.setItem(sKey, sValue, vEnd, sPath, sDomain, bSecure)`
         //
-        // Param {String} sKey: the name of the cookie;
-        // Param {String} sValue: the value of the cookie;
+        // Param {String} `sKey`: the name of the cookie  
+        // Param {String} `sValue`: the value of the cookie  
         // 
-        // Optional Param {Number, String, Date Object or null} vEnd: 
+        // Optional Param {Number, String, Date Object or null} `vEnd`: 
         //   the max-age in seconds (e.g., 31536e3 for a year) or the expires date in 
-        //   GMTString format or in Date Object format; if not specified it will expire at the end of session; 
-        // Optional Param {String or null} sPath: e.g., "/", "/mydir"; if not specified, defaults to the 
-        //   current path of the current document location;
-        // Optional Param {String or null} sDomain: e.g., "example.com", ".example.com" (includes all subdomains) or
-        //   "subdomain.example.com"; if not specified, defaults to the host portion of the current document location;
-        // Optional Param {Boolean or null} bSecure: cookie will be transmitted only over secure protocol as https;
+        //   GMTString format or in Date Object format; if not specified it will expire at the end of session;  
+        // Optional Param {String or null} `sPath`: e.g., "/", "/mydir"; if not specified, defaults to the 
+        //   current path of the current document location;  
+        // Optional Param {String or null} `sDomain`: e.g., "example.com", ".example.com" (includes all subdomains) or
+        //   "subdomain.example.com"; if not specified, defaults to the host portion of the current document location;  
+        // Optional Param {Boolean or null} `bSecure`: cookie will be transmitted only over secure protocol as https;
         //
         // Return undefined;
         setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {

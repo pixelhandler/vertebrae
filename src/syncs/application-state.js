@@ -2,7 +2,7 @@
 // ---------------------------------
 
 define(['facade', 'syncs/factory', 'syncs/storage', 'utils'], 
-function(facade, syncs_factory, storage_factory, utils) {
+function(facade,   syncs_factory,   storage_factory, utils) {
 
     var sync = {},
         $ = facade.$,
@@ -11,10 +11,11 @@ function(facade, syncs_factory, storage_factory, utils) {
         createAction, readAction, updateAction, deleteAction;
         debug = utils.debug;
 
-    // Override storage CRUD methods ... 
+    // Override storage **CRUD methods** ... 
     // functions below are called in the context of the model object
     // this refers to the model not the storage object
-    // Param {Store} store object implements CRUD interface
+
+    // Param {Store} `store` object implements CRUD interface
 
     createAction = function (store) {
         var data;

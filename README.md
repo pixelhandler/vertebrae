@@ -1,10 +1,160 @@
-# Build and optimize using:
+# Vertabrea front-end framework build with Backbone.js and RequireJS using AMD
 
-> r.js -o build.js
+**Vertabrea** provides *AMD* structure and additional objects for extending *Backbone.js* as an application framework.
 
-## to launch server
 
-> node app.js
+## Views: `BaseView`, `CollectionView`, `SectionView`, `LayoutView` (Manages Sections)
+
+### Base View
+
+A view object to construct a standard view with common properties and utilties
+The base view extends Backbone.View adding methods for resolving deferreds, 
+rendering, decorating data just in time for rendering, adding child views to 
+form a composite of views under one view object, add a destroy method.
+
+### Collection View
+
+Manages rendering many views with a collection, see: <http://liquidmedia.ca/blog/2011/02/lib-js-part-3/>
+
+The CollectionView extends BaseView and is intended for rendering a collection.
+A item view is required for rendering withing each iteration over the models.
+
+### Section View States
+
+Mixin object to track view's state 'not-rendered', 'rendered', 'not-displayed', 'displayed'
+
+A section view is the required view object for a layout view which expects
+views to track their own state. This view may be extended as need. to use
+in a layout, perhaps adding the Section prototype properties to another view.
+
+### Layout Manager View
+
+Presents, arranges, transitions and clears views
+
+The layout manager has one or many views as well as document (DOM) 
+destinations for each (rendered) view. A page may transition between 
+many views, so the layout manager keeps track of view states, e.g. 
+'not-rendered', 'rendered', 'not-displayed', 'displayed'. 
+
+The layout manager can lazy load and render (detached) views that 
+a member is very likely to request, e.g. tab changes on events page. 
+The transition between view states is managed by this object. 
+An entire layout may be cleared so that view objects and their bindings 
+are removed, preparing these objects for garbage collection (preventing 
+memory leaks). The layout manager also communicates view state 
+with controller(s).
+
+
+## Models: `BaseModel`, `ApplicationState`
+
+### Application state model
+
+A model object to manage state within the single-page application Attributes: {String} `name`, {Object} `data`, {String} `storage`, {Date} `expires`
+
+
+## Collections: `BaseCollection`, `ApplicationStates`
+
+### Application state collection
+
+A collection object to reference various states in the application.
+
+The application manager stores data in memory and also persists data in 
+browser storage to provide a resource for common data/metadata. Also provides 
+data (state) to reconstruct the page views based on previous interactions 
+(e.g. selected tab, applied filters). The application state manager provides 
+a strategy for resources to retrieve state.
+
+## Syncs: syncFactory, application-state, storageFactory
+
+
+## Utils: ajax-options, docCookies, debug, storage, shims, lib [checkType, duckTypeCheck, Channel (pub/sub), loadCss, formatCase, formatMoney]
+
+
+## Controller
+
+A controller object should called withing a route handler function, and may 
+be responsible for getting relevant state (application models) to generate 
+a page (layout), (also responsible for setting state when routes change). 
+The controller passes dependent data (models/collections) and constructed 
+view objects for a requested page to the layout manager. As a side-effect 
+the use of controllers prevents the routes object from becoming bloated and 
+tangled. A route should map to a controller which then kicks off the page 
+view, keeping the route handling functions lean.
+
+
+## Facade 
+
+Vendor libraries and specific methods used in the framework are required in the facade, and referenced from the facade module in the views, models, collections, lib and other objects in the framework.
+
+
+## AMD - Asynchronous Module Definition 
+
+Using RequireJS script loader and AMD there are a couple options for managing dependencies:
+
+The the examples below the facade module has it's own dependencies for loading vendor libraries and maps them to an object. So vendor libraries Should only be required using the facade module which provides references to the libraries.
+
+    define(['facade','utils'], function (facade, utils) {
+
+        var ModuleName,
+            // References to objects nested in dependencies
+            Backbone = facade.Backbone,
+            $ = facade.$,
+            _ = facade._,
+            lib = utils.lib;
+
+        ModuleName = DO SOMETHING HERE
+
+        return ModuleName;
+    });
+
+
+    define(['require','facade','utils'], function (require) {
+
+        var ModuleName,
+            // Dependencies
+            facade = require('facade'),
+            utils = require('utils'),
+            // References to objects nested in dependencies
+            Backbone = facade.Backbone,
+            $ = facade.$,
+            _ = facade._,
+            lib = utils.lib;
+
+        ModuleName = DO SOMETHING HERE
+
+        return ModuleName;
+    });
+
+
+References:
+  * [[https://github.com/amdjs/amdjs-api/wiki/AMD|AMD spec]]
+  * [[http://requirejs.org/docs/whyamd.html|RequireJS why AMD]]
+  * [[http://requirejs.org/docs/whyamd.html#amd|RequireJS AMD]]
+
+
+## Build and optimize using:
+
+    r.js -o build.js
+
+## Code examples included in framework active in application.js
+
+The application.js has a few routes defined which handle a couple example code packages: `products` and `hello`. the `chrome` package has the [Twitter bootstrap](http://twitter.github.com/bootstrap/ "Twitter bootstrap")  markup for rendering header component on the page.
+
+    App = Backbone.Router.extend({
+
+        routes: {
+            '': 'defaultRoute',
+            'products': 'showProducts',
+            'hello': 'showHello',
+            'hello/': 'showHello',
+            'hello/:name': 'showHello'
+        },
+
+The default route above links to the products route handler loading a list of products on the default page.
+
+## To launch (Node.js) server
+
+    node app.js
 
 runs at : http://localhost:4242/
 
@@ -14,7 +164,9 @@ The build.js should be configured to build to the "public" directory.
 
 So after you run `r.js -o build.js` to populate the "public" directory then you can use `node app.js` to view the site at : http://localhost:4242
 
-# Hello World example using a Backbone View as a Layout Manager
+
+
+## Hello World example using a Backbone View as a Layout Manager
 
 Routes in the hello package 
 
@@ -23,7 +175,7 @@ Routes in the hello package
 
 without the name parameter only one the 'about' view is rendered in the layout; with the parameter e.g. /hello/bill two views are rendered in the layout a 'welcome' and an 'about' view
 
-## Part 1
+### Part 1
 
 Using a Layout view involves: adding a route, route handler function in App, new "hello" package with a template and view. The package controller file *hello.js* extends the Controller.prototype and is based on a (template) copy of the Controller.prototype in *src/controller.js*. The WelcomeSectionView prototype extends the SectionView prototype (class) and requries both **name** and **destination** properties when instantiated. The *application.js* method 'showHello' is mapped to the route '/hello/:name' and the showHello method instantiates a controller object 
 
@@ -41,20 +193,20 @@ Files added as a new package:
     src/packages/hello/views/welcome.js  [returns: WelcomeSectionView, with article element] 
     src/packages/hello/welcome.css
 
-### New Route added in src/application.js 
+#### New Route added in src/application.js 
 
 ```javascript
     'hello/:name': 'showHello'
 ```
 
-### New Package added in src/main.js
+#### New Package added in src/main.js
 
 ```javascript
     // ** Packages **
     'hello'        : HL.prependBuild('/packages/hello'),
 ```
 
-### Add dependency to application.js 
+#### Add dependency to application.js 
 
 ```javascript
 define([ /*... ,*/ "hello" ], function ( /*... ,*/ HelloController ) {  
@@ -62,7 +214,7 @@ define([ /*... ,*/ "hello" ], function ( /*... ,*/ HelloController ) {
 });
 ```
 
-### Add Method for new '/hello/:name' route handler
+#### Add Method for new '/hello/:name' route handler
 
 ```javascript
     showHello: function (name) {  
@@ -84,9 +236,9 @@ src/packages/hello/views/welcome.js
 src/packages/hello/welcome.css  
 
 
-## Part 2: Get JSON data for content using AJAX
+### Part 2: Get JSON data for content using AJAX
 
-### To get the 'About' section data a fixture (JSON file) was added in the test directory.
+#### To get the 'About' section data a fixture (JSON file) was added in the test directory.
 
 src/test/fixtures/hello/101:
 
@@ -102,7 +254,7 @@ src/test/fixtures/hello/101:
 }
 ```
 
-### application.js updated with...
+#### application.js updated with...
 
 ```javascript
     routes: {
@@ -116,14 +268,14 @@ src/test/fixtures/hello/101:
     showHello: function (name) {
         controller = new HelloController({
             "params": { "name": name },
-            "route": (name) ? "/hello" + name : "/hello",
+            "route": (name) ? "/hello/" + name : "/hello",
             "appStates" : this.states,
             "useFixtures" : true
         });
     },
 ```
 
-### Some files have changed...
+#### Some files should have changed when working with the hello world part two example...
 
     src/packages/hello.js  
     src/packages/hello/models/about.js  
@@ -135,3 +287,45 @@ src/test/fixtures/hello/101:
     src/packages/hello/welcome.css
 
 See the source code below and see how the new "About" section view is added in addition to the simple hello *name* view created by the welcome view.
+
+## Documentation:
+
+Using docco annotated source code documenation is found in these directories:
+
+    /docs/
+    /models/docs/
+    /collections/docs/
+    /syncs/docs/
+    /utils/docs/
+    /views/docs/
+
+View docs at:
+
+http://YourDomain/docs/  
+http://YourDomain/models/docs/  
+http://YourDomain/collections/docs/  
+http://YourDomain/syncs/docs/  
+http://YourDomain/utils/docs/  
+http://YourDomain/views/docs/
+
+To generate the docs:
+
+    cd src/
+    docco application.js facade.js controller.js
+
+    cd models  
+    docco *.js  
+    cd ../collections  
+    docco *.js  
+    cd ../syncs  
+    docco *.js  
+    cd ../utils  
+    docco *.js  
+    cd ../views  
+    docco *.js
+    cd ../  
+    rm docs/docco.css collections/docs/docco.css models/docs/docco.css syncs/docs/docco.css utils/docs/docco.css views/docs/docco.css
+
+References:
+  * [[http://jashkenas.github.com/docco/|Docco Annotated Source]]
+  * [[https://github.com/jashkenas/docco|Docco Source Code]]

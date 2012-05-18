@@ -4,7 +4,7 @@
 //   storage methods all use storage property defined on the model / collection
 //   and also handle the response from the Backbone.sync calls
 //
-// Return storageFactory {Function}, a storage sync factory  
+// Return {Function} `storageFactory`, a storage sync factory  
 //     implments CRUD Interface [create, read, update, delete]  
 
 define([
@@ -20,8 +20,8 @@ define([
         createAction, readAction, updateAction, deleteAction;
 
     // Implement interface methods for default storage/persistence  
-    //   these methods should be called in the context of the model as this
-    // Param {Store} store instance with storage methods
+    //   these methods should be called in the context of the model as this  
+    // Param {Store} `store` instance with storage methods
     createAction = function(store) {
         return store.create(this);
     };
@@ -39,7 +39,7 @@ define([
         return store.destroy(this); 
     };
 
-    // check interface via duck typing
+    // Check interface via duck typing
     function isStorageInterface(arg) {
         var storageInterfaceMethods = ["create", "read", "update", "destroy"],
             storageInterface = {};
@@ -50,7 +50,7 @@ define([
         return duckTypeCheck(arg, storageInterface);
     }
 
-    // Param {Object} crudMethods sync method
+    // Param {Object} `crudMethods` sync method  
     // Return {Function} with model and options params for sync method
     function implementStorageInterface(crudMethods) {
         // Setup default interface
@@ -73,9 +73,9 @@ define([
 
     SyncAction = function(action) {
         var fn = action;
-        // syncAction
-        // Param {Backbone.Model, Backbone.Collection or Object} data, should have a storage property
-        // Param {Object} options (success, error) arguments passed when sync method is executed 
+        // {Function} `syncAction`  
+        // Param {Backbone.Model, Backbone.Collection or Object} `data`, should have a storage property  
+        // Param {Object} `options` (success, error) arguments passed when sync method is executed 
         //  (or contain a collection property) named "storage"
         return function syncAction(data, options) {
             var resp, store = data.storage || data.collection.storage; 
@@ -83,7 +83,7 @@ define([
             if (_.isUndefined(store)) {
                 throw new Error("storageFactory error, data object does not have a storage property");
             } else {
-                // call action function (param) with model's context as this and continue with options calls
+                // Call action function (param) with model's context as this and continue with options calls
                 resp = fn.call(data, store, options);
                 if (resp) { 
                     options.success(resp);
@@ -94,12 +94,12 @@ define([
         };
     };
 
-    // storageFactory
-    // --------------
+    // {Function} `storageFactory`
+    // ---------------------------  
     // Returns intermediate (syncAction) functions to use as CRUD sync methods, also returns 
     // implemenation object of CRUD interface when argument is the same interface
 
-    // Param {Object} CRUD interface implementation
+    // Param {Object} CRUD interface implementation  
     // Return {Object} storage sync object implments CRUD Interface [create, read, update, delete]
     storageFactory = function () {
         // when firstArg is a function wrap the sync CRUD method in a function to 

@@ -5,15 +5,18 @@
 
 define(["facade", "utils/debug"], function(facade, debug) {
 
-    // Constructor Lib
+    // **Constructor** `Lib`
     var Lib = function () {},
-        channels = {},
         $ = facade.$,
         _ = facade._,
         Backbone = facade.Backbone,
         inArray = facade.inArray,
-        Callbacks = facade.Callbacks;
+        Callbacks = facade.Callbacks,
+        channels = {};
 
+    // Helper to check object's types, requires facade.type  
+    // Param {Object} `given`  
+    // Param {Object} `known`
     function checkType(given, known) {
         var truthyCheck = true;
 
@@ -31,15 +34,14 @@ define(["facade", "utils/debug"], function(facade, debug) {
         return truthyCheck;
     }
 
-
-    // Property duckTypeCheck
+    // **Method:** `duckTypeCheck`  
     // Compare given object (as argument) with know (defaults) object
     // If it walks like a duck, must be a type of duck
-    // Keys of the two arguments are compared by intersection
+    // Keys of the two arguments are compared by intersection  
     // Returns true if all the known key names are found in the given object
-    // Param {Object} given the object you would like to test its interface (haystack)
-    // Param {Object} known the object (needles to find in the haystack)
-    // Return {Boolean} do the two objects have same properties, 
+    // Param {Object} `given` the object you would like to test its interface (haystack)  
+    // Param {Object} `known` the object (needles to find in the haystack)  
+    // Return {Boolean} do the two objects have same properties,
     Lib.prototype.duckTypeCheck = function (given, known) {
         var hasSameProperties = false, keysGiven, keysKnown;
 
@@ -69,35 +71,36 @@ define(["facade", "utils/debug"], function(facade, debug) {
     // - to publish use: object.topic.trigger(event, [*args]) 
     Lib.prototype.topic = _.extend({}, Backbone.Events);
 
-
-    // Pub/Sub using jQuery Callbacks object
-    // interface methods: publish subscribe unsubscribe disable 
-    // use like: 
-    //  - Channel('package:topic').subscribe(fn, flags)
-    //  - Channel('package:topic').publish(args), 
+    // **Method:** `Channel` - Pub/Sub using jQuery Callbacks object  
+    // See <http://api.jquery.com/jQuery.Callbacks/>  
+    // Param {String} `id` - topic (channel) name for callbacks list  
+    // Param {String} `flags` - set behavior of callbacks object,
+    // - options are 'once', 'memory', 'unique', 'stopOnFalse', or 'nomemory'
+    // - default option is 'memory'
     Lib.prototype.Channel = function(id, flags) {
-        var callbacks, method, topic = id && channels[id],
+        var callbacks, method, topic = id && channels[id], msg,
             allowedFlags = ['once', 'memory', 'unique', 'stopOnFalse'], flagsOk;
 
         if (!topic) {
             if (flags && typeof flags === 'string') {
                 flag = flags.split(' ');
                 $.each(flag, function () {
-                    if (!$.inArray(this, allowedFlags)) {
+                    if (!inArray(this, allowedFlags)) {
                         flagsOk = false;
                         return flagsOk;
                     }
                 });
                 if (flags === 'nomemory') {
-                    callbacks = jQuery.Callbacks();
+                    callbacks = Callbacks();
                 } else if (flagsOk) {
-                    callbacks = jQuery.Callbacks(flags);
+                    callbacks = Callbacks(flags);
                 } else {
-                    throw new Error("Channel options expeced one or more of the following strings: "
-                        + "'once', 'memory', 'unique', 'stopOnFalse'");
+                    msg = "Channel options expeced one or more of the following strings: ";
+                    msg += "'once', 'memory', 'unique', 'stopOnFalse'";
+                    throw new Error(msg);
                 }
             } else {
-                callbacks = jQuery.Callbacks('memory');
+                callbacks = Callbacks('memory');
             }
             topic = {
                 publish: callbacks.fire,
@@ -112,8 +115,8 @@ define(["facade", "utils/debug"], function(facade, debug) {
         return topic;
     };
 
-    // Method to load CSS
-    // Param {String} like "/packages/events/events.css"
+    // **Method:** `loadCss`  
+    // Param {String} `url` - "/packages/events/events.css"
     // or Param {Object} like { rel: 'stylesheet/less', href: "/packages/events/events.less" }
 
     Lib.prototype.loadCss = function (url) {

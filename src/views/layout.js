@@ -2,6 +2,19 @@
 // -------------------
 // Presents, arranges, transitions and clears views
 
+// The layout manager has one or many views as well as document (DOM) 
+// destinations for each (rendered) view. A page may transition between 
+// many views, so the layout manager keeps track of view states, e.g. 
+// 'not-rendered', 'rendered', 'not-displayed', 'displayed'. 
+
+// The layout manager can lazy load and render (detached) views that 
+// a member is very likely to request, e.g. tab changes on events page. 
+// The transition between view states is managed by this object. 
+// An entire layout may be cleared so that view objects and their bindings 
+// are removed, preparing these objects for garbage collection (preventing 
+// memory leaks). The layout manager also communicates view state 
+// with controller(s).
+
 // Requires `define`
 // Return {LayoutView} object as constructor
 
@@ -18,11 +31,19 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
 
     debug = utils.debug;
 
+    // **Constructor** `{LayoutView}` extends the BaseView.prototype
+    // object literal argument to extend is the prototype for the LayoutView constructor
     LayoutView = BaseView.extend({
 
-        scheme: null, // array of (section) views
-        schemeViewNames: null, // array of sections' view names
+        // **Property:** {Array} `scheme` - a list of {SectionView} sections 
+        scheme: null, 
 
+        // **Property:** {Array} `schemeViewNames` - a list of the {string} names for each section
+        schemeViewNames: null, 
+
+        // **Method:** `initialize`  
+        // First calls method to setup options and also add a controller when arg is present
+        // no need to call ...BaseView.prototype.initialize.apply(this, slice.call(arguments));
         initialize: function (options, controller) {
             debug.log('LayoutView initialize');
             if (options) {
@@ -31,9 +52,14 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             if (controller && controller.route) {
                 this.addController(controller);
             }
-            // no need to call ...BaseView.prototype.initialize.apply(this, slice.call(arguments));
         },
 
+        // **Method:** `setOptions`  
+        // Param {Object} `controller` - used to add this layout as a property of the controller  
+        // When controller has a data property the state data is set with this.handleStateData
+        // Some coupling exists between controller, layout and app states collection
+        // the controller is added as a proptery to the layout and vise versa 
+        // the layout property is set on the controller
         addController: function (controller) {
             if (!controller.layout) {
                 controller.layout = this;
@@ -51,6 +77,10 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             });
         },
 
+        // **Method:** `setOptions`  
+        // Param {Object} `options` with required properties:  
+        //  {String} `template` - HTML string as dom fragment for the layout.  
+        //  {Sting} `destination` - selector to place section views on the layout template
         setOptions: function (options) {
             var msg;
             BaseView.prototype.setOptions.apply(this, slice.call(arguments));
@@ -64,6 +94,8 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             }
         },
 
+        // **Method:** `setSchemeOption`  
+        // Param {Object} `options` with {Array} 'scheme' property of views in the layout
         setSchemeOption: function (options) {
             var msg, names;
             if (!options.scheme && !_.isArray(options.scheme)) {
@@ -81,6 +113,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             $(this.destination).html(this.template);
         },
 
+        // **Method:** `setDisplayWhenOption`  
+        // Param {Object} `options` with propery named displayWhen
+        //   which only has two options 'resolved' or 'ready'
         setDisplayWhenOption: function (options) {
             if (options.displayWhen) {
                 if (!(options.displayWhen === 'ready' || options.displayWhen === 'resolved')) {
@@ -93,6 +128,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             debug.log('LayoutView setDisplayWhenOption: ' + options.displayWhen);
         },
 
+        // **Method:** `setTransitionMethodOption`  
+        // There is only one transition method 'showHide'
+        // This method should be extended to provide other transitions between views e.g. fade
         setTransitionMethodOption: function (options) {
             var msg;
             if (options.transitionMethod) {
@@ -107,6 +145,8 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             debug.log('LayoutView transitionMethod: ' + options.transitionMethod);
         },
 
+        // **Method:** `section`  
+        // Utility to find a view instance by name rely's on the Section view's name property
         section: function (name) {
             var section = _.find(this.scheme, function (view) {
                 return view.name === name;
@@ -114,6 +154,8 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             return section;
         },
 
+        // **Method:** `render`  
+        // Calls the strategy for rendering the layout: deferred or ready
         render: function (callback) {
             var options = this.options;
 
@@ -127,6 +169,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             debug.log('LayoutView render');
         },
 
+        // **Method:** `displayViews`  
+        // Iterates over the views in the layout's this.scheme array then uses the name
+        // property to retrive the view with this.section method and display
         displayViews: function () {
             var views = this.scheme,
                 layout = this;
@@ -137,6 +182,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             });
         },
 
+        // **Method:** `displayWhenReady`  
+        // Param {Function} `callback` is called when deferreds are all passed.  
+        // The strategy to display when all sections' deferreds are resolved successfully
         displayWhenResolved: function (callback) {
             var layout = this,
                 deferreds = [];
@@ -169,6 +217,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             );
         },
 
+        // **Method:** `displayWhenReady`  
+        // Param {Function} `callback` is called following the setting of done callbacks  
+        // The strategy to rely on each Section's own deferred resolution and then display
         displayWhenReady: function (callback) {
             var views = this.scheme,
                 layout = this;
@@ -188,9 +239,13 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             if (callback && _.isFunction(callback)) {
                 callback();
             }
-            Channel('layout:ready').publish();
         },
 
+        // **Method:** `transition`  
+        // Param {String} `sectionName` is the targeted area for the change to happen  
+        // Param {SectionView} `sectionView` replaces the current view in this section  
+        // Each section is named and acts as a zone in the layout, this method
+        // is called to change between two views in a single section (zone).
         transition: function (sectionName, sectionView) {
             var msg;
             if (!_.contains(this.schemeViewNames, sectionName)) {
@@ -214,6 +269,8 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             }
         },
 
+        // **Method:** `clearLayoutScheme`  
+        // this is called by this.remove to destroy each method in the layout scheme.
         clearLayoutScheme: function () {
             var i;
 
@@ -224,16 +281,23 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             this.scheme = [];
         },
 
+        // **Method:** `remove`  
+        // Utility to prevew memory leaks calling the clearLayoutScheme and prototype remove methods
         remove: function () {
             this.clearLayoutScheme();
             BaseView.prototype.remove.call(this);
         },
 
-        // Param {Object} state properties are section names with values as the state of that section's view
-        //   e.g. {"Top": "not-displayed", "Bottom": "displayed"}
-        //   When no arg is given the method is a getter, with expected state arg the method sets state for views  
-        // Param {Function} changeHandlerCallback passed to state to handle state change in section views
-        //   changeHandlerCallback should accept two args (lastState, state)
+        
+        // **Method:** `state` (of all sections' views)  
+        // e.g. {"Top": "not-displayed", "Bottom": "displayed"}  
+        // When no arg is given the method is a getter, 
+        // with expected state arg the method sets state for views
+
+        // Param {Object} `state` properties are section names with values as the  
+        // Param {Function} `changeHandlerCallback` passed to state to  
+        //   - handle state change in section views
+        //   - should accept two args (lastState, state)
         state: function (state, changeHandlerCallback) {
             var layout = this, section, layoutRoute;
 
@@ -273,7 +337,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             return state;
         },
 
-        // use as a callback when calling state 
+        // **Method:** `displayChangeHandler`  
+        // Use as a callback when calling state, toggles between a sections state between
+        // 'not-displayed' and 'displayed' (and vice-versa) also rendering when needed.
         displayChangeHandler: function (lastState, state) {
             var bool, msg;
 
@@ -295,6 +361,11 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             }
         },
 
+        // **Method:** `handleStateData`  
+        // There is some coupling with the layout and controller which can be passed 
+        // as the 2nd arg to the layout's initialize method. When a controller.data 
+        // property is present this method sets the appropriate state using the
+        // this.displayChangeHandler method to change state for each section
         handleStateData: function (state) {
             var layout = this;
             _.each(state, function (data, viewName, state) {

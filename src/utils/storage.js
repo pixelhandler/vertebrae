@@ -3,6 +3,8 @@
 // for sessionStorage, cookie and localStorage persistence. 
 //   Models are given GUIDS, and saved into a JSON object. 
 
+// Returns {Object} `Store` with CRUD interface for storage
+
 define(["facade", "utils/cookies", "utils/debug"], function (facade, docCookies, debug) {
 
     var Store,
@@ -35,7 +37,7 @@ define(["facade", "utils/cookies", "utils/debug"], function (facade, docCookies,
         return option;
     }
 
-    // Our Store is represented by a single JS object in *localStorage*, *sessionStorage* or a cookie. 
+    // Our `Store` is represented by a single JS object in *localStorage*, *sessionStorage* or a cookie.  
     // Param {String} name a meaningful name, like the name you'd give a table.
     Store = function (name, option) {
         var stored;

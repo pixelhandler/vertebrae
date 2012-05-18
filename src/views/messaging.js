@@ -1,7 +1,9 @@
 // Messaging View
 // ---------------
+// Manages rendering many views with a collection,
 
 // Requires `define`
+// Returns {MessageView} constructor
 
 define(['facade','views/base','utils'], function (facade,  BaseView,   utils) {
 
@@ -10,8 +12,11 @@ define(['facade','views/base','utils'], function (facade,  BaseView,   utils) {
         _ = facade._,
         debug = utils.debug;
 
+    // Constructor `{MessageView}` extends BaseView.prototype
+    // object literal argument to extend is the prototype for the MessageView constructor
     MessageView = BaseView.extend({
 
+        // Param {Object} `options` should have property: `display` and `collection` (of messages)
         initialize: function(options) {
             _.bindAll(this);
             options = options || {};
@@ -23,6 +28,8 @@ define(['facade','views/base','utils'], function (facade,  BaseView,   utils) {
             this.checkNew();
         },
 
+        // **Method:** `render`  
+        // Calls the display method passed in as option during initialize
         render: function() {
             var mesg = this.model.get('message');
             var btns = this.model.get('buttons');
@@ -34,6 +41,9 @@ define(['facade','views/base','utils'], function (facade,  BaseView,   utils) {
             });
         },
 
+        // **Method:** `wrapCallback`  
+        // buttons should have callbacks to handle resolution of notices,
+        // wrap the callbacks and set the model to a `done` state.
         wrapCallback: function() {
             var model = this.model;
             var buttons = model.get('buttons');
@@ -46,9 +56,11 @@ define(['facade','views/base','utils'], function (facade,  BaseView,   utils) {
                 });
                 button.callback = fn;
             });
-                model.set({'buttons':buttons},{'silent':true});
+            model.set({'buttons':buttons},{'silent':true});
         },
 
+        // **Method:** `checkNew`  
+        // Check for new messages in the collection and process
         checkNew: function() {
             var newest = this.collection.find(function(message) {
                 return message.get('state') === 'new';
@@ -62,5 +74,4 @@ define(['facade','views/base','utils'], function (facade,  BaseView,   utils) {
     });
 
     return MessageView;
-
 });

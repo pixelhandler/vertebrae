@@ -1,12 +1,17 @@
 // debug.js
 // --------
+// Wrapper for console to log messages without throwing errors,
+// It's safe to leave debug.log calls in code.
+// Also as a debugging tool the output can be put onto the dom
+
+// Return {Object} `debug` for normal behavior or append during development
 
 define(['jquery'], function ($) {
 
     var debug, append;
 
     debug = {
-        
+
         // debug enabled by single url param like ?debug
         mode : function () {
             return (typeof console !== "undefined" && console !== null);
@@ -14,12 +19,11 @@ define(['jquery'], function ($) {
                 // (window.location.hash.match(/!debug/) == "!debug")) 
         },
 
-        msgs : [],
-
+        // msgs : [],
         log: function (msg) {
             var active = this.mode();
             if (active) { 
-                this.msgs.push(msg);
+                // this.msgs.push(msg);
                 console.log(msg);
             }
         }

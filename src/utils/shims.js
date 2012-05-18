@@ -1,6 +1,5 @@
-/**
- * Shims 
- */
+// Shims
+// -----
 
 define(function () {
 

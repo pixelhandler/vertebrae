@@ -1,36 +1,47 @@
 // Section View States
 // -------------------
 // Mixin object to track view's state
-// not-rendered, rendered, shown, hidden
+// 'not-rendered', 'rendered', 'not-displayed', 'displayed'
 
-// Requires `define`
+// A section view is the required view object for a layout view which expects
+// views to track their own state. This view may be extended as need. to use
+// in a layout, perhaps adding the Section prototype properties to another view.
+
+// Requires `define`  
 // Return {SectionView} object constructor
 
-define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
+define(['facade','views/base','utils'], function (facade, BaseView, utils) {
 
     var Section,
         SectionView,
         viewStates,
-        _ = vendor._,
-        $ = vendor.$,
+        _ = facade._,
+        $ = facade.$,
         Channel = utils.lib.Channel,
         debug = utils.debug;
 
+    // A section view is managed by a layout with the following states.
     viewStates = ['not-rendered', 'rendered', 'not-displayed', 'displayed'];
 
+    // Constructor {Section} will have the properties and methods to manage state
     Section = function () {};
 
     Section.prototype._viewState = viewStates[0];
 
+    // **Method:** `state`  
+    // A getter/setter to change or retrieve state
+    // Param {String} `state` - on of the acceptable viewStates  
+    // Param (optional) {Function} `callback` - called when state has changed  
+    // Param (optional) {Object} `context` - the `this` context of the callback function  
     Section.prototype.state = function (state, callback, context) {
         var lastState = this._viewState, msg;
 
         if (state) {
-            // set state value
+            // Set state value
             if (!_.isString(state) || !_.contains(viewStates, state)) {
                 throw new Error("Section state (" + state + ") not allowed.");
             } else {
-                // handle state changes with callback argument in this content
+                // Handle state changes with callback argument in this content
                 if (lastState !== state) {
                     if (callback || _.isFunction(callback)) {
                         callback.call(context || this, lastState, state);
@@ -47,11 +58,14 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
                 debug.log(msg);
             }
         } else {
-            // get state value
+            // Get state value
             state = this._viewState;
         }
         return state;
     };
+
+    // **Methods:** `isRendered`, `isNotRendered`, `isDisplayed`, `isNotDisplayed` -  
+    // these are helpers to check the state of the Section view
 
     Section.prototype.isRendered = function () {
         return this.state() === "rendered";
@@ -69,10 +83,19 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
         return this.state() === 'not-displayed';
     };
 
+    // **Constructor** {Function} `SectionView` extends the BaseView.prototype
+    // object literal argument to extend is the prototype for the SectionView constructor
     SectionView = BaseView.extend({
 
+        // **Property:** `__super__`  
+        // this is set to the base prototype,
+        // however if needed can be set as another objects prototype (e.g. polymorphic)
         __super__: BaseView.prototype,
 
+        // **Method:** `initialize`  
+        // Param {Object} options with properties for {String} name 
+        // and {String} destination as a selector string found in the layout's template 
+        // The Section view's initialize method calls the __super__ initialize as well
         initialize: function (options) {
             var msg;
 
@@ -90,7 +113,10 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
             }
         },
 
-        render: function (domInsertion, decoratorCallback, partials) {
+        // **Method:** `render`  
+        // Wraps the `__super__` render method adding a callback to set the section's
+        // state as 'rendered'
+        render: function (domInsertion, dataDecorator, partials) {
             var section = this;
 
             function setRenderedState() {
@@ -98,9 +124,14 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
             }
             this.callbacks.add(setRenderedState);
             debug.log('SectionView render: ' + this.name + ' (' + this.cid + ')');
-            this.__super__.render.call(this, domInsertion, decoratorCallback, partials);
+            this.__super__.render.call(this, domInsertion, dataDecorator, partials);
         },
 
+        // **Method:** `display`  
+        // Param {Boolean} `bool`  
+        // In addition to render the display function manages whether or not the section
+        // view is visible or not, so the bool param shows the section with true,
+        // and removes the section from the dom with false.
         display: function (bool) {
             var toDisplay = bool, section, msg;
 
@@ -126,14 +157,16 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
             }
         },
 
-        // metadata for params should be set on the this._meta object for managing state
-        // Also, user interations which will be stored and retrieved when viewing 
-        // the page again later should also be added to this._meta
-        // 
-        // meta getter/setter used for managing state of view
-        // this._meta is mean to be private, no mess with please :)
-        // Param {Object} data is the information to set on the this._meta object
+        // **Method:** `meta` - getter/setter used for managing state of view  
+        // this._meta is mean to be private, no mess with please :)  
+        // Param {Object} `data` is the information to set on the this._meta object
         // with no Param returns this_.meta
+
+        // **Private Property:** `_meta`  
+        // Metadata for params should be set on the this._meta object for managing state
+        // Also, user interations which will be stored and retrieved when viewing 
+        // the page again later, should also be added to this._meta using this.meta(Object)
+        //   NOTE: `this._meta` is mean to be private, no mess with please :)
         meta: function (data) {
             if (!data) {
                 data = this._meta;
@@ -148,7 +181,7 @@ define(['vendor','views/base','utils'], function (vendor, BaseView, utils) {
 
     });
 
-    // mix-in Section object
+    // Mix-in `Section` object
     _.extend(SectionView.prototype, Section.prototype);
 
     return SectionView;

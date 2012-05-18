@@ -5,21 +5,21 @@
 
 define( [
         "vendor", 
-        "collections", 
+        "products/collections/products",
         "products/views/container",
         "products/views/product-list",
         "utils"
         ],
 function (
         vendor,
-        collections,
+        ProductsCollection,
         ProductContainerView,
         ProductListView,
         utils
         ) {
 
     var productsBootstrap,
-        products = new collections.products(),
+        products = new ProductsCollection(),
         $ = vendor.$,
         _ = vendor._,
         Channel = utils.lib.Channel,

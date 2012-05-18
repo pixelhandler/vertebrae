@@ -2,8 +2,14 @@
 // ----------------------------
 // a collection object to reference various states in the application
 
+// The application manager stores data in memory and also persists data in 
+// browser storage to provide a resource for common data/metadata. Also provides 
+// data (state) to reconstruct the page views based on previous interactions 
+// (e.g. selected tab, applied filters). The application state manager provides 
+// a strategy for resources to retrieve state. 
+
 // Requires `define`  
-// Return {ApplicationStates} object as constructor
+// Return `{ApplicationStates}` object as constructor
 
 define(['models', 'facade', 'utils'], function (models, facade, utils) {
 
@@ -17,12 +23,18 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
         // lib = utils.lib,
         debug = utils.debug;
 
+    // Constructor `{ApplicationStates}` extends Backbone.Collection.prototype
+    // object literal argument to extend is the prototype for the ApplicationStates constructor
     ApplicationStates = Backbone.Collection.extend({
 
+        // **Attributes:**  
+        // {String} `name`, {Object} `data`, {String} `storage`, {Date} `expires`
         model: ApplicationStateModel,
 
-        // Param {Object} attributes set on model when creating an instance  
-        // Param {Object} options  
+        // **Method:** `initialize` - a Singleton  
+        // Param {Object} `attributes` set on model when creating an instance  
+        // Param {Object} `options`  
+        // Returns a singleton instance, when called again same instance returned
         initialize: function (models, options) {
             var appStates = appStatesInstance;
 
@@ -39,6 +51,9 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `add` - wrapper for addOrUpdate  
+        // Param {ApplicationStateModel} `models` - may be an array of models or single model  
+        // Param {Object} `options` passed to addOrUpdate
         add: function (models, options) {
             var collection = this;
 
@@ -51,6 +66,10 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `addOrUpdate` - checks if model extists and updates or adds if not,
+        // calls this.updateModel or Backbone.Collection.prototype.add  
+        // Param {Model} `model` with attributes like ApplicationStateModel  
+        // Param {Object} `options` - passed through to add or updateModel functions
         addOrUpdate: function (model, options) {
             if (!this.isAlreadyStored(model)) {
                 this.storeReferenceName(model.name);
@@ -60,6 +79,8 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `clearModel` - removes from collection and destroys the instance  
+        // Param {ApplicationStateModel} `model`
         clearModel: function (model) {
             if (model && model instanceof ApplicationStateModel) {
                 this.removeReferenceName(model.get('name'));
@@ -68,7 +89,9 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
-        // removes from memory
+        // **Method:** `remove` - clear from memory  
+        // Param (optional) {String} - name of a model to remove, with no param removes all  
+        // Wraps Backbone.Collection.prototype.remove
         remove: function () {
             var references = ApplicationStates.references, expiringModel,
                 collection = this, i;
@@ -87,6 +110,7 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `destroy` - tear down a model that should be expired, remove and destroy
         destroy: function () {
             var references = ApplicationStates.references, expiringModel,
                 collection = this;
@@ -107,6 +131,8 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `expiresHandler` - calls this.clearModel to expire the outdated model  
+        // Param {Model} `model` like ApplicationStateModel - has property: `expires`
         expiresHandler: function (model) {
             var expired = false;
             if (!model) {
@@ -124,6 +150,9 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             return expired;
         },
 
+        // **Method:** `isAlreadyStored` - check if there is already a model with same name.
+        // Active models' names are stored in the {Array} ApplicationStates.references  
+        // Param {Model} `model` like ApplicationStateModel - has property: `name`
         isAlreadyStored: function (model) {
             var stored = false, references = ApplicationStates.references;
 
@@ -135,10 +164,13 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             return stored;
         },
 
+        // **Method:** `removeReferenceName` - delete a reference by name in ApplicationStates.references  
+        // Param {String} `name` 
         removeReferenceName: function (name) {
             ApplicationStates.references.splice(ApplicationStates.references.indexOf(name), 1);
         },
 
+        // **Method:** `updateModel` - replace data by key in existing model
         updateModel: function (model) {
             var existingModel = this.findByName(model.name), data = {};
 
@@ -153,6 +185,9 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `save` - calls model.save() on one or all models  
+        // Param (optional) {ApplicationStateModel} - first argument may be a name of model or instance
+        // With no argument save all models in collection - to models' `storage` destination
         save: function () {
             var arg = arguments[0], collection = this, found;
 
@@ -174,6 +209,9 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `storeReferenceName` - add model's name to references array  
+        // Param {String} `name`  
+        // Returns {String} `name`
         storeReferenceName: function (name) {
             var msg, references = ApplicationStates.references;
 
@@ -187,6 +225,7 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             return name;
         },
 
+        // **Method:** `validate` - calls validation method(s) and collects any errors
         validate: function (attrs) {
             var errorMsg, errors = [];
 
@@ -204,6 +243,9 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
+        // **Method:** `validateNameProperty` - name property must be a String  
+        // Param {Object} `attrs` - model data attributes  
+        // Returns {Undefined} `msg` or {String} `msg` with an error
         validateNameProperty: function (attrs) {
             var msg,
                 name = attrs.name,
@@ -219,10 +261,10 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             return msg;
         },
 
-        // Method to find model in the collection by models name value
-        // find method is Backbone pointer to Underscore collection `find` method
-        // See <http://documentcloud.github.com/backbone/#Collection-Underscore-Methods>
-        // Param {String} name 
+        // **Method:** `findByName` - find model in the collection by models name value
+        // find method is Backbone pointer to Underscore collection `find` method  
+        // See <http://documentcloud.github.com/backbone/#Collection-Underscore-Methods>  
+        // Param {String} `name`  
         // Returns a model in the collection based on model's name property  
         findByName: function (name) {
             var found = null;
@@ -242,6 +284,10 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             return (!this.expiresHandler(found)) ? found : null;
          },
 
+        // **Method:** `findByNameInStorage` - looks for a model my name, 
+        // sources to find the model are defined by the model's storage option  
+        // Param {String} `name`  
+        // Returns {Model} `foundData` or {Null}
         findByNameInStorage: function (name) {
             var foundData;
             if (!name || !_.isString(name)) {
@@ -253,6 +299,11 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             return (foundData && !this.expiresHandler(foundData)) ? foundData : null;
         },
 
+        // **Method:** `findInCollectionOrStorage` - looks for 
+        // sources to find the model are the collection or the model's storage option  
+        // Param {String} `name`  
+        // Param {Model} `model` - fetch called on model if present and when data not found  
+        // Returns {Model} `foundData` or {Null}
         findInCollectionOrStorage: function (name, model) {
             var foundData;
 
@@ -273,7 +324,7 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
         }
 
     },
-    // class properties, reference like :ApplicationStates.references 
+    // Class properties, reference like: ApplicationStates.references 
     {
         references: []
     });

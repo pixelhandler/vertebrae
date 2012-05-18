@@ -1,8 +1,46 @@
-// base View
+// Base View
 // ---------
+// A view object to construct a standard view with common properties and utilties
+// The base view extends Backbone.View adding methods for resolving deferreds, 
+// rendering, decorating data just in time for rendering, adding child views to 
+// form a composite of views under one view object, add a destroy method.
+
+// Example use for a composite view utilizing addChildView, setOptions & callbacks:
+// 
+//     MyCompositeViewConstructor = BaseView.extend({
+//     
+//         template: myHTMLTemplate,
+//     
+//         initialize: function (options) {
+//             _.bindAll(this);
+//             this.setOptions();
+//             BaseView.prototype.initialize.call(this, options);
+//         },
+//     
+//         dataDecorator: function (data) {
+//             data.myExtraProperty = 'stuff I added just in time to render';
+//             return data;
+//         },
+//     
+//         setOptions: function () {
+//             var msg;
+//             if (!this.options || !this.options.childView) {
+//                 msg = "MyCompositeViewConstructor requires a options.childView object";
+//                 throw new Error(msg);
+//             }
+//             this.addChildView();
+//         },
+//     
+//         addChildView: function () {
+//             var childView = this.options.childView, renderChildView;
+//     
+//             renderChildView = BaseView.prototype.addChildView(childView);
+//             this.callbacks.add(renderChildView);
+//         }
+//     });
 
 // Requires `define`
-// Return {BaseView} object as constructor
+// Return `{BaseView}` constructor
 
 define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
 
@@ -16,10 +54,12 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
         lib = utils.lib, 
         debug = utils.debug;
 
+    // Constructor `{BaseView}` extends Backbone.Model.prototype
+    // object literal argument to extend is the prototype for the BaseView constructor
     BaseView = Backbone.View.extend({
 
-        // Param {Object} attributes set on model when creating an instance  
-        // Param {Object} options  
+        // **Method:** `initialize`  
+        // Param {Object} `options`  
         initialize: function (options) {
             if (options) {
                 this.setOptions(options);
@@ -28,6 +68,9 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             this.callbacks = Callbacks('unique');
         },
 
+        // **Method:** `setOptions`  
+        // Param {Object} `options`  
+        // handle options passed to initialize, e.g. required properties/errors
         setOptions: function (options) {
             if (options.destination) {
                 this.destination = options.destination;
@@ -37,12 +80,23 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             }
         },
 
-        render: function (domInsertion, decoratorCallback, partials) {
+        // **Method:** `render`  
+        // Standarization of the task to render a view using a model & template
+        // Options available:  
+        // - Method to add the resulting markiup to the dom  
+        // - Callback to mutate the model's data after model.toJSON() called  
+        //   - Merging data to template happens after dataDecorator is applied  
+        // - Callbacks object can be filled with ancillerary work following render
+        //   - E.g. callbacks list can trigger rendering of child views  
+        // Param {String} `domInsertion` - gives option for adding result to dom  
+        // Param {Function} `dataDecorator` - accepts arg for {Object} `data`  
+        // Returns the same (mutated) {Object} `data`
+        render: function (domInsertion, dataDecorator, partials) {
             var markup;
 
             this.confirmElement();
-            decoratorCallback = decoratorCallback || this.decoratorCallback;
-            markup = this.toHTML(decoratorCallback, partials);
+            dataDecorator = dataDecorator || this.dataDecorator;
+            markup = this.toHTML(dataDecorator, partials);
             domInsertion = this.domInsertionMethod(domInsertion);
             this.$el[domInsertion](markup);
             this.resolve();
@@ -51,7 +105,8 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             return this;
         },
 
-        // resolved view's deferred object after all callbacks are fired once
+        // **Method:** `resolve`  
+        // Resolve the view's deferred object after all callbacks are fired once.
         resolve: function () {
             var view = this;
 
@@ -64,6 +119,8 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             }
         },
 
+        // **Method:** `confirmElement`  
+        // A view needs an `el` property and `$el` too; a helper to check that this.el is OK.
         confirmElement: function () {
             if (_.isUndefined(this.el)) {
                 this.$el = $(this.options.el);
@@ -73,12 +130,19 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             }
         },
 
-        toHTML: function (decoratorCallback, partials) {
+        // **Method:** `toHTML`  
+        // A wrapper for the task of merging a Mustache.js template with preprocessing
+        // Handles the merging of JSON data from model with a HTML template {{vars}}
+        // Prior to merging the template the data can be changed with dataDecorator  
+        // Requires _toHTML an alias for the applications templating method  
+        // Param {Function} `dataDecorator` - accepts and returns a {Object} `data`  
+        // Param {Object} `partials` - see Mustache.js documentation.
+        toHTML: function (dataDecorator, partials) {
             var markup, data, args;
 
             data = (this.model) ? this.model.toJSON() : null;
-            if (decoratorCallback && _.isFunction(decoratorCallback)) {
-                data = decoratorCallback(data);
+            if (dataDecorator && _.isFunction(dataDecorator)) {
+                data = dataDecorator(data);
             }
             this.template = this.template || this.options.template;
             if (!this.template || !data) {
@@ -89,6 +153,9 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             return markup;
         },
 
+        // **Method:** `domInsertionMethod` - used when rendering to add markup to dom  
+        // Default is `html` however this is configurable to support :  
+        //  - 'append', 'html', 'prepend', 'text'
         domInsertionMethod: function (domInsertionMethod) {
             var defaultMethod = 'html',
                 domInsertionMethods = ['append', 'html', 'prepend', 'text'],
@@ -105,30 +172,36 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             return domInsertion || defaultMethod;
         },
 
-        // no-op re-define as needed as hook to modify model data just before rendering
-        decoratorCallback: function (data) { return data },
+        // **Method:** `dataDecorator`  
+        // No-op re-define as needed as hook to modify model data just before rendering
+        dataDecorator: function (data) { return data; },
 
-        // Pub/Sub object shared between views, interface: ['bind', 'unbind', 'trigger']
-        // topic: lib.topic,
-
+        // **Property:** {Object} `callbacks` - list of callbacks
         // Child views or render stages can be managed using jQuery Callbacks
-        // this should be an Callbacks object for each instance, so the initialize method sets the Callbacks object
+        // this should be an Callbacks object for each instance, so the 
+        // initialize method sets the Callbacks object
         callbacks: null,
 
-        // Initialization or other criteria to resolve whether view is ready can be handled with jQuery Deferred
-        // this should be an deferred object for each instance, so the initialize method sets the deferred instance
+        // **Property:** {Object} `deferred` - implements a jQuery.Deferred interface
+        // Initialization or other criteria to resolve whether view is ready 
+        // can be handled with jQuery Deferred, this should be an deferred 
+        // object for each instance, the initialize method sets the 
+        // deferred instance.
         deferred: null,
 
-        // - if needed, override in specific view prototypes
+        // Primarily a tool for unit tests... Don't rely on calling this.isReady!!
         isReady: function () {
             return this.deferred.isResolved();
         },
 
-        // setup child 'partial' views
+        // **Method:** `addChildView`  
+        // For a composite view this method can add multiple view objects
+        // Setup child views which can be rendered or appended to another context
         addChildView: function (view, context) {
-            var callbackFn;
+            var callbackFn, msg;
             if (!view) {
-                throw new Error('baseView addChildView expects view object as first arg.');
+                msg = "baseView addChildView expects view object as first arg.";
+                throw new Error(msg);
             }
             if (context && !_.isEmpty(context)) {
                 callbackFn = function () {
@@ -143,11 +216,14 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             return callbackFn;
         },
 
+        // **Method:** `getOuterHtml` - utility fn  
         // Using outerHTML with any browser via jQuery fallback when not supported
         getOuterHtml: function (obj) {
             return (obj[0].outerHTML) ? obj[0].outerHTML : $('<div/>').html( obj.eq(0).clone() ).html();
         },
 
+        // **Method:** `destroy` - used to teardown a view object  
+        // Best practice to avoid memory leaks is to remove references between objects
         destroy: function () {
             var key;
 
@@ -163,11 +239,15 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
             }
         },
 
+        // **Method:** `addSubscribers`  
+        // No-op re-define as needed, for Channel pub/sub or other event bindings
         addSubscribers: function () {},
 
+        // **Method:** `removeSubscribers`  
+        // Re-define as needed used by this.destroy() to remove pub/sub bindings
         removeSubscribers: function () {
             this.$el.off();
-        },
+        }
 
     });
 

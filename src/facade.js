@@ -1,5 +1,9 @@
 // Facade
 // ------
+// Vendor libraries and specific methods used in the framework are required in the facade, 
+// and referenced from the facade module in the views, models, collections, lib and 
+// other objects in the framework.
+
 // Requires define
 // Returns {object} references to vendor / library methods
 

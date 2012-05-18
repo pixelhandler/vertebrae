@@ -1,5 +1,8 @@
-// sync factory
+// Sync Factory
 // ------------
+
+// Requires {object} with CRUD Interface [create, read, update, delete]
+// Returns {Function} to map syncInterface to implementation of CRUD methods
 
 define(['facade', 'utils'], function(facade, utils) {
 
@@ -8,7 +11,7 @@ define(['facade', 'utils'], function(facade, utils) {
         duckTypeCheck = utils.lib.duckTypeCheck;
 
     // Simple sync factory  
-    // Param {object} impl - Concrete implementation of create, read, update, and destroy
+    // Param {object} `implementation` - concrete implementation of create, read, update, and destroy
     syncFactory = function (implementation) {
         var crudInterface = {};
 
@@ -19,10 +22,10 @@ define(['facade', 'utils'], function(facade, utils) {
             throw new Error("syncFactory expected implementation argument with CRUD methods.");
         }
 
-        // Interface for Backbone.sync
-        // Param {String} method  One of: create, delete, read, update  
-        // Param {Backbone.Model} model A backbone model instance  
-        // Param {Object} options with success/error callbacks
+        // **Interface** for Backbone.sync  
+        // Param {String} `method`  One of: create, delete, read, update  
+        // Param {Backbone.Model} `model` A backbone model instance  
+        // Param {Object} `options` with success/error callbacks
         return function syncInterface(method, model, options) {
             switch (method) {
                 case "read":
