@@ -30,7 +30,7 @@ function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloC
         },
 
         defaultRoute: function () {
-            this.navigate("products", {trigger: true});
+            this.showProducts()
         },
 
         showHello: function (name) {
