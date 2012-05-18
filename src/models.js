@@ -4,7 +4,7 @@
 // Requires `define`  
 // See http://requirejs.org/docs/api.html#define
 
-define(["models/base", "models/product", "models/messaging", "models/application-state"], 
+define(["models/base", "models/messaging", "models/application-state"], 
 function (BaseModel, ProductModel, MessagingModel, ApplicationStateModel) {
 
     // Add models in this same directory to this object, 
@@ -13,8 +13,7 @@ function (BaseModel, ProductModel, MessagingModel, ApplicationStateModel) {
     return {
         "ApplicationStateModel": ApplicationStateModel,
         "BaseModel": BaseModel,
-        "MessagingModel": MessagingModel,
-        "ProductModel": ProductModel,
+        "MessagingModel": MessagingModel
     };
 
 });

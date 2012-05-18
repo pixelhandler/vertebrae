@@ -9,8 +9,7 @@ define([
         'collections/application-states',
         'collections/base',
         'collections/iterator',
-        'collections/messaging',
-        'collections/products'
+        'collections/messaging'
         ], 
 function (require) {
 
@@ -21,8 +20,7 @@ function (require) {
         "ApplicationStates": require('collections/application-states'),
         "BaseCollection": require('collections/base'),
         "IteratorCollection": require('collections/iterator'),
-        "MessagingCollection": require('collections/messaging'),
-        "products" : require('collections/products')
+        "MessagingCollection": require('collections/messaging')
     };
 
 });
