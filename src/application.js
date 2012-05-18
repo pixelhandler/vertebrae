@@ -19,8 +19,8 @@ function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloC
         routes: {
             '': 'defaultRoute',
             'products': 'showProducts',
-            'hello': 'showHello',
-            'hello/': 'showHello',
+            'about': 'showHello',
+            'about/': 'showHello',
             'hello/:name': 'showHello'
         },
 
@@ -36,13 +36,14 @@ function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloC
         showHello: function (name) {
             controller = new HelloController({
                 "params": { "name": name },
-                "route": (name) ? "/hello" + name : "/hello",
+                "route": (name) ? "/hello/" + name : "/hello",
                 "appStates" : this.states,
                 "useFixtures" : true
             });
         },
 
         showProducts: function () {
+            $('body').empty();
             chromeBootstrap();
             productsBootstrap();
         },

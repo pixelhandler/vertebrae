@@ -20,6 +20,14 @@ define( ["models/base"], function (BaseModel) {
                 {
                     page: "Products",
                     link: "/products"
+                },
+                {
+                    page: "About",
+                    link: "/about"
+                },
+                {
+                    page: "Hello World",
+                    link: "/hello/world"
                 }
             ]
         }
