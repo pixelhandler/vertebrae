@@ -1,0 +1,64 @@
+<!DOCTYPE html>  <html> <head>   <title>application-state.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="application-state.html">                 application-state.js               </a>                                           <a class="source" href="factory.html">                 factory.js               </a>                                           <a class="source" href="storage.html">                 storage.js               </a>                                           <a class="source" href="sync-localstorage.html">                 sync-localstorage.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               application-state.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h2>Sync for Application State Models</h2>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;syncs/factory&#39;</span><span class="p">,</span> <span class="s1">&#39;syncs/storage&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">],</span> 
+<span class="kd">function</span><span class="p">(</span><span class="nx">facade</span><span class="p">,</span>   <span class="nx">syncs_factory</span><span class="p">,</span>   <span class="nx">storage_factory</span><span class="p">,</span> <span class="nx">utils</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">sync</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span>
+        <span class="nx">_</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span>
+        <span class="cm">/* CRUD */</span> 
+        <span class="nx">createAction</span><span class="p">,</span> <span class="nx">readAction</span><span class="p">,</span> <span class="nx">updateAction</span><span class="p">,</span> <span class="nx">deleteAction</span><span class="p">;</span>
+        <span class="nx">debug</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Override storage <strong>CRUD methods</strong> ... 
+functions below are called in the context of the model object
+this refers to the model not the storage object</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Param {Store} <code>store</code> object implements CRUD interface</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">createAction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">guid</span><span class="p">))</span> <span class="p">{</span> 
+            <span class="k">this</span><span class="p">.</span><span class="nx">guid</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">_guid</span><span class="p">();</span> 
+        <span class="p">}</span>
+        <span class="nx">store</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+        <span class="nx">store</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">readAction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">store</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">readHandler</span><span class="p">;</span>
+
+        <span class="nx">data</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">model</span><span class="p">.</span><span class="nx">urlRoot</span> <span class="o">&amp;&amp;</span> <span class="nx">model</span><span class="p">.</span><span class="nx">fetch</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">readHandler</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
+                <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+                    <span class="k">return</span> <span class="nx">data</span> <span class="o">||</span> <span class="nx">readHandler</span><span class="p">(</span><span class="nx">store</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">readHandler</span> <span class="o">||</span> <span class="nx">data</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">updateAction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">store</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+        <span class="nx">store</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">deleteAction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">store</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+        <span class="k">delete</span> <span class="nx">store</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">implementation</span> <span class="o">=</span> <span class="nx">storage_factory</span><span class="p">({</span>
+        <span class="s2">&quot;create&quot;</span> <span class="o">:</span> <span class="nx">createAction</span><span class="p">,</span>
+        <span class="s2">&quot;read&quot;</span> <span class="o">:</span> <span class="nx">readAction</span><span class="p">,</span>
+        <span class="s2">&quot;update&quot;</span> <span class="o">:</span> <span class="nx">updateAction</span><span class="p">,</span>
+        <span class="s2">&quot;destroy&quot;</span> <span class="o">:</span> <span class="nx">deleteAction</span>
+    <span class="p">});</span>
+
+    <span class="nx">sync</span> <span class="o">=</span> <span class="nx">syncs_factory</span><span class="p">(</span><span class="nx">implementation</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">sync</span><span class="p">;</span>
+<span class="p">});</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

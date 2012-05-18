@@ -48,7 +48,7 @@ require.config({
         // Facade references to vendor / lirabry methods
         'facade'       : '/facade',
 
-        // Utilities and HauteLook libraries
+        // Utilities and libraries
         'utils'        : '/utils',
         
         // Backbone syncs depend on both vendor and utils
@@ -135,7 +135,7 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
     describe("Application state manager", function () {
 
         // delete existing cookie if exists
-        docCookies.removeItem('hauteLookMember', null);
+        docCookies.removeItem('member', null);
 
         it("should use options for persistent storage of data", function () {
             // arrange
@@ -221,30 +221,30 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
                     "self": {
                         "href": "/v4/events"
                     },
-                    "http://hautelook.com/rels/events/upcoming": {
+                    "events/upcoming": {
                         "href": "/v4/events?status=upcoming&days={days}"
                     }
                 },
                 "_embedded": {
-                    "http://hautelook.com/rels/event": [
+                    "event": [
                         {
                             "_links": {
                                 "self": {
                                     "href": "/v4/events/15301"
                                 },
-                                "http://hautelook.com/rels/catalog": {
+                                "/catalog": {
                                     "href": "/v4/events/15301/catalog"
                                 },
-                                "http://hautelook.com/rels/availability": {
+                                "/availability": {
                                     "href": "/v4/events/15301/availability"
                                 },
-                                "http://hautelook.com/rels/images/event-hero": {
+                                "/images/event-hero": {
                                     "href": "/assets/15301leviswd/event-small.jpg"
                                 },
-                                "http://hautelook.com/rels/images/seals/event-hero": {
+                                "/images/seals/event-hero": {
                                     "href": ""
                                 },
-                                "http://hautelook.com/rels/images/seals/catalog-banner": {
+                                "/images/seals/catalog-banner": {
                                     "href": ""
                                 }
                             },
@@ -272,19 +272,19 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
                                 "self": {
                                     "href": "/v4/events/15147"
                                 },
-                                "http://hautelook.com/rels/catalog": {
+                                "/catalog": {
                                     "href": "/v4/events/15147/catalog"
                                 },
-                                "http://hautelook.com/rels/availability": {
+                                "/availability": {
                                     "href": "/v4/events/15147/availability"
                                 },
-                                "http://hautelook.com/rels/images/event-hero": {
+                                "/images/event-hero": {
                                     "href": "/assets/15147chanluuwj/event-small.jpg"
                                 },
-                                "http://hautelook.com/rels/images/seals/event-hero": {
+                                "/images/seals/event-hero": {
                                     "href": ""
                                 },
-                                "http://hautelook.com/rels/images/seals/catalog-banner": {
+                                "/images/seals/catalog-banner": {
                                     "href": ""
                                 }
                             },
@@ -319,19 +319,19 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
                                 "self": {
                                     "href": "/v4/events/14137"
                                 },
-                                "http://hautelook.com/rels/catalog": {
+                                "/catalog": {
                                     "href": "/v4/events/14137/catalog"
                                 },
-                                "http://hautelook.com/rels/availability": {
+                                "/availability": {
                                     "href": "/v4/events/14137/availability"
                                 },
-                                "http://hautelook.com/rels/images/event-hero": {
+                                "/images/event-hero": {
                                     "href": "/assets/14137frockbytracyreesewc/event-small.jpg"
                                 },
-                                "http://hautelook.com/rels/images/seals/event-hero": {
+                                "/images/seals/event-hero": {
                                     "href": ""
                                 },
-                                "http://hautelook.com/rels/images/seals/catalog-banner": {
+                                "/images/seals/catalog-banner": {
                                     "href": ""
                                 }
                             },
@@ -366,19 +366,19 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
                                 "self": {
                                     "href": "/v4/events/15099"
                                 },
-                                "http://hautelook.com/rels/catalog": {
+                                "/catalog": {
                                     "href": "/v4/events/15099/catalog"
                                 },
-                                "http://hautelook.com/rels/availability": {
+                                "/availability": {
                                     "href": "/v4/events/15099/availability"
                                 },
-                                "http://hautelook.com/rels/images/event-hero": {
+                                "/images/event-hero": {
                                     "href": "/assets/15099invictablwtunisex/event-small.jpg"
                                 },
-                                "http://hautelook.com/rels/images/seals/event-hero": {
+                                "/images/seals/event-hero": {
                                     "href": "/images/scrims/Blowout_85percent_Event_Page.png"
                                 },
-                                "http://hautelook.com/rels/images/seals/catalog-banner": {
+                                "/images/seals/catalog-banner": {
                                     "href": "/images/scrims/Blowout_85percent_Catalog_Banner.png"
                                 }
                             },
@@ -409,19 +409,19 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
                                 "self": {
                                     "href": "/v4/events/15280"
                                 },
-                                "http://hautelook.com/rels/catalog": {
+                                "/catalog": {
                                     "href": "/v4/events/15280/catalog"
                                 },
-                                "http://hautelook.com/rels/availability": {
+                                "/availability": {
                                     "href": "/v4/events/15280/availability"
                                 },
-                                "http://hautelook.com/rels/images/event-hero": {
+                                "/images/event-hero": {
                                     "href": "/assets/15280viviennetamwc/event-small.jpg"
                                 },
-                                "http://hautelook.com/rels/images/seals/event-hero": {
+                                "/images/seals/event-hero": {
                                     "href": ""
                                 },
-                                "http://hautelook.com/rels/images/seals/catalog-banner": {
+                                "/images/seals/catalog-banner": {
                                     "href": ""
                                 }
                             },
@@ -464,7 +464,7 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
                 [
                     200,
                     {"Content-Type": "application/json"},
-                    JSON.stringify(eventsData._embedded["http://hautelook.com/rels/event"][0])
+                    JSON.stringify(eventsData._embedded["event"][0])
                 ]
             );
 

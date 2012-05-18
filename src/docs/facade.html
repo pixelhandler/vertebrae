@@ -1,0 +1,44 @@
+<!DOCTYPE html>  <html> <head>   <title>facade.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="application.html">                 application.js               </a>                                           <a class="source" href="controller.html">                 controller.js               </a>                                           <a class="source" href="facade.html">                 facade.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               facade.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h2>Facade</h2>
+
+<p>Vendor libraries and specific methods used in the framework are required in the facade, 
+and referenced from the facade module in the views, models, collections, lib and 
+other objects in the framework.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Requires define
+Returns {object} references to vendor / library methods</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;vendor&#39;</span><span class="cm">/*, &#39;order!touch&#39;*/</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">vendor</span><span class="p">)</span> <span class="p">{</span> 
+
+    <span class="kd">var</span> <span class="nx">facade</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="nx">domLib</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>vendor should have either jQuery or Zepto, so one of these two should be undefined below.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">jQuery</span> <span class="o">=</span> <span class="nx">vendor</span><span class="p">.</span><span class="nx">jQuery</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">jQuery</span><span class="p">,</span>
+        <span class="nx">Zepto</span> <span class="o">=</span> <span class="nx">vendor</span><span class="p">.</span><span class="nx">Zepto</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Zepto</span><span class="p">,</span>
+        <span class="nx">_</span> <span class="o">=</span> <span class="nx">vendor</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span>
+        <span class="nx">Mustache</span> <span class="o">=</span> <span class="nx">vendor</span><span class="p">.</span><span class="nx">Mustache</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Mustache</span><span class="p">,</span>
+        <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">vendor</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">;</span>
+
+    <span class="nx">domLib</span> <span class="o">=</span> <span class="nx">jQuery</span> <span class="o">||</span> <span class="nx">Zepto</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jQuery</span> <span class="o">&amp;&amp;</span> <span class="nx">Zepto</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="p">([</span><span class="s1">&#39;vendor/plugins/type&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">domLib</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+            <span class="nx">require</span><span class="p">([</span><span class="s1">&#39;vendor/plugins/callbacks&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">domLib</span><span class="p">.</span><span class="nx">Callbacks</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Callbacks</span><span class="p">;</span>
+                <span class="nx">require</span><span class="p">([</span><span class="s1">&#39;vendor/plugins/deferred&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">domLib</span><span class="p">.</span><span class="nx">Deferred</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">;</span>
+                <span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">domLib</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">facade</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">domLib</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+        <span class="nx">facade</span><span class="p">.</span><span class="nx">inArray</span> <span class="o">=</span> <span class="nx">domLib</span><span class="p">.</span><span class="nx">inArray</span><span class="p">;</span>
+        <span class="nx">facade</span><span class="p">.</span><span class="nx">Callbacks</span> <span class="o">=</span> <span class="nx">domLib</span><span class="p">.</span><span class="nx">Callbacks</span><span class="p">;</span>
+        <span class="nx">facade</span><span class="p">.</span><span class="nx">Deferred</span> <span class="o">=</span> <span class="nx">domLib</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">facade</span><span class="p">.</span><span class="nx">toHTML</span> <span class="o">=</span> <span class="nx">Mustache</span><span class="p">.</span><span class="nx">to_html</span><span class="p">;</span>
+    <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span> <span class="o">=</span> <span class="nx">domLib</span><span class="p">;</span>
+    <span class="nx">facade</span><span class="p">.</span><span class="nx">_</span> <span class="o">=</span> <span class="nx">_</span><span class="p">;</span>
+    <span class="nx">facade</span><span class="p">.</span><span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="nx">facade</span><span class="p">;</span>
+<span class="p">});</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

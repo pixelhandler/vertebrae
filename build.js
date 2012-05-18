@@ -33,7 +33,7 @@
         // Facade references to vendor / library methods
         'facade'       : 'facade',
 
-        // Utilities and HauteLook libraries
+        // Utilities and libraries
         'utils'        : 'utils',
         
         // Backbone syncs depend on both vendor and utils

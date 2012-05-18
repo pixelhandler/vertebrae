@@ -1,7 +1,7 @@
 // Messaging specs :
 // ---------------
 // - should check member cookie prior to loading views
-// - should update or set hauteLookMember Cookie with summary data published on channel: 'credentials:login'
+// - should update or set member Cookie with summary data published on channel: 'credentials:login'
 // - should read member summary data and publish cart count
 // - should also publish gender data M / F
 
@@ -44,7 +44,7 @@ require.config({
         // Facade references to vendor / lirabry methods
         'facade'       : '/facade',
 
-        // Utilities and HauteLook libraries
+        // Utilities and libraries
         'utils'        : '/utils',
         
         // Backbone syncs depend on both vendor and utils

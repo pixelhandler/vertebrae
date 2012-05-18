@@ -1,0 +1,201 @@
+<!DOCTYPE html>  <html> <head>   <title>base.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="base.html">                 base.js               </a>                                           <a class="source" href="collection.html">                 collection.js               </a>                                           <a class="source" href="layout.html">                 layout.js               </a>                                           <a class="source" href="messaging.html">                 messaging.js               </a>                                           <a class="source" href="section.html">                 section.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               base.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h2>Base View</h2>
+
+<p>A view object to construct a standard view with common properties and utilties
+The base view extends Backbone.View adding methods for resolving deferreds, 
+rendering, decorating data just in time for rendering, adding child views to 
+form a composite of views under one view object, add a destroy method.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Example use for a composite view utilizing addChildView, setOptions &amp; callbacks:</p>
+
+<pre><code>MyCompositeViewConstructor = BaseView.extend({
+
+    template: myHTMLTemplate,
+
+    initialize: function (options) {
+        _.bindAll(this);
+        this.setOptions();
+        BaseView.prototype.initialize.call(this, options);
+    },
+
+    dataDecorator: function (data) {
+        data.myExtraProperty = 'stuff I added just in time to render';
+        return data;
+    },
+
+    setOptions: function () {
+        var msg;
+        if (!this.options || !this.options.childView) {
+            msg = "MyCompositeViewConstructor requires a options.childView object";
+            throw new Error(msg);
+        }
+        this.addChildView();
+    },
+
+    addChildView: function () {
+        var childView = this.options.childView, renderChildView;
+
+        renderChildView = BaseView.prototype.addChildView(childView);
+        this.callbacks.add(renderChildView);
+    }
+});
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Requires <code>define</code>
+Return <code>{BaseView}</code> constructor</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">facade</span><span class="p">,</span> <span class="nx">facade</span><span class="p">,</span> <span class="nx">utils</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">BaseView</span><span class="p">,</span> 
+        <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">,</span>
+        <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span>
+        <span class="nx">_</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span>
+        <span class="nx">_toHTML</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">,</span>
+        <span class="nx">Deferred</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">,</span>
+        <span class="nx">Callbacks</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Callbacks</span><span class="p">,</span>
+        <span class="nx">lib</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">lib</span><span class="p">,</span> 
+        <span class="nx">debug</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Constructor <code>{BaseView}</code> extends Backbone.Model.prototype
+object literal argument to extend is the prototype for the BaseView constructor</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">BaseView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p><strong>Method:</strong> <code>initialize</code> <br />
+Param {Object} <code>options</code>  </p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Deferred</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span> <span class="o">=</span> <span class="nx">Callbacks</span><span class="p">(</span><span class="s1">&#39;unique&#39;</span><span class="p">);</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p><strong>Method:</strong> <code>setOptions</code> <br />
+Param {Object} <code>options</code> <br />
+handle options passed to initialize, e.g. required properties/errors</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">setOptions</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">destination</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">destination</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">destination</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">template</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">template</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p><strong>Method:</strong> <code>render</code> <br />
+Standarization of the task to render a view using a model &amp; template
+Options available: <br />
+- Method to add the resulting markiup to the dom <br />
+- Callback to mutate the model's data after model.toJSON() called <br />
+  - Merging data to template happens after dataDecorator is applied <br />
+- Callbacks object can be filled with ancillerary work following render
+  - E.g. callbacks list can trigger rendering of child views <br />
+Param {String} <code>domInsertion</code> - gives option for adding result to dom <br />
+Param {Function} <code>dataDecorator</code> - accepts arg for {Object} <code>data</code> <br />
+Returns the same (mutated) {Object} <code>data</code></p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">domInsertion</span><span class="p">,</span> <span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">markup</span><span class="p">;</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">confirmElement</span><span class="p">();</span>
+            <span class="nx">dataDecorator</span> <span class="o">=</span> <span class="nx">dataDecorator</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">dataDecorator</span><span class="p">;</span>
+            <span class="nx">markup</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">);</span>
+            <span class="nx">domInsertion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">domInsertionMethod</span><span class="p">(</span><span class="nx">domInsertion</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">[</span><span class="nx">domInsertion</span><span class="p">](</span><span class="nx">markup</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p><strong>Method:</strong> <code>resolve</code> <br />
+Resolve the view's deferred object after all callbacks are fired once.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">resolve</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p><strong>Method:</strong> <code>confirmElement</code> <br />
+A view needs an <code>el</code> property and <code>$el</code> too; a helper to check that this.el is OK.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">confirmElement</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">$el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;View has no this.el or this.options.el property defined.&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p><strong>Method:</strong> <code>toHTML</code> <br />
+A wrapper for the task of merging a Mustache.js template with preprocessing
+Handles the merging of JSON data from model with a HTML template {{vars}}
+Prior to merging the template the data can be changed with dataDecorator <br />
+Requires _toHTML an alias for the applications templating method <br />
+Param {Function} <code>dataDecorator</code> - accepts and returns a {Object} <code>data</code> <br />
+Param {Object} <code>partials</code> - see Mustache.js documentation.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">toHTML</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">markup</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">args</span><span class="p">;</span>
+
+            <span class="nx">data</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">dataDecorator</span> <span class="o">&amp;&amp;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">dataDecorator</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="nx">dataDecorator</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">template</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">||</span> <span class="o">!</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;BaseView method toHTML called, but this.template or data is not defined.&quot;</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">markup</span> <span class="o">=</span> <span class="nx">_toHTML</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">partials</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">markup</span><span class="p">;</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p><strong>Method:</strong> <code>domInsertionMethod</code> - used when rendering to add markup to dom <br />
+Default is <code>html</code> however this is configurable to support : <br />
+ - 'append', 'html', 'prepend', 'text'</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">domInsertionMethod</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">domInsertionMethod</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">defaultMethod</span> <span class="o">=</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span>
+                <span class="nx">domInsertionMethods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;append&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;prepend&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">],</span>
+                <span class="nx">domInsertion</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">domInsertionMethod</span> <span class="o">!==</span> <span class="nx">defaultMethod</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">domInsertionMethod</span> <span class="o">&amp;&amp;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">domInsertionMethod</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">domInsertionMethods</span><span class="p">,</span> <span class="nx">domInsertionMethod</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">domInsertion</span> <span class="o">=</span> <span class="nx">domInsertionMethod</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">domInsertion</span> <span class="o">||</span> <span class="nx">defaultMethod</span><span class="p">;</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p><strong>Method:</strong> <code>dataDecorator</code> <br />
+No-op re-define as needed as hook to modify model data just before rendering</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">dataDecorator</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">data</span><span class="p">;</span> <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p><strong>Property:</strong> {Object} <code>callbacks</code> - list of callbacks
+Child views or render stages can be managed using jQuery Callbacks
+this should be an Callbacks object for each instance, so the 
+initialize method sets the Callbacks object</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">callbacks</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p><strong>Property:</strong> {Object} <code>deferred</code> - implements a jQuery.Deferred interface
+Initialization or other criteria to resolve whether view is ready 
+can be handled with jQuery Deferred, this should be an deferred 
+object for each instance, the initialize method sets the 
+deferred instance.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">deferred</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Primarily a tool for unit tests... Don't rely on calling this.isReady!!</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">isReady</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">();</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p><strong>Method:</strong> <code>addChildView</code> <br />
+For a composite view this method can add multiple view objects
+Setup child views which can be rendered or appended to another context</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">addChildView</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">view</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">callbackFn</span><span class="p">,</span> <span class="nx">msg</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">view</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;baseView addChildView expects view object as first arg.&quot;</span><span class="p">;</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">context</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">context</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">callbackFn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+                    <span class="nx">view</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+                <span class="p">};</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">callbackFn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">callbackFn</span><span class="p">;</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p><strong>Method:</strong> <code>getOuterHtml</code> - utility fn <br />
+Using outerHTML with any browser via jQuery fallback when not supported</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">getOuterHtml</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">outerHTML</span><span class="p">)</span> <span class="o">?</span> <span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">outerHTML</span> <span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div/&gt;&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">clone</span><span class="p">()</span> <span class="p">).</span><span class="nx">html</span><span class="p">();</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p><strong>Method:</strong> <code>destroy</code> - used to teardown a view object <br />
+Best practice to avoid memory leaks is to remove references between objects</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">key</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">removeSubscribers</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">removeSubscribers</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">destination</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">destination</span><span class="p">).</span><span class="nx">empty</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p><strong>Method:</strong> <code>addSubscribers</code> <br />
+No-op re-define as needed, for Channel pub/sub or other event bindings</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">addSubscribers</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p><strong>Method:</strong> <code>removeSubscribers</code> <br />
+Re-define as needed used by this.destroy() to remove pub/sub bindings</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">removeSubscribers</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">off</span><span class="p">();</span>
+        <span class="p">}</span>
+
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">BaseView</span><span class="p">;</span>
+<span class="p">});</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

@@ -1,9 +1,11 @@
-# Vertabrea front-end framework build with Backbone.js and RequireJS using AMD
+# Vertebrae front-end framework build with Backbone.js and RequireJS using AMD
 
-**Vertabrea** provides *AMD* structure and additional objects for extending *Backbone.js* as an application framework.
+**Vertebrae** provides *AMD* structure and additional objects for extending *Backbone.js* as an application framework.
 
 
-## Views: `BaseView`, `CollectionView`, `SectionView`, `LayoutView` (Manages Sections)
+## Views: 
+
+**`BaseView`, `CollectionView`, `SectionView`, `LayoutView` (Manages Sections)**
 
 ### Base View
 
@@ -45,7 +47,9 @@ memory leaks). The layout manager also communicates view state
 with controller(s).
 
 
-## Models: `BaseModel`, `ApplicationState`
+## Models: 
+
+**`BaseModel`, `ApplicationState`**
 
 ### Application state model
 
@@ -64,10 +68,14 @@ data (state) to reconstruct the page views based on previous interactions
 (e.g. selected tab, applied filters). The application state manager provides 
 a strategy for resources to retrieve state.
 
-## Syncs: syncFactory, application-state, storageFactory
+## Syncs: 
+
+**syncFactory, application-state, storageFactory**
 
 
-## Utils: ajax-options, docCookies, debug, storage, shims, lib [checkType, duckTypeCheck, Channel (pub/sub), loadCss, formatCase, formatMoney]
+## Utils: 
+
+**ajax-options, docCookies, debug, storage, shims, lib [checkType, duckTypeCheck, Channel (pub/sub), loadCss, formatCase, formatMoney]**
 
 
 ## Controller
@@ -126,10 +134,10 @@ The the examples below the facade module has it's own dependencies for loading v
     });
 
 
-References:
-  * [[https://github.com/amdjs/amdjs-api/wiki/AMD|AMD spec]]
-  * [[http://requirejs.org/docs/whyamd.html|RequireJS why AMD]]
-  * [[http://requirejs.org/docs/whyamd.html#amd|RequireJS AMD]]
+References:  
+  * [AMD spec](https://github.com/amdjs/amdjs-api/wiki/AMD "AMD spec")
+  * [RequireJS why AMD](http://requirejs.org/docs/whyamd.html "RequireJS why AMD")
+  * [RequireJS AMD](http://requirejs.org/docs/whyamd.html#amd "RequireJS AMD")
 
 
 ## Build and optimize using:
@@ -290,7 +298,7 @@ See the source code below and see how the new "About" section view is added in a
 
 ## Documentation:
 
-Using docco annotated source code documenation is found in these directories:
+Using docco annotated source code documentation is found in these directories:
 
     /docs/
     /models/docs/
@@ -301,12 +309,12 @@ Using docco annotated source code documenation is found in these directories:
 
 View docs at:
 
-http://YourDomain/docs/  
-http://YourDomain/models/docs/  
-http://YourDomain/collections/docs/  
-http://YourDomain/syncs/docs/  
-http://YourDomain/utils/docs/  
-http://YourDomain/views/docs/
+http://localhost:4242/docs/  
+http://localhost:4242/models/docs/  
+http://localhost:4242/collections/docs/  
+http://localhost:4242/syncs/docs/  
+http://localhost:4242/utils/docs/  
+http://localhost:4242/views/docs/
 
 To generate the docs:
 
@@ -326,6 +334,6 @@ To generate the docs:
     cd ../  
     rm docs/docco.css collections/docs/docco.css models/docs/docco.css syncs/docs/docco.css utils/docs/docco.css views/docs/docco.css
 
-References:
-  * [[http://jashkenas.github.com/docco/|Docco Annotated Source]]
-  * [[https://github.com/jashkenas/docco|Docco Source Code]]
+References:  
+  * [Docco Annotated Source](http://jashkenas.github.com/docco/ "Docco Annotated Source")
+  * [Docco Source Code](https://github.com/jashkenas/docco "Docco Source Code")
