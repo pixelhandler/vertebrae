@@ -179,18 +179,18 @@ See: <https://devcenter.heroku.com/articles/nodejs>
 Some links to see framework running:  
  * products package at : <http://vertebrae-framework.herokuapp.com/products>  
  * hello package at : <http://vertebrae-framework.herokuapp.com/hello>  
-    * add a paramtert like your name or 'joe': <http://vertebrae-framework.herokuapp.com/hello/joe>
+    * add a parameter like your name or 'joe': <http://vertebrae-framework.herokuapp.com/hello/joe>
 
 ## Hello World example using a Backbone View as a Layout Manager
 
 Routes in the hello package 
 
     /hello  
-    /hello:name  
+    /hello/:name  
 
 without the name parameter only one the 'about' view is rendered in the layout; with the parameter e.g. /hello/bill two views are rendered in the layout a 'welcome' and an 'about' view
 
-### Part 1
+### Part 1: *welcome* section
 
 Using a Layout view involves: adding a route, route handler function in App, new "hello" package with a template and view. The package controller file *hello.js* extends the Controller.prototype and is based on a (template) copy of the Controller.prototype in *src/controller.js*. The WelcomeSectionView prototype extends the SectionView prototype (class) and requries both **name** and **destination** properties when instantiated. The *application.js* method 'showHello' is mapped to the route '/hello/:name' and the showHello method instantiates a controller object 
 
@@ -235,7 +235,7 @@ define([ /*... ,*/ "hello" ], function ( /*... ,*/ HelloController ) {
     showHello: function (name) {  
         controller = new HelloController({  
             "params": { "name": name },  
-            "route": "/hello" + name,  
+            "route": "/hello/" + name,  
             "appStates" : this.states
         });
     },
@@ -243,19 +243,20 @@ define([ /*... ,*/ "hello" ], function ( /*... ,*/ HelloController ) {
 
 The parameters hash is added as an option above for the controller object to deal with.
 
-src/packages/hello/templates/layout.html  
-src/packages/hello.js  
-src/packages/hello/models/welcome.js  
-src/packages/hello/templates/welcome.html  
-src/packages/hello/views/welcome.js  
-src/packages/hello/welcome.css  
+### Code to add in your `hello` package for a *welcome* section:
 
+[src/packages/hello/templates/layout.html](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/templates/layout.html)  
+[src/packages/hello.js](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello.js)  
+[src/packages/hello/views/welcome.js](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/views/welcome.js)  
+[src/packages/hello/templates/welcome.html](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/templates/welcome.html)  
+[src/packages/hello/views/welcome.js](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/views/welcome.js)  
+[src/packages/hello/welcome.css](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/welcome.css)  
 
-### Part 2: Get JSON data for content using AJAX
+### Part 2: Use JSON data for new *about* section
 
-#### To get the 'About' section data a fixture (JSON file) was added in the test directory.
+#### To get the 'about' section data a fixture (JSON file) was added in the test directory.
 
-src/test/fixtures/hello/101:
+[src/test/fixtures/hello/101](https://github.com/hautelook/vertebrae/blob/master/src/test/fixtures/hello/101):
 
 ```javascript
 {
@@ -268,6 +269,9 @@ src/test/fixtures/hello/101:
     "callToAction": "To start shopping, go to: <a href=\"www.hautelook.com\">www.hautelook.com</a>"
 }
 ```
+
+The above object is added as a server response in the Node.js [app.js](https://github.com/hautelook/vertebrae/blob/master/app.js) as well, so you can simulate using an api for data. 
+
 
 #### application.js updated with...
 
@@ -290,18 +294,24 @@ src/test/fixtures/hello/101:
     },
 ```
 
-#### Some files should have changed when working with the hello world part two example...
+#### Files added for a *about* section:
 
-    src/packages/hello.js  
-    src/packages/hello/models/about.js  
-    src/packages/hello/templates/about.html  
-    src/packages/hello/templates/layout.html  
-    src/packages/hello/templates/welcome.html  
-    src/packages/hello/views/about.js  
-    src/packages/hello/views/welcome.js  
-    src/packages/hello/welcome.css
+See the source code in the files below for how the new "About" section view is added to the layout (in addition to the simple hello *name* view created by the welcome view)...
 
-See the source code below and see how the new "About" section view is added in addition to the simple hello *name* view created by the welcome view.
+[src/packages/hello/templates/about.html](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/templates/about.html)  
+[src/packages/hello/views/about.js](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/views/about.js)  
+[src/packages/hello/models/about.js](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/views/about.js)  
+
+#### Files changed to support the additional section:
+
+Some files should have changed when working with the *Hello World Part 2* example, and others need to be added for the *about* section...
+
+[src/packages/hello.js](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello.js)  
+[src/packages/hello/templates/layout.html](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/templates/layout.html)  
+[src/packages/hello/templates/welcome.html](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/templates/welcome.html)  
+[src/packages/hello/views/welcome.js](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/views/welcome.js)  
+[src/packages/hello/welcome.css](https://github.com/hautelook/vertebrae/blob/master/src/packages/hello/welcome.css)
+
 
 ## Documentation:
 
