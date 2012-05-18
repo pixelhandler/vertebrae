@@ -172,7 +172,9 @@ The build.js should be configured to build to the "public" directory.
 
 So after you run `r.js -o build.js` to populate the "public" directory then you can use `node app.js` to view the site at : http://localhost:4242
 
+## Hosting on Heroku
 
+See: <https://devcenter.heroku.com/articles/nodejs>
 
 ## Hello World example using a Backbone View as a Layout Manager
 
