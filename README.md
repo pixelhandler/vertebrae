@@ -176,6 +176,11 @@ So after you run `r.js -o build.js` to populate the "public" directory then you 
 
 See: <https://devcenter.heroku.com/articles/nodejs>
 
+Some links to see framework running:  
+ * products package at : <http://vertebrae-framework.herokuapp.com/products>  
+ * hello package at : <http://vertebrae-framework.herokuapp.com/hello>  
+    * add a paramtert like your name or 'joe': <http://vertebrae-framework.herokuapp.com/hello/joe>
+
 ## Hello World example using a Backbone View as a Layout Manager
 
 Routes in the hello package 
