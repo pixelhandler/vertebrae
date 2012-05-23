@@ -3,8 +3,8 @@
 // Requires define
 // Return {Object} App
 
-define( ["facade", "utils", "collections", "chrome", "products", "hello"], 
-function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloController) {
+define( ["facade", "utils", "collections", "chrome", "products", "hello", "todos"], 
+function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloController, TodosController) {
 
     var App,
         ApplicationStates = collections.ApplicationStates,
@@ -21,7 +21,8 @@ function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloC
             'products': 'showProducts',
             'about': 'showHello',
             'about/': 'showHello',
-            'hello/:name': 'showHello'
+            'hello/:name': 'showHello',
+            'todos': 'initTodos'
         },
 
         initialize: function (options) {
@@ -34,11 +35,18 @@ function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloC
         },
 
         showHello: function (name) {
-            controller = new HelloController({
+            var controller = new HelloController({
                 "params": { "name": name },
                 "route": (name) ? "/hello/" + name : "/hello",
                 "appStates" : this.states,
                 "useFixtures" : true
+            });
+        },
+
+        initTodos: function () {
+            var controller = new TodosController({
+                "route": "todos",
+                "appStates" : this.states,
             });
         },
 

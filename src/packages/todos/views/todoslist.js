@@ -1,4 +1,4 @@
-// The Application
+// The Todos List WAS Application TODO replace with collection view.
 // ---------------
 
 // Our overall **AppView** is the top-level piece of UI.
