@@ -46,11 +46,11 @@ define(["facade", "utils/debug"], function(facade, debug) {
         var hasSameProperties = false, keysGiven, keysKnown;
 
         if (!_.isUndefined(given) && !_.isUndefined(known)) {
-            debug.log("duckTypeCheck...");
+            // debug.log("duckTypeCheck...");
             keysGiven = _.keys(given); 
-            debug.log("given: " + keysGiven.toString());
+            // debug.log("given: " + keysGiven.toString());
             keysKnown = _.keys(known);
-            debug.log("known: " + keysKnown.toString());
+            // debug.log("known: " + keysKnown.toString());
             if (_.intersection(keysGiven, keysKnown).length >= keysKnown.length) {
                 hasSameProperties = true;
                 if (hasSameProperties && facade.type) {

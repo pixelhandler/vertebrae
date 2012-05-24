@@ -53,6 +53,7 @@ require.config({
         'chrome'       : '/packages/chrome',
         'products'     : '/packages/products',
         'hello'        : '/packages/hello',
+        'todos'        : '/packages/todos',
 
         // Application - bootstrap for frontend app 
         'application'  : '/application'

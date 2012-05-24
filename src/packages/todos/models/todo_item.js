@@ -12,7 +12,7 @@ define(['models'], function (models) {
     TodoModel = BaseModel.extend({
         // Default attributes for the todo.
         defaults: {
-            content: "empty todo...",
+            content: "What needs to be done?",
             done: false
         },
 

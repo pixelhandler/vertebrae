@@ -12,13 +12,11 @@ define([
         "views",
         "utils",
         "todos/collections/todos",
+        "todos/views/form",
         "todos/views/todoslist"
         ],
 function (require, todosLayoutTemplate) {
-<<<<<<< Updated upstream:src/packages/todos.js
-=======
 
->>>>>>> Stashed changes:src/packages/todos.js
     var TodosController,
         facade = require("facade"),
         Controller = require("controller"),
@@ -26,6 +24,7 @@ function (require, todosLayoutTemplate) {
         views = require("views"),
         utils = require("utils"),
         TodosList = require("todos/collections/todos"),
+        TodosFormView = require("todos/views/form"),
         TodosListView = require("todos/views/todoslist"),
         LayoutView = views.LayoutView,
         BaseModel = models.BaseModel,
@@ -45,12 +44,44 @@ function (require, todosLayoutTemplate) {
             _.bindAll(this);
 
             this.handleOptions(options);
-            this.setupTodosListView();
-            this.setupLayout();
-
-            this.layout.render();
+            this.initSections();
 
             return this;
+        },
+
+        initSections: function () {
+            this.createTodosList();
+            this.setupTodosFormView();
+            this.setupTodosListView();
+            this.setupLayout();
+        },
+
+        createTodosList: function () {
+            this.collection = new TodosList();
+        },
+
+        setupTodosFormView: function() {
+            var todosFormView;
+
+            todosFormView = new TodosFormView({
+                collection: this.collection,
+                name: "Form",
+                destination: "#todo-form"
+            });
+
+            this.scheme.push(todosFormView);
+        },
+
+        setupTodosListView: function() {
+            var todosListView;
+
+            todosListView = new TodosListView({
+                collection: this.collection,
+                name: "List",
+                destination: "#todos-section"
+            });
+
+            this.scheme.push(todosListView);
         },
 
         setupLayout: function () {
@@ -65,16 +96,9 @@ function (require, todosLayoutTemplate) {
             });
             this.layout = todosLayout;
 
-            return this.layout;
-        },
-
-        setupTodosListView: function() {
-            var todosListView = new TodosListView({
-                collection: new TodosList()
-            });
-
-            this.scheme.push(todosListView);
+            return this.layout.render();
         }
+
     });
 
     return TodosController;
