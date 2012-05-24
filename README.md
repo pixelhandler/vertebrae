@@ -1,7 +1,8 @@
-# Vertebrae front-end framework build with Backbone.js and RequireJS using AMD
+# Vertebrae front-end framework built with Backbone.js and RequireJS using AMD
 
 **Vertebrae** provides *AMD* structure and additional objects for extending *Backbone.js* as an application framework.
 
+Demo running at : <http://vertebrae-framework.herokuapp.com/>
 
 ## Views: 
 
@@ -325,20 +326,22 @@ Using docco annotated source code documentation is found in these directories:
     /views/docs/
 
 View docs at:  
-* http://localhost:4242/docs/  
-* http://localhost:4242/models/docs/  
-* http://localhost:4242/collections/docs/  
-* http://localhost:4242/syncs/docs/  
-* http://localhost:4242/utils/docs/  
-* http://localhost:4242/views/docs/
+
+http://localhost:4242/docs/  
+http://localhost:4242/models/docs/  
+http://localhost:4242/collections/docs/  
+http://localhost:4242/syncs/docs/  
+http://localhost:4242/utils/docs/  
+http://localhost:4242/views/docs/
 
 Or, view docs on the demo site hosted on heroku at:  
-* <http://vertebrae-framework.herokuapp.com/docs/>  
-* <http://vertebrae-framework.herokuapp.com/models/docs/>  
-* <http://vertebrae-framework.herokuapp.com/collections/docs/>  
-* <http://vertebrae-framework.herokuapp.com/syncs/docs/>  
-* <http://vertebrae-framework.herokuapp.com/utils/docs/>  
-* <http://vertebrae-framework.herokuapp.com/views/docs/>
+
+<http://vertebrae-framework.herokuapp.com/docs/>  
+<http://vertebrae-framework.herokuapp.com/models/docs/>  
+<http://vertebrae-framework.herokuapp.com/collections/docs/>  
+<http://vertebrae-framework.herokuapp.com/syncs/docs/>  
+<http://vertebrae-framework.herokuapp.com/utils/docs/>  
+<http://vertebrae-framework.herokuapp.com/views/docs/>
 
 To generate the docs:
 

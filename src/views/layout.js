@@ -182,7 +182,7 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             });
         },
 
-        // **Method:** `displayWhenReady`  
+        // **Method:** `displayWhenResolved`  
         // Param {Function} `callback` is called when deferreds are all passed.  
         // The strategy to display when all sections' deferreds are resolved successfully
         displayWhenResolved: function (callback) {
