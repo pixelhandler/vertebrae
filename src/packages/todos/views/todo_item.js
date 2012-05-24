@@ -6,37 +6,35 @@
 // Requires define
 // Returns {TodoItemView} constructor
 
-// Contrete prototype extends SectionView.prototype (class) to be used in a LayoutView.
+// Concrete prototype extends SectionView.prototype (class) to be used in a LayoutView.
 
 define([
         'views',
-        'hello/models/about',
-        'text!hello/templates/about.html'
+        'todos/models/todo_item',
+        'text!todos/templates/todo_item.html'
         ], 
 function (
         views,
-        AboutModel,
-        aboutTemplate
+        TodoModel,
+        todoItemTemplate
         ) {
 
     var TodoItemView,
         BaseView = views.BaseView;
 
     TodoItemView = BaseView.extend({
-
         //... is a list tag.
         tagName:    "li",
 
-        // Cache the template function for a single item.
-        template: _.template($('#item-template').html()),
+        template: todoItemTemplate,
 
         // The DOM events specific to an item.
         events: {
-            "click .check"                            : "toggleDone",
-            "dblclick label.todo-content" : "edit",
-            "click span.todo-destroy"     : "clear",
-            "keypress .todo-input"            : "updateOnEnter",
-            "blur .todo-input"                    : "close"
+            "click .check"                  : "toggleDone",
+            "dblclick label.todo-content"   : "edit",
+            "click span.todo-destroy"       : "clear",
+            "keypress .todo-input"          : "updateOnEnter",
+            "blur .todo-input"              : "close"
         },
 
         // The TodoView listens for changes to its model, re-rendering. Since there's
@@ -50,7 +48,7 @@ function (
 
         // Re-render the contents of the todo item.
         render: function() {
-            $(this.el).html(this.template(this.model.toJSON()));
+            BaseView.prototype.render.call(this);
             this.input = this.$('.todo-input');
             return this;
         },
@@ -62,14 +60,14 @@ function (
 
         // Switch this view into `"editing"` mode, displaying the input field.
         edit: function() {
-            $(this.el).addClass("editing");
+            this.$el.addClass("editing");
             this.input.focus();
         },
 
         // Close the `"editing"` mode, saving changes to the todo.
         close: function() {
             this.model.save({content: this.input.val()});
-            $(this.el).removeClass("editing");
+            this.$el.removeClass("editing");
         },
 
         // If you hit `enter`, we're through editing the item.
@@ -81,7 +79,6 @@ function (
         clear: function() {
             this.model.clear();
         }
-
     });
 
     return TodoItemView;

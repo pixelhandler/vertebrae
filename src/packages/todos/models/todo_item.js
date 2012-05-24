@@ -6,12 +6,10 @@
 // Return {TodoModel} model constructor object  
 
 define(['models'], function (models) {
-
-    var WelcomeModel,
+    var TodoModel,
         BaseModel = models.BaseModel;
 
     TodoModel = BaseModel.extend({
-
         // Default attributes for the todo.
         defaults: {
             content: "empty todo...",
@@ -34,7 +32,6 @@ define(['models'], function (models) {
         clear: function() {
             this.destroy();
         }
-
     });
 
     return TodoModel;

@@ -10,20 +10,27 @@ define([
         "controller",
         "models",
         "views",
-        "utils"
+        "utils",
+        "todos/collections/todos",
+        "todos/views/todoslist"
         ],
 function (require, todosLayoutTemplate) {
+<<<<<<< Updated upstream:src/packages/todos.js
+=======
 
+>>>>>>> Stashed changes:src/packages/todos.js
     var TodosController,
-        vendor = require("vendor"),
+        facade = require("facade"),
         Controller = require("controller"),
         models = require("models"),
         views = require("views"),
         utils = require("utils"),
+        TodosList = require("todos/collections/todos"),
+        TodosListView = require("todos/views/todoslist"),
         LayoutView = views.LayoutView,
         BaseModel = models.BaseModel,
-        $ = vendor.$,
-        _ = vendor._,
+        $ = facade.$,
+        _ = facade._,
         debug = utils.debug,
         Channel = utils.lib.Channel,
         cssArr = [
@@ -38,23 +45,12 @@ function (require, todosLayoutTemplate) {
             _.bindAll(this);
 
             this.handleOptions(options);
-            this.setupSections();
-            // this.handleDeferreds();
+            this.setupTodosListView();
+            this.setupLayout();
+
+            this.layout.render();
 
             return this;
-        },
-
-        setupSections: function () {
-            // TODO
-        },
-
-        setupScheme: function () {
-            var i, params = this.params;
-
-            for (i = 0; i < this.meta.activeViews.length; i++) {
-                // TODO
-                // this.scheme.push(this.sections[this.meta.activeViews[i]]);
-            };
         },
 
         setupLayout: function () {
@@ -72,22 +68,13 @@ function (require, todosLayoutTemplate) {
             return this.layout;
         },
 
-        // handleDeferreds: function () {
-        //     var controller = this;
-        //     // TODO
-        //     $.when(null).then(function () {
-        //         // controller.setupScheme();
-        //         // controller.setupLayout().render();
-        //     });
-        // },
+        setupTodosListView: function() {
+            var todosListView = new TodosListView({
+                collection: new TodosList()
+            });
 
-        // handleOptions: function (options) {
-        //     if (options.params) {
-        //         this.params = options.params;
-        //     }
-        //     Controller.prototype.handleOptions(options);
-        // }
-
+            this.scheme.push(todosListView);
+        }
     });
 
     return TodosController;

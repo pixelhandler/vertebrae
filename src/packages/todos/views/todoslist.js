@@ -1,105 +1,81 @@
 // The Todos List WAS Application TODO replace with collection view.
 // ---------------
 
-// Our overall **AppView** is the top-level piece of UI.
-var AppView = Backbone.View.extend({
+define(['facade','views', 'todos/views/todo_item'], function(facade, views, TodoItemView) {
+    var TodosListView,
+        $ = facade.$,
+        _ = facade._,
+        CollectionView = views.CollectionView,
+        SectionView = views.SectionView;
 
-    // Instead of generating a new element, bind to the existing skeleton of
-    // the App already present in the HTML.
-    el: $("#todoapp"),
+    var TodosListAbstract = CollectionView.extend(SectionView.prototype);
+    TodosListView = TodosListAbstract.extend({
+        __super__: CollectionView.prototype,
 
-    // Our template for the line of statistics at the bottom of the app.
-    statsTemplate: _.template($('#stats-template').html()),
+        // Instead of generating a new element, bind to the existing skeleton of
+        // the App already present in the HTML.
+        destination: "#todo-list",
 
-    // Delegated events for creating new items, and clearing completed ones.
-    events: {
-        "keypress #new-todo":    "createOnEnter",
-        "keyup #new-todo":         "showTooltip",
-        "click .todo-clear a": "clearCompleted",
-        "click .mark-all-done": "toggleAllComplete"
-    },
+        // Tag for the child views
+        _tagName: "li",
 
-    // At initialization we bind to the relevant events on the `Todos`
-    // collection, when items are added or changed. Kick things off by
-    // loading any preexisting todos that might be saved in *localStorage*.
-    initialize: function() {
-        _.bindAll(this, 'addOne', 'addAll', 'render', 'toggleAllComplete');
+        // Store constructor for the child views
+        _view: TodoItemView,
 
-        this.input = this.$("#new-todo");
-        this.allCheckbox = this.$(".mark-all-done")[0];
+        // Delegated events for creating new items, and clearing completed ones.
+        events: {
+            "keypress #new-todo":   "createOnEnter",
+            "keyup #new-todo":      "showTooltip",
+            "click .todo-clear a":  "clearCompleted",
+            "click .mark-all-done": "toggleAllComplete"
+        },
 
-        Todos.bind('add',         this.addOne);
-        Todos.bind('reset',     this.addAll);
-        Todos.bind('all',         this.render);
+        initialize: function(options) {
+            CollectionView.prototype.initialize.call(this, options);
 
-        Todos.fetch();
-    },
+            this.input = this.$el.find("#new-todo");
+            this.allCheckbox = this.$el.find(".mark-all-done")[0];
+        },
 
-    // Re-rendering the App just means refreshing the statistics -- the rest
-    // of the app doesn't change.
-    render: function() {
-        var done = Todos.done().length;
-        var remaining = Todos.remaining().length;
+        // If you hit return in the main input field, create new **Todo** model,
+        // persisting it to *localStorage*.
+        createOnEnter: function(e) {
+            if (e.keyCode != 13) return
 
-        this.$('#todo-stats').html(this.statsTemplate({
-            total:            Todos.length,
-            done:             done,
-            remaining:    remaining
-        }));
+            this.collection.add({
+                content: this.input.val(),
+                order: this.collection.nextOrder(),
+                done: false
+            });
 
-        this.allCheckbox.checked = !remaining;
-    },
+            this.input.val('');
+        },
 
-    // Add a single todo item to the list by creating a view for it, and
-    // appending its element to the `<ul>`.
-    addOne: function(todo) {
-        var view = new TodoView({model: todo});
-        this.$("#todo-list").append(view.render().el);
-    },
+        // Lazily show the tooltip that tells you to press `enter` to save
+        // a new todo item, after one second.
+        showTooltip: function(e) {
+            var tooltip = this.$(".ui-tooltip-top");
+            var val = this.input.val();
+            tooltip.fadeOut();
 
-    // Add all items in the **Todos** collection at once.
-    addAll: function() {
-        Todos.each(this.addOne);
-    },
+            if (this.tooltipTimeout) clearTimeout(this.tooltipTimeout);
 
-    // Generate the attributes for a new Todo item.
-    newAttributes: function() {
-        return {
-            content: this.input.val(),
-            order:     Todos.nextOrder(),
-            done:        false
-        };
-    },
+            if (val == '' || val == this.input.attr('placeholder')) return;
 
-    // If you hit return in the main input field, create new **Todo** model,
-    // persisting it to *localStorage*.
-    createOnEnter: function(e) {
-        if (e.keyCode != 13) return;
-        Todos.create(this.newAttributes());
-        this.input.val('');
-    },
+            var show = function(){ tooltip.show().fadeIn(); };
+            this.tooltipTimeout = _.delay(show, 1000);
+        },
 
-    // Clear all done todo items, destroying their models.
-    clearCompleted: function() {
-        _.each(Todos.done(), function(todo){ todo.clear(); });
-        return false;
-    },
+        // Clear all done todo items, destroying their models.
+        clearCompleted: function() {
+            this.collection.clearCompleted();
+            return false;
+        },
 
-    // Lazily show the tooltip that tells you to press `enter` to save
-    // a new todo item, after one second.
-    showTooltip: function(e) {
-        var tooltip = this.$(".ui-tooltip-top");
-        var val = this.input.val();
-        tooltip.fadeOut();
-        if (this.tooltipTimeout) clearTimeout(this.tooltipTimeout);
-        if (val == '' || val == this.input.attr('placeholder')) return;
-        var show = function(){ tooltip.show().fadeIn(); };
-        this.tooltipTimeout = _.delay(show, 1000);
-    },
+        toggleAllComplete: function () {
+            this.collections.toggleAllComplete(this.allCheckbox.checked);
+        }
+    });
 
-    toggleAllComplete: function () {
-        var done = this.allCheckbox.checked;
-        Todos.each(function (todo) { todo.save({'done': done}); });
-    }
-
+    return TodosListView;
 });
