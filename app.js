@@ -23,7 +23,7 @@ app.get('/api/hello/101', function (req, res) {
         },
         "title": "About HauteLook",
         "content": "Welcome to HauteLook, where you will discover thousands of the top fashion and lifestyle brands at amazing savings. Each day at 8 AM Pacific, shop new sale events featuring the best names in women's and men's fashion and accessories, beauty, kids' apparel and toys, and home décor at up to 75% off. Membership is free and everyone is welcome!",
-        "callToAction": "To start shopping, go to: <a href=\"www.hautelook.com\">www.hautelook.com</a>"
+        "callToAction": "To start shopping, go to: <a href=\"http://www.hautelook.com\">www.hautelook.com</a>"
     });
 });
 
