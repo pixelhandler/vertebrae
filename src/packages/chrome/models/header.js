@@ -18,6 +18,10 @@ define( ["models/base"], function (BaseModel) {
 
             nav: [
                 {
+                    page: "Todos",
+                    link: "/todos"
+                },
+                {
                     page: "Products",
                     link: "/products"
                 },

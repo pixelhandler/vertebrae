@@ -31,7 +31,7 @@ function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloC
         },
 
         defaultRoute: function () {
-            this.initTodos()
+            this.showProducts();
         },
 
         showHello: function (name) {
