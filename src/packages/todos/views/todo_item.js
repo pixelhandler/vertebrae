@@ -6,7 +6,7 @@
 // Requires define
 // Returns {TodoItemView} constructor
 
-// Concrete prototype extends SectionView.prototype (class) to be used in a LayoutView.
+// TodoItemView.prototype extends SectionView.prototype to be used in a LayoutView.
 
 define([
         'facade',
@@ -70,7 +70,8 @@ function (
 
         // Close the `"editing"` mode, saving changes to the todo.
         close: function() {
-            this.model.save({content: this.input.val()});
+            this.model.set({content: this.input.val()});
+            // TODO use ASM for storage... this.model.save();
             this.$el.removeClass("editing");
         },
 

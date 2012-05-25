@@ -27,7 +27,7 @@ define(["facade", "utils/debug"], function(facade, debug) {
             haystackType = facade.type(haystack[val]);
             if (needleType !== haystackType) {
                 truthyCheck = false;
-                debug.log("checkType: " + val + " is [" + haystackType + "] not expected [" + needleType + "] type.");
+                // debug.log("checkType: " + val + " is [" + haystackType + "] not expected [" + needleType + "] type.");
                 return false;
             }
         });
@@ -46,19 +46,21 @@ define(["facade", "utils/debug"], function(facade, debug) {
         var hasSameProperties = false, keysGiven, keysKnown;
 
         if (!_.isUndefined(given) && !_.isUndefined(known)) {
-            // debug.log("duckTypeCheck...");
+            /* debug.log("duckTypeCheck..."); */
             keysGiven = _.keys(given); 
             // debug.log("given: " + keysGiven.toString());
             keysKnown = _.keys(known);
-            // debug.log("known: " + keysKnown.toString());
+            /* debug.log("known: " + keysKnown.toString()); */
             if (_.intersection(keysGiven, keysKnown).length >= keysKnown.length) {
                 hasSameProperties = true;
                 if (hasSameProperties && facade.type) {
                     hasSameProperties = checkType(given, known);
                 }
+                /* 
                 if (hasSameProperties) {
                     debug.log("it walks like a duck, must be a type of duck");
                 }
+                */
             }
         }
         return hasSameProperties;

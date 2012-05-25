@@ -6,14 +6,16 @@
 // Requires define
 // Returns {TodoFormView} constructor
 
-define(['require', 'text!todos/templates/form.html', 'views', 'todos/models/todo_item'], 
+define(['require', 'text!todos/templates/form.html', 'facade', 'views', 'todos/models/todo_item'], 
 
 function(require, formTemplate) {
 
     var TodoFormView,
+        facade = require('facade'),
         views = require('views'),
         TodoModel = require('todos/models/todo_item'),
-        SectionView = views.SectionView;
+        SectionView = views.SectionView,
+        _ = facade._;
 
     TodoFormView = SectionView.extend({
 
@@ -38,6 +40,11 @@ function(require, formTemplate) {
         render: function () {
             SectionView.prototype.render.call(this);
             this.input = this.$("#new-todo");
+        },
+
+        dataDecorator: function (data) {
+            data.tooltip = "Press Enter to save this task";
+            return data;
         },
 
         submitHandler: function (e) {

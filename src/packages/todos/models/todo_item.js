@@ -23,6 +23,11 @@ define(['models'], function (models) {
             }
         },
 
+        // Stubbed;  integrate ASM
+        save: function() {
+            // no-op
+        },
+
         // Toggle the `done` state of this todo item.
         toggle: function() {
             this.save({done: !this.get("done")});
