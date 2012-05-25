@@ -2,7 +2,8 @@
 
 **Vertebrae** provides *AMD* structure and additional objects for extending *Backbone.js* as an application framework.
 
-Demo running at : <http://vertebrae-framework.herokuapp.com/>
+* About the project: ["www.hautelooktech.com - Vertebrae post"](http://www.hautelooktech.com/2012/05/24/vertebrae-front-end-framework-built-with-backbone-js-and-requirejs-using-amd/ "Vertebrae background")  
+* Demo running at : <http://vertebrae-framework.herokuapp.com/>
 
 ## Views: 
 
@@ -57,7 +58,9 @@ with controller(s).
 A model object to manage state within the single-page application Attributes: {String} `name`, {Object} `data`, {String} `storage`, {Date} `expires`
 
 
-## Collections: `BaseCollection`, `ApplicationStates`
+## Collections: 
+
+**`BaseCollection`, `ApplicationStates`**
 
 ### Application state collection
 
@@ -359,7 +362,7 @@ To generate the docs:
     cd ../views  
     docco *.js
     cd ../  
-    rm docs/docco.css collections/docs/docco.css models/docs/docco.css syncs/docs/docco.css utils/docs/docco.css views/docs/docco.css
+    rm docs/docco.css collections/docs/docco.css models/docs/docco.css syncs/docs/docco.css utils/docs/docco.css views/docs/docco.css  
 
 References:  
   * [Docco Annotated Source](http://jashkenas.github.com/docco/ "Docco Annotated Source")
