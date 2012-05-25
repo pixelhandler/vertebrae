@@ -2,7 +2,7 @@
 
 **Vertebrae** provides *AMD* structure and additional objects for extending *Backbone.js* as an application framework.
 
-* About the project: ["www.hautelooktech.com - Vertebrae post"](http://www.hautelooktech.com/2012/05/24/vertebrae-front-end-framework-built-with-backbone-js-and-requirejs-using-amd/ "Vertebrae background")  
+* About the project: [www.hautelooktech.com - Vertebrae post](http://www.hautelooktech.com/2012/05/24/vertebrae-front-end-framework-built-with-backbone-js-and-requirejs-using-amd/ "Vertebrae background")  
 * Demo running at : <http://vertebrae-framework.herokuapp.com/>
 
 ## Views: 
