@@ -2,28 +2,24 @@
 
 <div id="todoapp">
 
-    <div class="title">
-        <h1>Todos</h1>
-    </div>
+	<header id="header"></header>
 
-    <div class="content">
+    <!-- This section should be hidden by default and shown when there are todos -->
+	<div id="main">
+		<section id="controls"></section>
+		<section id="todos-section"><!-- <ul id="todo-list"></ul> --></section>
+	</div>
 
-        <section id="todo-form"></section>
-
-        <div id="todos">
-            <input class="check mark-all-done" type="checkbox"/>
-            <label for="check-all">Mark all as complete</label>
-            <section id="todos-section"></section>
-        </div>
-
-        <div id="todo-stats"></div>
-
-    </div>
+    <!-- This footer should hidden by default and shown when there are todos -->
+	<footer id="footer"></footer>
 
 </div>
-
+<div id="instructions">
+    <p>Double-click to edit a todo.</p>
+</div>
 <div id="credits">
-    Created by
-    <br />
-    <a href="http://jgn.me/">J&eacute;r&ocirc;me Gravel-Niquet</a>. <br />Cleanup, edits: <a href="http://addyosmani.com">Addy Osmani</a> <br />Adapted to Vertebrae framework for <a href="http://www.hautelook.com">Hautelook</a>.
+	<p>Template by <a href="http://github.com/sindresorhus">Sindre Sorhus</a></p>
+	<!-- Change this out with your name and url ↓ -->
+	<p>Created by <a href="http://www.hautelooktech.com/2012/05/24/vertebrae-front-end-framework-built-with-backbone-js-and-requirejs-using-amd/">Hautelook Tech</a></p>
+	<p>Based off <a href="http://todomvc.com">TodoMVC</a></p>
 </div>

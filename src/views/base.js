@@ -142,7 +142,7 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
 
             data = (this.model) ? this.model.toJSON() : null;
             if (dataDecorator && _.isFunction(dataDecorator)) {
-                data = dataDecorator(data);
+                data = dataDecorator.call(this, data);
             }
             this.template = this.template || this.options.template;
             if (!this.template || !data) {
@@ -207,10 +207,11 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
                 callbackFn = function () {
                     view.render();
                     view.$el.appendTo(context.$el);
+                    return view;
                 };
             } else {
                 callbackFn = function () {
-                    view.render();
+                    return view.render();
                 };
             }
             return callbackFn;

@@ -6,39 +6,51 @@
 // Requires define
 // Returns {TodoFormView} constructor
 
-define(['require', 'text!todos/templates/form.html', 'facade', 'views', 'todos/models/todo_item'], 
-
-function(require, formTemplate) {
+define([
+        'require', 
+        'text!todos/templates/form.html', 
+        'facade', 
+        'views', 
+        'todos/models/item'
+        ], function(require, formTemplate) {
 
     var TodoFormView,
         facade = require('facade'),
         views = require('views'),
-        TodoModel = require('todos/models/todo_item'),
-        SectionView = views.SectionView,
+        TodoModel = require('todos/models/item'),
+        BaseView = views.BaseView,
         _ = facade._;
 
-    TodoFormView = SectionView.extend({
+    TodoFormView = BaseView.extend({
 
-        tagName: 'form',
-
-        className: 'create-todo',
+        tagName: "form",
 
         template: formTemplate,
 
         // Delegated events for creating new items, and clearing completed ones.
         events: {
-            "keypress #new-todo": "createOnEnter",
-            "keyup #new-todo": "showTooltip",
+            "keypress #new-todo":  "createOnEnter",
             "submit": "submitHandler"
         },
 
+/*
         initialize: function (options) {
             SectionView.prototype.initialize.call(this, options);
-            this.model = new TodoModel();
+        },
+*/
+        
+        // **Method** `setOptions` - called by BaseView's initialize method
+        setOptions: function (options) {
+            if (!this.collection) {
+                throw new Error("HeaderView expected options.collection.");
+            }
+            if (!this.model) {
+                this.model = new TodoModel();
+            }
         },
 
         render: function () {
-            SectionView.prototype.render.call(this);
+            BaseView.prototype.render.call(this);
             this.input = this.$("#new-todo");
         },
 
@@ -49,7 +61,7 @@ function(require, formTemplate) {
 
         submitHandler: function (e) {
             e.preventDefault();
-            this.createOnEnter(e);
+            //this.createOnEnter(e);
         },
 
         // If you hit return in the main input field, create new **Todo** model,
@@ -66,21 +78,6 @@ function(require, formTemplate) {
             });
 
             this.input.val('');
-        },
-
-        // Lazily show the tooltip that tells you to press `enter` to save
-        // a new todo item, after one second.
-        showTooltip: function(e) {
-            var tooltip = this.$(".ui-tooltip-top");
-            var val = this.input.val();
-            tooltip.fadeOut();
-
-            if (this.tooltipTimeout) clearTimeout(this.tooltipTimeout);
-
-            if (val == '' || val == this.input.attr('placeholder')) return;
-
-            var show = function(){ tooltip.show().fadeIn(); };
-            this.tooltipTimeout = _.delay(show, 1000);
         }
 
     });

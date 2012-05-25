@@ -4,18 +4,18 @@
 // Returns {TodosController} constructor
 
 define([
-        "require",
-        "text!todos/templates/layout.html",
-        "facade",
-        "controller",
-        "models",
-        "views",
-        "utils",
-        "todos/collections/todos",
-        "todos/views/form",
-        "todos/views/todoslist"
-        ],
-function (require, todosLayoutTemplate) {
+    "require",
+    "text!todos/templates/layout.html",
+    "facade",
+    "controller",
+    "models",
+    "views",
+    "utils",
+    "todos/collections/todos",
+    "todos/views/header",
+    "todos/views/list",
+    "todos/views/controls"
+    ], function (require, todosLayoutTemplate) {
 
     var TodosController,
         facade = require("facade"),
@@ -24,16 +24,16 @@ function (require, todosLayoutTemplate) {
         views = require("views"),
         utils = require("utils"),
         TodosList = require("todos/collections/todos"),
-        TodosFormView = require("todos/views/form"),
-        TodosListView = require("todos/views/todoslist"),
+        TodosListView = require("todos/views/list"),
+        HeaderView = require("todos/views/header"),
+        ControlsView = require("todos/views/controls"),
         LayoutView = views.LayoutView,
-        BaseModel = models.BaseModel,
         $ = facade.$,
         _ = facade._,
         debug = utils.debug,
         Channel = utils.lib.Channel,
         cssArr = [
-            "/packages/todos/todos.css"
+            "/packages/todos/app.css"
         ];
 
     TodosController = Controller.extend(    {
@@ -51,25 +51,26 @@ function (require, todosLayoutTemplate) {
 
         initSections: function () {
             this.createTodosList();
-            this.setupTodosFormView();
+            this.setupHeaderView();
+            this.setupControlsView();
             this.setupTodosListView();
-            this.setupLayout();
+            this.setupLayout().render();
         },
 
         createTodosList: function () {
             this.collection = new TodosList();
         },
 
-        setupTodosFormView: function() {
-            var todosFormView;
+        setupHeaderView: function() {
+            var headerView;
 
-            todosFormView = new TodosFormView({
+            headerView = new HeaderView({
                 collection: this.collection,
-                name: "Form",
-                destination: "#todo-form"
+                name: "Header",
+                destination: "#header"
             });
 
-            this.scheme.push(todosFormView);
+            this.scheme.push(headerView);
         },
 
         setupTodosListView: function() {
@@ -77,11 +78,22 @@ function (require, todosLayoutTemplate) {
 
             todosListView = new TodosListView({
                 collection: this.collection,
-                name: "List",
                 destination: "#todos-section"
             });
 
             this.scheme.push(todosListView);
+        },
+        
+        setupControlsView: function() {
+            var controlsView;
+
+            controlsView = new ControlsView({
+                collection: this.collection,
+                name: "Controls",
+                destination: "#controls"
+            });
+
+            this.scheme.push(controlsView);
         },
 
         setupLayout: function () {
@@ -89,14 +101,14 @@ function (require, todosLayoutTemplate) {
 
             todosLayout = new LayoutView({
                 scheme: this.scheme,
-                destination: "#content",
+                destination: "#wrapper",
                 // require a html page layout template with text! prefix
                 template: todosLayoutTemplate,
                 displayWhen: "ready"
             });
             this.layout = todosLayout;
 
-            return this.layout.render();
+            return this.layout;
         }
 
     });

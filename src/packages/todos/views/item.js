@@ -8,24 +8,15 @@
 
 // TodoItemView.prototype extends SectionView.prototype to be used in a LayoutView.
 
-define([
-        'facade',
-        'views',
-        'todos/models/todo_item',
-        'text!todos/templates/todo_item.html'
-        ], 
-function (
-        facade,
-        views,
-        TodoModel,
-        todoItemTemplate
-        ) {
+define(['facade', 'views','text!todos/templates/item.html'], 
+function (facade,  views,  todoItemTemplate) {
 
     var TodoItemView,
         _ = facade._,
         BaseView = views.BaseView;
 
     TodoItemView = BaseView.extend({
+
         //... is a list tag.
         tagName:    "li",
 
@@ -53,6 +44,9 @@ function (
         // Re-render the contents of the todo item.
         render: function() {
             BaseView.prototype.render.call(this);
+            if (!!this.model.get('done')) {
+                this.$el.addClass('completed');
+            }
             this.input = this.$('.todo-input');
             return this;
         },
@@ -84,6 +78,7 @@ function (
         clear: function() {
             this.model.clear();
         }
+
     });
 
     return TodoItemView;

@@ -1,11 +1,17 @@
-// Todo Collection
-// ---------------
+// Todos List
+// ----------
 
-define(['collections', 'todos/models/todo_item'], function(collections, TodoModel) {
+// Package Todos
+// Requires define
+// Returns {TodosList} constructor
+
+define(['collections', 'todos/models/item'], function(collections, TodoModel) {
+
     var TodosList,
         BaseCollection = collections.BaseCollection;
 
     TodosList = BaseCollection.extend({
+
         // Reference to this collection's model.
         model: TodoModel,
 
@@ -43,6 +49,7 @@ define(['collections', 'todos/models/todo_item'], function(collections, TodoMode
         fetch: function() {
             this.request = this.deferred.promise();
         }
+
     });
 
     return TodosList;
