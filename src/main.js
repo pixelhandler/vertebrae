@@ -79,11 +79,7 @@ require(['facade', 'application', 'utils'], function (facade, App, utils) {
 
     var $ = facade.$,
         Backbone = facade.Backbone,
-        Channel = utils.lib.Channel,
         debug = utils.debug;
-
-    // load style sheets
-    Channel('load:css').publish(["css/bootstrap.css", "css/bootstrap-responsive.css"]);
 
     $(function () { // doc ready
         var app;

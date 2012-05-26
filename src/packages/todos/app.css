@@ -64,7 +64,7 @@ body {
 }
 
 #main {
-	/* display: none; */
+	display: none;
 }
 
 #todo-list {
@@ -91,6 +91,7 @@ body {
 }
 
 #todo-list .destroy {
+    border: none;
 	position: absolute;
 	right: 5px;
 	top: 20px;
@@ -98,7 +99,7 @@ body {
 	cursor: pointer;
 	width: 20px;
 	height: 20px;
-	background: url(destroy.png) no-repeat;
+	background: url(/images/destroy.png) no-repeat;
 }
 
 #todo-list li:hover .destroy {
@@ -121,6 +122,7 @@ body {
 
 #todo-list li.editing .edit {
 	display: block;
+	font-size: 24px;
 	width: 444px;
 	padding: 13px 15px 14px 20px;
 	margin: 0;

@@ -51,6 +51,8 @@ function (facade, utils, collections, chromeBootstrap, productsBootstrap, HelloC
         },
 
         showProducts: function () {
+            // load style sheets
+            Channel('load:css').publish(["css/bootstrap.css", "css/bootstrap-responsive.css"]);
             $('body').empty();
             chromeBootstrap();
             productsBootstrap();

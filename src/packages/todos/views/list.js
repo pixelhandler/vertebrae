@@ -45,11 +45,12 @@ function(facade,  views,   TodoItemView,       FooterView) {
         },
 
         // Re-rendering just means refreshing the statistics
+/*
         render: function () {
             SectionView.prototype.render.call(this);
-            this.handleListDisplay();
             return this;
         },
+*/
 
         // Child views...
         childViews: {},
@@ -74,18 +75,6 @@ function(facade,  views,   TodoItemView,       FooterView) {
                 this.childViews.footer.$el.hide();
             }
         },
-        
-        handleListDisplay: function () {
-            var main = $('#main');
-
-/*
-            if (this.collection.length) {
-                main.show();
-            } else {
-                main.hide();
-            }
-*/
-        },
 
         // Event handlers...
 
@@ -99,13 +88,17 @@ function(facade,  views,   TodoItemView,       FooterView) {
             Channel('todos:toggleAll').publish();
         },
         
+        // Subscribers...
+        
+/*
         addSubscribers: function () {
-            this.collection.on('add destroy remove reset sync', this.handleListDisplay);
+            this.collection.on('add destroy remove reset sync', this.render);
         },
 
         removeSubscribers: function () {
-            this.collection.off('add destroy remove reset sync', this.handleListDisplay)
+            this.collection.off('add destroy remove reset sync', this.render)
         }
+*/
 
     });
 

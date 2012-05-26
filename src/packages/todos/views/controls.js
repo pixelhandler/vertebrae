@@ -6,12 +6,13 @@
 // Requires `define`
 // Returns {ControlsView} constructor
 
-define(['views', 'text!todos/templates/controls.html', 'utils'], 
-function(views,   controlsTemplate,                     utils) {
+define(['facade', 'views', 'text!todos/templates/controls.html', 'utils'], 
+function(facade,   views,   controlsTemplate,                     utils) {
 
     var ControlsView,
         SectionView = views.SectionView,
-        Channel = utils.lib.Channel;
+        Channel = utils.lib.Channel,
+        $ = facade.$;
 
     ControlsView = SectionView.extend({
 
@@ -19,6 +20,7 @@ function(views,   controlsTemplate,                     utils) {
 
         initialize: function (options) {
             SectionView.prototype.initialize.call(this, options);
+            this.addSubscribers();
         },
         
         // **Method** `setOptions` - called by BaseView's initialize method
@@ -39,13 +41,25 @@ function(views,   controlsTemplate,                     utils) {
         toggleAll: function () {
             this.collections.toggleAllComplete(this.allCheckbox.checked);
         },
+
+        handleListDisplay: function () {
+            var main = $('#main');
+
+            if (this.collection.length) {
+                main.show();
+            } else {
+                main.hide();
+            }
+        },
         
         addSubscribers: function () {
             Channel('todos:toggleAll').subscribe(this.toggleAll);
+            this.collection.on('add destroy remove reset sync', this.handleListDisplay);
         },
 
         removeSubscribers: function () {
             Channel('todos:toggleAll').unsubscribe(this.toggleAll);
+            this.collection.off('add destroy remove reset sync', this.handleListDisplay)
         }
 
     });

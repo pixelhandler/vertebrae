@@ -24,11 +24,11 @@ function (facade,  views,  todoItemTemplate) {
 
         // The DOM events specific to an item.
         events: {
-            "click .check"                  : "toggleDone",
-            "dblclick label.todo-content"   : "edit",
-            "click span.todo-destroy"       : "clear",
-            "keypress .todo-input"          : "updateOnEnter",
-            "blur .todo-input"              : "close"
+            "click .toggle"   : "toggleDone",
+            "dblclick .view"  : "edit",
+            "click button.destroy" : "clear",
+            "keypress .edit"  : "updateOnEnter",
+            "blur .edit"      : "close"
         },
 
         // The TodoView listens for changes to its model, re-rendering. Since there's
@@ -37,17 +37,16 @@ function (facade,  views,  todoItemTemplate) {
         initialize: function(options) {
             BaseView.prototype.initialize.call(this, options);
             _.bindAll(this, 'render', 'close', 'remove');
-            this.model.bind('change', this.render);
-            this.model.bind('destroy', this.remove);
+            this.addSubscribers();
         },
 
         // Re-render the contents of the todo item.
         render: function() {
             BaseView.prototype.render.call(this);
             if (!!this.model.get('done')) {
-                this.$el.addClass('completed');
+                this.$el.addClass('done');
             }
-            this.input = this.$('.todo-input');
+            this.input = this.$('input.edit'); //this.$('.todo-input');
             return this;
         },
 
@@ -77,6 +76,20 @@ function (facade,  views,  todoItemTemplate) {
         // Remove the item, destroy the model.
         clear: function() {
             this.model.clear();
+        },
+        
+        addSubscribers: function () {
+            /*
+            Channel('todos:toggleAll').subscribe(this.toggleAll);
+            this.collection.on('add destroy remove reset sync', this.handleListDisplay);
+            */
+            this.model.on('change', this.render);
+            this.model.on('destroy', this.remove);
+        },
+
+        removeSubscribers: function () {
+            this.model.off('change', this.render);
+            this.model.off('destroy', this.remove);
         }
 
     });
