@@ -19,7 +19,8 @@ define([
         views = require('views'),
         StatsModel = require('todos/models/stats'),
         BaseView = views.BaseView,
-        _ = facade._;
+        _ = facade._,
+        $ = facade.$;
 
     FooterView = BaseView.extend({
 
@@ -48,11 +49,11 @@ define([
         },
 
         addSubscribers: function () {
-            this.model.on('change', this.render/*, this*/);
+            this.model.on('add remove change destroy sync', this.render, this);
         },
         
         removeSubscribers: function () {
-            this.model.off('change', this.render);
+            this.model.off('add remove change destroy sync', this.render);
         }
 
     });

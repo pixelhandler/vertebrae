@@ -83,8 +83,8 @@ function (facade,  views,  todoItemTemplate) {
             Channel('todos:toggleAll').subscribe(this.toggleAll);
             this.collection.on('add destroy remove reset sync', this.handleListDisplay);
             */
-            this.model.on('change', this.render);
-            this.model.on('destroy', this.remove);
+            this.model.on('change', this.render, this);
+            this.model.on('destroy', this.remove, this);
         },
 
         removeSubscribers: function () {

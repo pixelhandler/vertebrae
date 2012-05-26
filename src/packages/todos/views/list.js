@@ -41,27 +41,31 @@ function(facade,  views,   TodoItemView,       FooterView) {
                 throw new Error("TodosListView expected options.collection.");
             }
             _.bindAll(this);
-            this.setupFooterView();
+            this.addSubscribers();
         },
 
         // Re-rendering just means refreshing the statistics
-/*
         render: function () {
             SectionView.prototype.render.call(this);
+            if (!this.childViews.footer) {
+                this.setupFooterView();
+            }
+            this.handleFooterDisplay();
             return this;
         },
-*/
 
         // Child views...
         childViews: {},
 
         setupFooterView: function () {
-            var footerView = new FooterView({collection: this.collection}),
+            var footerView = new FooterView({
+                    el: "#footer",
+                    collection: this.collection
+                }),
                 renderFooterView = this.addChildView(footerView);
 
             this.childViews.footer = footerView;
             this.callbacks.add(renderFooterView);
-            this.callbacks.add(this.handleFooterDisplay);
         },
         
         handleFooterDisplay: function () {
@@ -70,7 +74,7 @@ function(facade,  views,   TodoItemView,       FooterView) {
                     "done": this.collection.done().length, 
                     "remaining": this.collection.remaining().length
                 });
-                this.childViews.footer.$el.show();
+                this.childViews.footer.render().$el.show();
             } else {
                 this.childViews.footer.$el.hide();
             }
@@ -90,15 +94,13 @@ function(facade,  views,   TodoItemView,       FooterView) {
         
         // Subscribers...
         
-/*
         addSubscribers: function () {
-            this.collection.on('add destroy remove reset sync', this.render);
+            this.collection.on('add destroy remove reset sync', this.handleFooterDisplay);
         },
 
         removeSubscribers: function () {
-            this.collection.off('add destroy remove reset sync', this.render)
+            this.collection.off('add destroy remove reset sync', this.handleFooterDisplay)
         }
-*/
 
     });
 

@@ -94,7 +94,9 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
         render: function (domInsertion, dataDecorator, partials) {
             var markup;
 
-            this.confirmElement();
+            if (_.isFunction(this.confirmElement)) {
+                this.confirmElement();
+            }
             dataDecorator = dataDecorator || this.dataDecorator;
             markup = this.toHTML(dataDecorator, partials);
             domInsertion = this.domInsertionMethod(domInsertion);

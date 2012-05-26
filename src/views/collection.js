@@ -54,8 +54,8 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
         setupCollection: function () {
             var collection = this.options.collection || this.collection;
 
-            collection.bind('add', this.add);
-            collection.bind('remove', this.remove);
+            collection.on('add', this.add);
+            collection.on('remove', this.remove);
             if (!collection.length && !collection.request) {
                 collection.fetch();
                 collection.request.done(function () {

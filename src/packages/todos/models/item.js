@@ -24,6 +24,11 @@ define(['models'], function (models) {
         },
 
         // Stubbed;  integrate ASM
+        destroy: function() {
+            this.trigger('destroy', this, this.collection);
+        },
+
+        // Stubbed;  integrate ASM
         save: function() {
             // no-op
         },
@@ -37,6 +42,7 @@ define(['models'], function (models) {
         // Remove this Todo from *localStorage* and delete its view.
         clear: function() {
             this.destroy();
+            this.collection.trigger('remove', this);
         }
     });
 

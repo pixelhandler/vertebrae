@@ -27,6 +27,13 @@ define(['models'], function (models) {
 
         itemsRemainingText: function () {
             return this.itemsText(this.get('remaining'));
+        },
+        
+        setStats: function (done, remaining) {
+            this.set({
+                'done': done,
+                'remaining': remaining
+            });
         }
 
     });

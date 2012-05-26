@@ -161,6 +161,7 @@ body {
 	line-height: 20px;
 	text-decoration: none;
 	background: rgba(0, 0, 0, 0.1);
+	border: none;
 	color: #555555;
 	font-size: 11px;
 	margin-top: 8px;
