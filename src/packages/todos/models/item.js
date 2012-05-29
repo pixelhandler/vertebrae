@@ -5,9 +5,10 @@
 // Requires define  
 // Return {TodoModel} model constructor object  
 
-define(['models'], function (models) {
+define(['models', 'facade'], function (models, facade) {
     var TodoModel,
-        BaseModel = models.BaseModel;
+        BaseModel = models.BaseModel,
+        _ = facade._;
 
     TodoModel = BaseModel.extend({
         // Default attributes for the todo.
@@ -18,6 +19,7 @@ define(['models'], function (models) {
 
         // Ensure that each todo created has `content`.
         initialize: function() {
+            _.bindAll(this);
             if (!this.get("content")) {
                 this.set({"content": this.defaults.content});
             }
@@ -25,7 +27,7 @@ define(['models'], function (models) {
 
         // Stubbed;  integrate ASM
         destroy: function() {
-            this.trigger('destroy', this, this.collection);
+            this.trigger('destroy');
         },
 
         // Stubbed;  integrate ASM
@@ -39,10 +41,10 @@ define(['models'], function (models) {
             this.save({done: !this.get("done")});
         },
 
-        // Remove this Todo from *localStorage* and delete its view.
+        // Remove this Todo and delete its view.
         clear: function() {
+            //this.collection.trigger('remove', this);
             this.destroy();
-            this.collection.trigger('remove', this);
         }
     });
 

@@ -42,7 +42,10 @@ define(['collections', 'todos/models/item'], function(collections, TodoModel) {
         },
 
         toggleAllComplete: function(done) {
-            this.each(function (todo) { todo.save({'done': done}); });
+            this.each(function (todo) { 
+                todo.set({'done': done});
+                todo.save(); 
+            });
         },
 
         // Stubbed;  integrate ASM

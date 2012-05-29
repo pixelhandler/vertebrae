@@ -15,6 +15,10 @@ function(facade,   views,   controlsTemplate,                     utils) {
         $ = facade.$;
 
     ControlsView = SectionView.extend({
+    
+        events: {
+            "click #toggle-all": "toggleAll"
+        },
 
         template: controlsTemplate,
 
@@ -39,7 +43,7 @@ function(facade,   views,   controlsTemplate,                     utils) {
         },
         
         toggleAll: function () {
-            this.collections.toggleAllComplete(this.allCheckbox.checked);
+            this.collection.toggleAllComplete(this.allCheckbox.checked);
         },
 
         handleListDisplay: function () {
@@ -54,12 +58,12 @@ function(facade,   views,   controlsTemplate,                     utils) {
         
         addSubscribers: function () {
             Channel('todos:toggleAll').subscribe(this.toggleAll);
-            this.collection.on('add destroy remove reset sync', this.handleListDisplay);
+            this.collection.on('add remove reset sync', this.handleListDisplay);
         },
 
         removeSubscribers: function () {
             Channel('todos:toggleAll').unsubscribe(this.toggleAll);
-            this.collection.off('add destroy remove reset sync', this.handleListDisplay)
+            this.collection.off('add remove reset sync', this.handleListDisplay)
         }
 
     });

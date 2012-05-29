@@ -44,7 +44,6 @@ function(facade,  views,   TodoItemView,       FooterView) {
             this.addSubscribers();
         },
 
-        // Re-rendering just means refreshing the statistics
         render: function () {
             SectionView.prototype.render.call(this);
             if (!this.childViews.footer) {
@@ -95,11 +94,11 @@ function(facade,  views,   TodoItemView,       FooterView) {
         // Subscribers...
         
         addSubscribers: function () {
-            this.collection.on('add destroy remove reset sync', this.handleFooterDisplay);
+            this.collection.on('add remove reset sync', this.handleFooterDisplay);
         },
 
         removeSubscribers: function () {
-            this.collection.off('add destroy remove reset sync', this.handleFooterDisplay)
+            this.collection.off('add remove reset sync', this.handleFooterDisplay);
         }
 
     });

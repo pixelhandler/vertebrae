@@ -45,6 +45,8 @@ function (facade,  views,  todoItemTemplate) {
             BaseView.prototype.render.call(this);
             if (!!this.model.get('done')) {
                 this.$el.addClass('done');
+            } else {
+                this.$el.removeClass('done');
             }
             this.input = this.$('input.edit'); //this.$('.todo-input');
             return this;

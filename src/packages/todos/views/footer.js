@@ -49,11 +49,11 @@ define([
         },
 
         addSubscribers: function () {
-            this.model.on('add remove change destroy sync', this.render, this);
+            this.model.on('add remove change sync', this.render, this);
         },
         
         removeSubscribers: function () {
-            this.model.off('add remove change destroy sync', this.render);
+            this.model.off('add remove change sync', this.render);
         }
 
     });
