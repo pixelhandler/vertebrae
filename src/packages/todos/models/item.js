@@ -5,10 +5,11 @@
 // Requires define  
 // Return {TodoModel} model constructor object  
 
-define(['models', 'facade'], function (models, facade) {
+define(['models', 'facade', 'utils'], function (models, facade, utils) {
     var TodoModel,
         BaseModel = models.BaseModel,
-        _ = facade._;
+        _ = facade._,
+        Channel = utils.lib.Channel;
 
     TodoModel = BaseModel.extend({
         // Default attributes for the todo.
@@ -37,8 +38,10 @@ define(['models', 'facade'], function (models, facade) {
 
         // Toggle the `done` state of this todo item.
         toggle: function() {
-            this.set({done: !this.get("done")});
-            this.save({done: !this.get("done")});
+            var doneState = this.get("done");
+            this.set({done: !doneState});
+            this.save({done: !doneState});
+            Channel('todo:toggleDone').publish(this.collection);
         },
 
         // Remove this Todo and delete its view.

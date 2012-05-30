@@ -1,13 +1,14 @@
 // The Todos List
 // --------------
 
-define(['facade','views', 'todos/views/item', 'todos/views/footer'], 
-function(facade,  views,   TodoItemView,       FooterView) {
+define(['facade','views', 'utils', 'todos/views/item', 'todos/views/footer'], 
+function(facade,  views,   utils,   TodoItemView,       FooterView) {
 
     var TodosListView, 
         TodosListAbstract,
         $ = facade.$,
         _ = facade._,
+        Channel = utils.lib.Channel,
         CollectionView = views.CollectionView,
         SectionView = views.SectionView;
 
@@ -49,7 +50,8 @@ function(facade,  views,   TodoItemView,       FooterView) {
             if (!this.childViews.footer) {
                 this.setupFooterView();
             }
-            this.handleFooterDisplay();
+            /* this.handleFooterDisplay(); */
+            this.updateStats();
             return this;
         },
 
@@ -67,6 +69,7 @@ function(facade,  views,   TodoItemView,       FooterView) {
             this.callbacks.add(renderFooterView);
         },
         
+/*
         handleFooterDisplay: function () {
             if (this.collection.length) {
                 this.childViews.footer.model.set({
@@ -78,6 +81,7 @@ function(facade,  views,   TodoItemView,       FooterView) {
                 this.childViews.footer.$el.hide();
             }
         },
+*/
 
         // Event handlers...
 
@@ -90,15 +94,21 @@ function(facade,  views,   TodoItemView,       FooterView) {
         toggleAllComplete: function () {
             Channel('todos:toggleAll').publish();
         },
-        
+
+        // Publishers
+
+        updateStats: function () {
+            Channel('todo:toggleDone').publish(this.collection);
+        },
+
         // Subscribers...
-        
+
         addSubscribers: function () {
-            this.collection.on('add remove reset sync', this.handleFooterDisplay);
+            this.collection.on('add remove reset sync', this.updateStats);
         },
 
         removeSubscribers: function () {
-            this.collection.off('add remove reset sync', this.handleFooterDisplay);
+            this.collection.off('add remove reset sync', this.updateStats);
         }
 
     });
