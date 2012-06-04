@@ -46,8 +46,9 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
 
         // Remove this Todo and delete its view.
         clear: function() {
-            //this.collection.trigger('remove', this);
+            this.collection.remove(this, {silent: true});
             this.destroy();
+            Channel('todo:clear').publish(this);
         }
     });
 

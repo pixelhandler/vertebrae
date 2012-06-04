@@ -57,12 +57,10 @@ function(facade,   views,   controlsTemplate,                     utils) {
         },
         
         addSubscribers: function () {
-            Channel('todos:toggleAll').subscribe(this.toggleAll);
             this.collection.on('add remove reset sync', this.handleListDisplay);
         },
 
         removeSubscribers: function () {
-            Channel('todos:toggleAll').unsubscribe(this.toggleAll);
             this.collection.off('add remove reset sync', this.handleListDisplay)
         }
 

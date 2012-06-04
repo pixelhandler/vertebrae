@@ -32,6 +32,11 @@ define([
         // Footer HTML template has stats info for remaining and done
         template: footerTemplate,
 
+        // Delegated events for creating new items, and clearing completed ones.
+        events: {
+            "click #clear-completed": "clearCompleted"
+        },
+
         initialize: function (options) {
             BaseView.prototype.initialize.call(this, options);
             if (!this.collection) {
@@ -52,14 +57,14 @@ define([
             return data;
         },
 
-        updateDisplay: function (collection) {
-            if (!collection || !this.$el) {
+        updateStats: function () {
+            if (!this.collection || !this.$el) {
                 return; // fail silently
             } else {
-                if (collection.length) {
+                if (this.collection.models.length) {
                     this.model.set({
-                        "done": collection.done().length, 
-                        "remaining": collection.remaining().length
+                        "done": this.collection.done().length, 
+                        "remaining": this.collection.remaining().length
                     });
                     this.render().$el.show();
                 } else {
@@ -68,14 +73,28 @@ define([
             }
         },
 
+        // Event handlers...
+
+        // Clear all done todo items, destroying their models.
+        clearCompleted: function() {
+            this.collection.clearCompleted();
+            return false;
+        },
+
+        // Subscribers...
+
         addSubscribers: function () {
             this.model.on('add remove change sync', this.render, this);
-            Channel('todo:toggleDone').subscribe(this.updateDisplay);
+            this.collection.on('add remove reset sync toggleAllComplete', this.updateStats);
+            Channel('todo:toggleDone').subscribe(this.updateStats);
+            Channel('todo:clear').subscribe(this.updateStats);
         },
 
         removeSubscribers: function () {
             this.model.off('add remove change sync', this.render);
-            Channel('todo:toggleDone').unsubscribe(this.updateDisplay);
+            this.collection.off('add remove reset sync toggleAllComplete', this.updateStats);
+            Channel('todo:toggleDone').unsubscribe(this.updateStats);
+            Channel('todo:clear').unsubscribe(this.updateStats);
         }
 
     });

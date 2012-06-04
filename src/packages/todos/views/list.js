@@ -50,8 +50,6 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
             if (!this.childViews.footer) {
                 this.setupFooterView();
             }
-            /* this.handleFooterDisplay(); */
-            this.updateStats();
             return this;
         },
 
@@ -68,20 +66,6 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
             this.childViews.footer = footerView;
             this.callbacks.add(renderFooterView);
         },
-        
-/*
-        handleFooterDisplay: function () {
-            if (this.collection.length) {
-                this.childViews.footer.model.set({
-                    "done": this.collection.done().length, 
-                    "remaining": this.collection.remaining().length
-                });
-                this.childViews.footer.render().$el.show();
-            } else {
-                this.childViews.footer.$el.hide();
-            }
-        },
-*/
 
         // Event handlers...
 
@@ -93,22 +77,6 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
 
         toggleAllComplete: function () {
             Channel('todos:toggleAll').publish();
-        },
-
-        // Publishers
-
-        updateStats: function () {
-            Channel('todo:toggleDone').publish(this.collection);
-        },
-
-        // Subscribers...
-
-        addSubscribers: function () {
-            this.collection.on('add remove reset sync', this.updateStats);
-        },
-
-        removeSubscribers: function () {
-            this.collection.off('add remove reset sync', this.updateStats);
         }
 
     });

@@ -5,10 +5,11 @@
 // Requires define
 // Returns {TodosList} constructor
 
-define(['collections', 'todos/models/item'], function(collections, TodoModel) {
+define(['facade', 'collections', 'todos/models/item'], function(facade, collections, TodoModel) {
 
     var TodosList,
-        BaseCollection = collections.BaseCollection;
+        BaseCollection = collections.BaseCollection,
+        _ = facade._;
 
     TodosList = BaseCollection.extend({
 
@@ -28,7 +29,7 @@ define(['collections', 'todos/models/item'], function(collections, TodoModel) {
         // We keep the Todos in sequential order, despite being saved by unordered
         // GUID in the database. This generates the next order number for new items.
         nextOrder: function() {
-            if (!this.length) return 1;
+            if (!this.models.length) return 1;
             return this.last().get('order') + 1;
         },
 
@@ -46,6 +47,7 @@ define(['collections', 'todos/models/item'], function(collections, TodoModel) {
                 todo.set({'done': done});
                 todo.save(); 
             });
+            this.trigger('toggleAllComplete', this);
         },
 
         // Stubbed;  integrate ASM
