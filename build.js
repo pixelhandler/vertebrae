@@ -51,6 +51,7 @@
         'chrome'       : 'packages/chrome',
         'products'     : 'packages/products',
         'hello'        : 'packages/hello',
+        'todos'        : 'packages/todos',
 
         // Application - bootstrap for frontend app 
         'application'  : 'application'
@@ -73,7 +74,7 @@
 
         {
             name: 'utils',
-            exclude: ['vendor']
+            exclude: ['jquery', 'vendor', 'facade']
         },
         {
             name: 'syncs',
@@ -104,7 +105,11 @@
         },
         {
             name: 'hello',
-            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views', 'collections', 'chrome']
+            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views', 'collections']
+        },
+        {
+            name: 'todos',
+            exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views', 'collections']
         }
     ]
 
