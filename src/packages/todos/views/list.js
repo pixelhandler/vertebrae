@@ -44,7 +44,7 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
             if (!this.childViews.footer) {
                 this.setupFooterView();
             }
-            _.defer(this.handleListDisplay);
+            _.delay(this.handleListDisplay, 250);
             return this;
         },
 

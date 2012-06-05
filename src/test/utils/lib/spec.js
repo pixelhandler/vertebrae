@@ -8,7 +8,6 @@ require.config({
 
         'json2'        : '/vendor/json2',
         'modernizr'    : '/vendor/modernizr',
-        'requirejquery': '/vendor/require-jquery',
         'jquery'       : '/vendor/jquery-1.7.2.min',
         'zepto'        : '/vendor/zepto',
         'underscore'   : '/vendor/underscore',
@@ -18,9 +17,10 @@ require.config({
         // Plugins
 
         // RequireJS
-        'domready'     : '/vendor/domReady',
-        'order'        : '/vendor/order',
-        'text'         : '/vendor/text',
+        'use'          : '/vendor/plugins/use',
+        'domready'     : '/vendor/plugins/domReady',
+        'order'        : '/vendor/plugins/order',
+        'text'         : '/vendor/plugins/text',
 
         // Touch events
         'touch'        : '/vendor/plugins/touch',
@@ -28,12 +28,12 @@ require.config({
         // Vendor libs, packaged group of common dependencies
         'vendor'       : '/vendor',
 
-        // Facade references to vendor / lirabry methods
+        // Facade references to vendor / library methods
         'facade'       : '/facade',
 
         // Utilities and libraries
         'utils'        : '/utils',
-        
+
         // Backbone syncs depend on both vendor and utils
         'syncs'        : '/syncs',
 
@@ -49,14 +49,26 @@ require.config({
         'chrome'       : '/packages/chrome',
         'products'     : '/packages/products',
         'hello'        : '/packages/hello',
+        'todos'        : '/packages/todos',
 
         // Application - bootstrap for frontend app 
         'application'  : '/application'
 
     },
-    priority: ['text', 'modernizr', 'json2', 'vendor', 'utils'],
+    use: {
+        "underscore": {
+            attach: "_"
+        },
+        "backbone": {
+            deps: ["use!underscore", "jquery"],
+            attach: function(_, $) {
+                return Backbone;
+            }
+        }
+    },
+    priority: ['text', 'use', 'modernizr', 'json2', 'vendor', 'utils'],
     jquery: '1.7.2',
-    waitSeconds: 10
+    waitSeconds: 30
 });
 
 require(['jquery', 'underscore', 'backbone', 'utils/debug', 'utils/lib', 'utils/date'], 

@@ -23,7 +23,6 @@ require.config({
 
         'json2'        : '/vendor/json2',
         'modernizr'    : '/vendor/modernizr',
-        'requirejquery': '/vendor/require-jquery',
         'jquery'       : '/vendor/jquery-1.7.2.min',
         'zepto'        : '/vendor/zepto',
         'underscore'   : '/vendor/underscore',
@@ -33,9 +32,10 @@ require.config({
         // Plugins
 
         // RequireJS
-        'domready'     : '/vendor/domReady',
-        'order'        : '/vendor/order',
-        'text'         : '/vendor/text',
+        'use'          : '/vendor/plugins/use',
+        'domready'     : '/vendor/plugins/domReady',
+        'order'        : '/vendor/plugins/order',
+        'text'         : '/vendor/plugins/text',
 
         // Touch events
         'touch'        : '/vendor/plugins/touch',
@@ -43,12 +43,12 @@ require.config({
         // Vendor libs, packaged group of common dependencies
         'vendor'       : '/vendor',
 
-        // Facade references to vendor / lirabry methods
+        // Facade references to vendor / library methods
         'facade'       : '/facade',
 
         // Utilities and libraries
         'utils'        : '/utils',
-        
+
         // Backbone syncs depend on both vendor and utils
         'syncs'        : '/syncs',
 
@@ -64,23 +64,35 @@ require.config({
         'chrome'       : '/packages/chrome',
         'products'     : '/packages/products',
         'hello'        : '/packages/hello',
+        'todos'        : '/packages/todos',
 
         // Application - bootstrap for frontend app 
         'application'  : '/application'
 
     },
-    priority: ['text', 'modernizr', 'json2', 'vendor', 'utils'],
+    use: {
+        "underscore": {
+            attach: "_"
+        },
+        "backbone": {
+            deps: ["use!underscore", "jquery"],
+            attach: function(_, $) {
+                return Backbone;
+            }
+        }
+    },
+    priority: ['text', 'use', 'modernizr', 'json2', 'vendor', 'utils'],
     jquery: '1.7.2',
-    waitSeconds: 10
+    waitSeconds: 30
 });
 
-require(['vendor', 'facade', 'models', 'collections', 'controller', 'views', 'utils'], 
-function (vendor,   facade,   models,   collections,   Controller,   views,   utils) {
+require(['facade', 'models', 'collections', 'controller', 'views', 'utils'], 
+function (facade,   models,   collections,   Controller,   views,   utils) {
 
-    var $ = vendor.$,
-        _ = vendor._,
+    var $ = facade.$,
+        _ = facade._,
         docCookies = utils.docCookies,
-        Backbone = vendor.Backbone,
+        Backbone = facade.Backbone,
         ApplicationStateModel = models.ApplicationStateModel,
         ApplicationStates = collections.ApplicationStates,
         BaseModel = models.BaseModel,
@@ -95,7 +107,7 @@ function (vendor,   facade,   models,   collections,   Controller,   views,   ut
 
     describe("Dependencies", function() {
 
-        it("should load jQuery, _ and Backbone from within vendor object using require", function () {
+        it("should load jQuery, _ and Backbone from within facade object using require", function () {
             expect($).toBeDefined();
             expect($).not.toBe(null);
             expect(_).toBeDefined();
@@ -104,9 +116,9 @@ function (vendor,   facade,   models,   collections,   Controller,   views,   ut
             expect(Backbone).not.toBe(null);
         });
 
-        it("should load vendor, models and utils reference objects with require", function () {
-            expect(vendor).toBeDefined();
-            expect(vendor).not.toBe(null);
+        it("should load facade, models and utils reference objects with require", function () {
+            expect(facade).toBeDefined();
+            expect(facade).not.toBe(null);
             expect(models).toBeDefined();
             expect(models).not.toBe(null);
             expect(collections).toBeDefined();
@@ -122,11 +134,9 @@ function (vendor,   facade,   models,   collections,   Controller,   views,   ut
             expect(ApplicationStates).not.toBeNull();
         });
 
-        it('should load objects: BaseModel, EventModel, BaseView, SectionView and LayoutView with require', function () {
+        it('should load objects: BaseModel, BaseView, SectionView and LayoutView with require', function () {
             expect(BaseModel).toBeDefined();
             expect(BaseModel).not.toBeNull();
-            expect(EventModel).toBeDefined();
-            expect(EventModel).not.toBeNull();
             expect(BaseView).toBeDefined();
             expect(BaseView).not.toBeNull();
             expect(SectionView).toBeDefined();

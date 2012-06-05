@@ -25,7 +25,6 @@ require.config({
 
         'json2'        : '/vendor/json2',
         'modernizr'    : '/vendor/modernizr',
-        'requirejquery': '/vendor/require-jquery',
         'jquery'       : '/vendor/jquery-1.7.2.min',
         'zepto'        : '/vendor/zepto',
         'underscore'   : '/vendor/underscore',
@@ -35,9 +34,10 @@ require.config({
         // Plugins
 
         // RequireJS
-        'domready'     : '/vendor/domReady',
-        'order'        : '/vendor/order',
-        'text'         : '/vendor/text',
+        'use'          : '/vendor/plugins/use',
+        'domready'     : '/vendor/plugins/domReady',
+        'order'        : '/vendor/plugins/order',
+        'text'         : '/vendor/plugins/text',
 
         // Touch events
         'touch'        : '/vendor/plugins/touch',
@@ -45,12 +45,12 @@ require.config({
         // Vendor libs, packaged group of common dependencies
         'vendor'       : '/vendor',
 
-        // Facade references to vendor / lirabry methods
+        // Facade references to vendor / library methods
         'facade'       : '/facade',
 
         // Utilities and libraries
         'utils'        : '/utils',
-        
+
         // Backbone syncs depend on both vendor and utils
         'syncs'        : '/syncs',
 
@@ -66,37 +66,49 @@ require.config({
         'chrome'       : '/packages/chrome',
         'products'     : '/packages/products',
         'hello'        : '/packages/hello',
+        'todos'        : '/packages/todos',
 
         // Application - bootstrap for frontend app 
         'application'  : '/application'
 
     },
-    priority: ['text', 'modernizr', 'json2', 'vendor', 'utils'],
+    use: {
+        "underscore": {
+            attach: "_"
+        },
+        "backbone": {
+            deps: ["use!underscore", "jquery"],
+            attach: function(_, $) {
+                return Backbone;
+            }
+        }
+    },
+    priority: ['text', 'use', 'modernizr', 'json2', 'vendor', 'utils'],
     jquery: '1.7.2',
-    waitSeconds: 10
+    waitSeconds: 30
 });
 
-require(['vendor', 'facade', 'models', 'collections', 'views', 'utils'], 
-function (vendor,   facade,   models,   collections,   views,   utils) {
+require(['facade', 'models', 'collections', 'views', 'utils'], 
+function (facade,   models,   collections,   views,   utils) {
 
-    var $ = vendor.$,
-        _ = vendor._,
+    var $ = facade.$,
+        _ = facade._,
         docCookies = utils.docCookies,
-        Backbone = vendor.Backbone,
+        Backbone = facade.Backbone,
         ApplicationStateModel = models.ApplicationStateModel,
         ApplicationStates = collections.ApplicationStates,
-        EventModel = models.EventModel,
-        events = collections.events,
-        MemberSummaryModel = models.MemberSummaryModel,
+        EventModel = models.BaseModel,
+        events = collections.BaseCollection,
+        MemberSummaryModel = models.BaseModel,
         lib = utils.lib,
         Channel = lib.Channel,
         debug = utils.debug;
 
     describe("Dependencies", function() {
 
-        it("should load vendor, models and utils reference objects with require", function () {
-            expect(vendor).toBeDefined();
-            expect(vendor).not.toBe(null);
+        it("should load facade, models and utils reference objects with require", function () {
+            expect(facade).toBeDefined();
+            expect(facade).not.toBe(null);
             expect(models).toBeDefined();
             expect(models).not.toBe(null);
             expect(collections).toBeDefined();
@@ -105,7 +117,7 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
             expect(utils).not.toBe(null);
         });
 
-        it("should load jQuery, _ and Backbone from within vendor object using require", function () {
+        it("should load jQuery, _ and Backbone from within facade object using require", function () {
             expect($).toBeDefined();
             expect($).not.toBe(null);
             expect(_).toBeDefined();
@@ -475,7 +487,7 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
 
             appData = new ApplicationStates();
             appData.add([{ 
-                name: eventsList.url, //"/v4/events", 
+                name: "/v4/events", // eventsList.url
                 data: eventsList, 
                 storage: 'sessionStorage'
             }]);
@@ -664,8 +676,8 @@ function (vendor,   facade,   models,   collections,   views,   utils) {
                 // assert
                 expect(layoutState["Top"].state).toBe("displayed");
                 expect(layoutState["Bottom"].state).toBe("displayed");
-                expect(layoutState["route"]).toBe("/test/application-state/");
-                expect(layoutState["meta"]).toBeDefined();
+                expect(layoutState["route"]).toBe("/test/applicationstates/");
+                //expect(layoutState["meta"]).toBeDefined();
                 expect(_.contains(ApplicationStates.references, layoutState.route)).toBeTruthy();
                 expect(appState.findByName(layoutState.route).get('data').route).toBe(layoutState.route);
 

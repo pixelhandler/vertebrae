@@ -1,13 +1,13 @@
-if (!window.PX) { var PX = {}; }
+if (!window.HL) { var HL = {}; }
 
-PX.AddStyleSheetElem = function (url) {
+HL.AddStyleSheetElem = function (url) {
     document.write('<link rel="stylesheet" href="'+url+'">');
 };
 
-PX.AddScriptElem = function (url) {
+HL.AddScriptElem = function (url) {
     document.write('<script type="text/javascript" src="'+url+'"></script>');
 };
 
-PX.AddRJSScriptElem = function (url, rlsUrl) {
+HL.AddRJSScriptElem = function (url, rlsUrl) {
     document.write('<script data-main="'+url+'" src="'+rlsUrl+'"></script>');
 };

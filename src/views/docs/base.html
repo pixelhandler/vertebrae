@@ -77,7 +77,9 @@ Param {Function} <code>dataDecorator</code> - accepts arg for {Object} <code>dat
 Returns the same (mutated) {Object} <code>data</code></p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">domInsertion</span><span class="p">,</span> <span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">markup</span><span class="p">;</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">confirmElement</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">confirmElement</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">confirmElement</span><span class="p">();</span>
+            <span class="p">}</span>
             <span class="nx">dataDecorator</span> <span class="o">=</span> <span class="nx">dataDecorator</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">dataDecorator</span><span class="p">;</span>
             <span class="nx">markup</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">);</span>
             <span class="nx">domInsertion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">domInsertionMethod</span><span class="p">(</span><span class="nx">domInsertion</span><span class="p">);</span>
@@ -116,7 +118,7 @@ Param {Object} <code>partials</code> - see Mustache.js documentation.</p>       
 
             <span class="nx">data</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">dataDecorator</span> <span class="o">&amp;&amp;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">dataDecorator</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">data</span> <span class="o">=</span> <span class="nx">dataDecorator</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="nx">dataDecorator</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">template</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">||</span> <span class="o">!</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
@@ -163,10 +165,11 @@ Setup child views which can be rendered or appended to another context</p>      
                 <span class="nx">callbackFn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
                     <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
                     <span class="nx">view</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+                    <span class="k">return</span> <span class="nx">view</span><span class="p">;</span>
                 <span class="p">};</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">callbackFn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                    <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+                    <span class="k">return</span> <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
                 <span class="p">};</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">callbackFn</span><span class="p">;</span>

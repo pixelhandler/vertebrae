@@ -3,7 +3,17 @@
 **Vertebrae** provides *AMD* structure and additional objects for extending *Backbone.js* as an application framework.
 
 * About the project: [www.hautelooktech.com - Vertebrae post](http://www.hautelooktech.com/2012/05/24/vertebrae-front-end-framework-built-with-backbone-js-and-requirejs-using-amd/ "Vertebrae background")  
-* Demo running at : <http://vertebrae-framework.herokuapp.com/>
+* The code for the demo app is in the todos package, for file structure
+see: [www.hautelooktech.com - JavaSript application using packages](http://www.hautelooktech.com/2012/02/01/optimize-and-build-a-backbone-js-javascript-application-with-require-js-using-packages/ "Organize code in packages")
+* Todos app / demo hosted on [Heroku](https://devcenter.heroku.com/articles/nodejs) at: <http://vertebrae-framework.herokuapp.com/>
+  * Todos controller code: <https://github.com/hautelook/vertebrae/blob/master/src/packages/todos.js>
+  * Todos package code: <https://github.com/hautelook/vertebrae/tree/master/src/packages/todos>
+  * Links to see other sample packages in the framework:  
+    * Products package at : <http://vertebrae-framework.herokuapp.com/products> (renders a list from mocked API)  
+    * `hello` package at :
+   <http://vertebrae-framework.herokuapp.com/hello/yourName>  
+      * Replace the `yourName` parameter, e.g. 'joe': <http://vertebrae-framework.herokuapp.com/hello/joe>
+
 
 ## Views: 
 
@@ -18,10 +28,11 @@ form a composite of views under one view object, add a destroy method.
 
 ### Collection View
 
-Manages rendering many views with a collection, see: <http://liquidmedia.ca/blog/2011/02/lib-js-part-3/>
+Manages rendering many views with a collection 
 
 The CollectionView extends BaseView and is intended for rendering a collection.
-A item view is required for rendering withing each iteration over the models.
+A item view is required for rendering withing each iteration over the models. 
+See: <http://liquidmedia.ca/blog/2011/02/lib-js-part-3/>
 
 ### Section View States
 
@@ -40,8 +51,8 @@ destinations for each (rendered) view. A page may transition between
 many views, so the layout manager keeps track of view states, e.g. 
 'not-rendered', 'rendered', 'not-displayed', 'displayed'. 
 
-The layout manager can lazy load and render (detached) views that 
-a member is very likely to request, e.g. tab changes on events page. 
+The layout manager can be utilized to lazy load and render (detached) views. 
+that a site visitor is very likely to request, e.g. tab changes on a page. 
 The transition between view states is managed by this object. 
 An entire layout may be cleared so that view objects and their bindings 
 are removed, preparing these objects for garbage collection (preventing 
@@ -175,15 +186,6 @@ The app.js is the node.js script that runs the server and expects the "public" d
 The build.js should be configured to build to the "public" directory. 
 
 So after you run `r.js -o build.js` to populate the "public" directory then you can use `node app.js` to view the site at : http://localhost:4242
-
-## Hosting on Heroku
-
-See: <https://devcenter.heroku.com/articles/nodejs>
-
-Some links to see framework running:  
- * products package at : <http://vertebrae-framework.herokuapp.com/products>  
- * hello package at : <http://vertebrae-framework.herokuapp.com/hello>  
-    * add a parameter like your name or 'joe': <http://vertebrae-framework.herokuapp.com/hello/joe>
 
 ## Hello World example using a Backbone View as a Layout Manager
 

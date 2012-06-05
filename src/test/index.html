@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vertabrae framework spec runners</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="./testutils.js"></script>
+  <script src="../vendor/modernizr.js"></script>
+  <script src="../vendor/jquery-1.7.2.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Vertabrae framework spec runners</h1>
+  </header>
+  <section id="content">
+    <nav>
+
+      <h2>Application</h2>
+      <ol>
+        <li>
+          <a href="./applicationstates/">Application State Manager</a>
+        </li>
+        <li>
+          <a href="./controller/">Controller</a>
+        </li>
+        <li>
+          <a href="./layout/">Layout Manager</a>
+        </li>
+        <!-- <li>
+          <a href="./messaging/">Messaging</a>
+        </li> -->
+      </ol>
+
+      <!-- <h2>Utils</h2>
+      <ol>
+        <li><a href="./utils/lib/">Lib</a></li>
+      </ol> -->
+
+    </nav>
+  </section>
+  <section>
+    <h4>Browser Features</h6>
+    <p id="features"></p>
+  </section>
+  <footer>
+    <a href="/">Back to home</a>
+  </footer>
+  
+  <script>
+    $(function () {
+      var features = $('html').attr('class');
+      // alert(features);
+      setTimeout(function () {
+        $('#features').text(features);
+      }, 1000);
+    }());
+  </script>
+
+</body>
+</html>
