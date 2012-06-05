@@ -57,9 +57,9 @@ define(['facade','views/base','utils'], function (facade, BaseView, utils) {
             collection.on('add', this.add);
             collection.on('remove', this.remove);
             if (!collection.length && !collection.request) {
-                collection.fetch();
+                collection.request = collection.fetch();
                 collection.request.done(function () {
-                    collection.each(this.add);
+                    collection.each(collection.add);
                 });
             } else {
                 collection.each(this.add);

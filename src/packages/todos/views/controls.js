@@ -15,7 +15,7 @@ function(facade,   views,   controlsTemplate,                     utils) {
         $ = facade.$;
 
     ControlsView = SectionView.extend({
-    
+
         events: {
             "click #toggle-all": "toggleAll"
         },
@@ -26,7 +26,7 @@ function(facade,   views,   controlsTemplate,                     utils) {
             SectionView.prototype.initialize.call(this, options);
             this.addSubscribers();
         },
-        
+
         // **Method** `setOptions` - called by BaseView's initialize method
         setOptions: function (options) {
             if (!this.collection) {
@@ -35,33 +35,34 @@ function(facade,   views,   controlsTemplate,                     utils) {
             // no model data needed, but we do need an empty object
             this.model = this.model || { toJSON: function () { return {}; } };
         },
-        
+
         render: function () {
             SectionView.prototype.render.call(this);
-            this.allCheckbox = this.$("#toggle-all")[0];
-            this.allCheckbox.checked = !!this.collection.remaining().length;
+            this.handleCheckbox();
         },
-        
+
         toggleAll: function () {
             this.collection.toggleAllComplete(this.allCheckbox.checked);
+            this.handleCheckbox();
         },
 
-        handleListDisplay: function () {
-            var main = $('#main');
-
-            if (this.collection.length) {
-                main.show();
-            } else {
-                main.hide();
+        handleCheckbox: function () {
+            if (this.deferred.isResolved()) {
+                this.allCheckbox = this.allCheckbox || this.$("#toggle-all")[0];
+                this.allCheckbox.checked = !this.collection.remaining().length;
             }
         },
-        
+
+        // Subscribers...
+
         addSubscribers: function () {
-            this.collection.on('add remove reset sync', this.handleListDisplay);
+            this.collection.on('add remove reset sync toggleAllComplete', this.handleCheckbox);
+            Channel('todo:clear').subscribe(this.handleCheckbox);
         },
 
         removeSubscribers: function () {
-            this.collection.off('add remove reset sync', this.handleListDisplay)
+            this.collection.on('add remove reset sync toggleAllComplete', this.handleCheckbox);
+            Channel('todo:clear').subscribe(this.handleCheckbox);
         }
 
     });

@@ -78,6 +78,7 @@ define([
         // Clear all done todo items, destroying their models.
         clearCompleted: function() {
             this.collection.clearCompleted();
+            this.updateStats();
             return false;
         },
 
@@ -88,6 +89,7 @@ define([
             this.collection.on('add remove reset sync toggleAllComplete', this.updateStats);
             Channel('todo:toggleDone').subscribe(this.updateStats);
             Channel('todo:clear').subscribe(this.updateStats);
+            Channel('todo:stats').subscribe(this.updateStats);
         },
 
         removeSubscribers: function () {
@@ -95,6 +97,7 @@ define([
             this.collection.off('add remove reset sync toggleAllComplete', this.updateStats);
             Channel('todo:toggleDone').unsubscribe(this.updateStats);
             Channel('todo:clear').unsubscribe(this.updateStats);
+            Channel('todo:stats').subscribe(this.updateStats);
         }
 
     });

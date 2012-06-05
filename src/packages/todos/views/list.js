@@ -19,7 +19,7 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
         __super__: CollectionView.prototype,
 
         id: "todo-list",
-        
+
         name: "List",
 
         tagName: "ul",
@@ -29,12 +29,6 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
 
         // Store constructor for the child views
         _view: TodoItemView,
-
-        // Delegated events for creating new items, and clearing completed ones.
-        events: {
-            "click #clear-completed": "clearCompleted",
-            "click #toggle-all": "toggleAllComplete"
-        },
 
         initialize: function(options) {
             CollectionView.prototype.initialize.call(this, options);
@@ -50,7 +44,19 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
             if (!this.childViews.footer) {
                 this.setupFooterView();
             }
+            _.defer(this.handleListDisplay);
             return this;
+        },
+
+        handleListDisplay: function () {
+            var main = $('#main');
+
+            if (this.collection.length) {
+                main.show();
+            } else {
+                main.hide();
+            }
+            Channel('todo:stats').publish();
         },
 
         // Child views...
@@ -65,18 +71,21 @@ function(facade,  views,   utils,   TodoItemView,       FooterView) {
 
             this.childViews.footer = footerView;
             this.callbacks.add(renderFooterView);
+            this.callbacks.add(function () {
+                Channel('todo:stats').publish();
+            });
         },
 
         // Event handlers...
 
-        // Clear all done todo items, destroying their models.
-        clearCompleted: function() {
-            this.collection.clearCompleted();
-            return false;
+        addSubscribers: function () {
+            this.collection.on('add remove reset sync toggleAllComplete clearCompleted', this.handleListDisplay);
+            Channel('todo:clear').subscribe(this.handleListDisplay);
         },
 
-        toggleAllComplete: function () {
-            Channel('todos:toggleAll').publish();
+        removeSubscribers: function () {
+            this.collection.off('add remove reset sync toggleAllComplete clearCompleted', this.handleListDisplay);
+            Channel('todo:clear').unsubscribe(this.handleListDisplay);
         }
 
     });

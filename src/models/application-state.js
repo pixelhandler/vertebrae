@@ -15,7 +15,7 @@ define(['facade', 'utils', 'syncs'], function (facade, utils, syncs) {
         _ = facade._,
         // lib = utils.lib,
         Store = utils.storage,
-        applicationStateSync = syncs.application,
+        applicationStateSync = syncs.applicationStateSync,
         debug = utils.debug;
 
     // Constructor `{ApplicationStateModel}` extends Backbone.Model.prototype

@@ -26,14 +26,14 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
             }
         },
 
-        // Stubbed;  integrate ASM
         destroy: function() {
+            // using Appications States Collection / localStorage
             this.trigger('destroy');
         },
 
-        // Stubbed;  integrate ASM
         save: function() {
-            // no-op
+            // no-op, using Appications States Collection / localStorage
+            Channel('todo:save').publish();
         },
 
         // Toggle the `done` state of this todo item.

@@ -5,11 +5,12 @@
 // Requires define
 // Returns {TodosList} constructor
 
-define(['facade', 'collections', 'todos/models/item'], function(facade, collections, TodoModel) {
+define(['facade', 'collections', 'todos/models/item', 'utils'], function(facade, collections, TodoModel, utils) {
 
     var TodosList,
         BaseCollection = collections.BaseCollection,
-        _ = facade._;
+        _ = facade._,
+        Channel = utils.lib.Channel;
 
     TodosList = BaseCollection.extend({
 
@@ -39,7 +40,14 @@ define(['facade', 'collections', 'todos/models/item'], function(facade, collecti
         },
 
         clearCompleted: function() {
-            _.each(this.done(), function(todo){ todo.clear(); });
+            var completed = this.done();
+            if (completed && completed.length) {
+                _.each(completed, function(todo){
+                    todo.clear(); 
+                });
+                this.remove(completed);
+                this.trigger('clearCompleted', completed);
+            }
         },
 
         toggleAllComplete: function(done) {
@@ -50,9 +58,15 @@ define(['facade', 'collections', 'todos/models/item'], function(facade, collecti
             this.trigger('toggleAllComplete', this);
         },
 
-        // Stubbed;  integrate ASM
         fetch: function() {
-            this.request = this.deferred.promise();
+            var collection = this;
+
+            function callback (data) {
+                collection.reset(data);
+                collection.deferred.resolve();
+            }
+            Channel('todos:fetch').publish(callback);
+            return this.request = this.deferred.promise(); // yes, assignment
         }
 
     });

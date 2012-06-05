@@ -18,17 +18,17 @@ function (facade,  views,  todoItemTemplate) {
     TodoItemView = BaseView.extend({
 
         //... is a list tag.
-        tagName:    "li",
+        tagName: "li",
 
         template: todoItemTemplate,
 
         // The DOM events specific to an item.
         events: {
-            "click .toggle"   : "toggleDone",
-            "dblclick .view"  : "edit",
-            "click button.destroy" : "clear",
-            "keypress .edit"  : "updateOnEnter",
-            "blur .edit"      : "close"
+            "click .toggle": "toggleDone",
+            "dblclick .view": "edit",
+            "click button.destroy": "clear",
+            "keypress .edit": "updateOnEnter",
+            "blur .edit": "close"
         },
 
         // The TodoView listens for changes to its model, re-rendering. Since there's
@@ -66,7 +66,7 @@ function (facade,  views,  todoItemTemplate) {
         // Close the `"editing"` mode, saving changes to the todo.
         close: function() {
             this.model.set({content: this.input.val()});
-            // TODO use ASM for storage... this.model.save();
+            this.model.save();
             this.$el.removeClass("editing");
         },
 
@@ -79,12 +79,8 @@ function (facade,  views,  todoItemTemplate) {
         clear: function() {
             this.model.clear();
         },
-        
+
         addSubscribers: function () {
-            /*
-            Channel('todos:toggleAll').subscribe(this.toggleAll);
-            this.collection.on('add destroy remove reset sync', this.handleListDisplay);
-            */
             this.model.on('change', this.render, this);
             this.model.on('destroy', this.remove, this);
         },

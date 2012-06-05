@@ -36,7 +36,7 @@ define([
             "/packages/todos/app.css"
         ];
 
-    TodosController = Controller.extend(    {
+    TodosController = Controller.extend({
 
         initialize: function (options) {
             Channel('load:css').publish(cssArr);
@@ -44,13 +44,14 @@ define([
             _.bindAll(this);
 
             this.handleOptions(options);
-            this.initSections();
+            this.createTodosList();
+            this.handleDeferreds();
+            this.addSubscribers();
 
             return this;
         },
 
         initSections: function () {
-            this.createTodosList();
             this.setupHeaderView();
             this.setupControlsView();
             this.setupTodosListView();
@@ -58,7 +59,10 @@ define([
         },
 
         createTodosList: function () {
+            // var data = this.fetchData();
+            // this.collection = (data)? new TodosList(data) : new TodosList();
             this.collection = new TodosList();
+            this.collection.fetch();
         },
 
         setupHeaderView: function() {
@@ -83,7 +87,7 @@ define([
 
             this.scheme.push(todosListView);
         },
-        
+
         setupControlsView: function() {
             var controlsView;
 
@@ -109,6 +113,79 @@ define([
             this.layout = todosLayout;
 
             return this.layout;
+        },
+
+        handleDeferreds: function () {
+            var controller = this;
+
+            $.when(this.collection.request).done(function () {
+                controller.initSections();
+                $.when(controller.layout.deferred).done(function () {
+                    _.delay(function () {
+                        $('.not-ready').removeAttr('class').removeAttr('style');
+                    }, 250);
+                });
+            });
+        },
+
+        // Using Application States Collection / localStorage for persistance of todos data
+
+        saveData: function () {
+            if (this.appStates) {
+                this.appStates.add({
+                    name: 'todosData',
+                    data: this.collection.toJSON(),
+                    storage: 'localStorage',
+                    expires: new Date(Date.now() + 1000 * (/*secs*/60 * /*mins*/7 * /*hrs*/24 * /*days*/365))
+                });
+                this.appStates.save('todosData');
+            }
+        },
+
+        destroyOrUpdateData: function (models) {
+            if (this.appStates) {
+                if (models && _.isArray(models)) {
+                    if (this.collection.models.length === models.length) {
+                        this.appStates.destroy('todosData');
+                    } else {
+                        this.saveData();
+                    }
+                }
+            }
+        },
+
+        fetchData: function (callback) {
+            var model, data;
+            if (this.appStates) {
+                model = this.appStates.findInCollectionOrStorage('todosData');
+            }
+            if (model && model.data) {
+                data = model.data;
+            }
+            if (callback && _.isFunction(callback)) {
+                callback(data);
+            }
+            return data;
+        },
+
+        addSubscribers: function () {
+            this.collection.on('add remove reset toggleAllComplete', this.saveData);
+            this.collection.on('clearCompleted', this.destroyOrUpdateData);
+            // Channel('todos:clearCompleted').subscribe(this.destroyOrUpdateData);
+            Channel('todo:toggleDone').subscribe(this.saveData);
+            Channel('todo:clear').subscribe(this.saveData);
+            Channel('todo:save').subscribe(this.saveData);
+            Channel('todos:fetch').subscribe(this.fetchData);
+        },
+
+        removeSubscribers: function () {
+            this.collection.off('add remove reset toggleAllComplete', this.saveData);
+            this.collection.on('clearCompleted', this.destroyOrUpdateData);
+            // Channel('todos:clearCompleted').unsubscribe(this.destroyData);
+            Channel('todo:toggleDone').unsubscribe(this.saveData);
+            Channel('todo:clear').unsubscribe(this.saveData);
+            Channel('todo:save').unsubscribe(this.saveData);
+            Channel('todos:fetch').unsubscribe(this.fetchData);
         }
 
     });
