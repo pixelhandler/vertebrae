@@ -74,19 +74,3 @@ require.config({
     jquery: '1.7.2',
     waitSeconds: 30
 });
-
-require(['facade', 'application', 'utils'], function (facade, App, utils) {
-
-    var $ = facade.$,
-        Backbone = facade.Backbone,
-        debug = utils.debug;
-
-    $(function () { // doc ready
-        var app;
-
-        // run the application, it all starts here.
-        app = new App();
-        Backbone.history.start({pushState: true});
-        debug.log("app initialized.");
-    });
-});
