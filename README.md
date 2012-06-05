@@ -5,7 +5,7 @@
 * About the project: [www.hautelooktech.com - Vertebrae post](http://www.hautelooktech.com/2012/05/24/vertebrae-front-end-framework-built-with-backbone-js-and-requirejs-using-amd/ "Vertebrae background")  
 * The code for the demo app is in the todos package, for file structure
 see: [www.hautelooktech.com - JavaSript application using packages](http://www.hautelooktech.com/2012/02/01/optimize-and-build-a-backbone-js-javascript-application-with-require-js-using-packages/ "Organize code in packages")
-* Todos app / demo hosted on [Heroku](https://devcenter.heroku.com/articles/nodejs) at: <http://vertebrae-framework.herokuapp.com/>
+* Todos app / demo hosted on [Heroku](https://devcenter.heroku.com/articles/nodejs) at: <http://vertebrae-framework.herokuapp.com/> | optimized and built at: <http://vertebrae-optimized.herokuapp.com/>
   * Todos controller code: <https://github.com/hautelook/vertebrae/blob/master/src/packages/todos.js>
   * Todos package code: <https://github.com/hautelook/vertebrae/tree/master/src/packages/todos>
   * Links to see other sample packages in the framework:  
