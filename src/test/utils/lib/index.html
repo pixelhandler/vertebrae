@@ -1,51 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>utils spec runner</title>
-
+  <title>utils - lib spec runner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="../../testutils.js"></script>
-  <script>
-  HL.AddStyleSheetElem('/test/lib/jasmine.css');
-  HL.AddScriptElem('/test/lib/jasmine.js');
-  HL.AddScriptElem('/test/lib/jasmine-html.js');
-  HL.AddScriptElem('/test/lib/jasmine-jquery.js');
-  HL.AddRJSScriptElem('/test/utils/lib/spec', '/vendor/require.js');
+  <script src="../../testenv.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    HL.AddScriptElem('/test/utils/lib/spec.js');
+    HL.setupTestEnv();
   </script>
-
-  <script type="text/javascript">
-    (function() {
-      var jasmineEnv = jasmine.getEnv();
-      jasmineEnv.updateInterval = 1000;
-
-      var trivialReporter = new jasmine.TrivialReporter();
-
-      jasmineEnv.addReporter(trivialReporter);
-
-      jasmineEnv.specFilter = function(spec) {
-        return trivialReporter.specFilter(spec);
-      };
-
-      var currentWindowOnload = window.onload;
-
-      window.onload = function() {
-        if (currentWindowOnload) {
-          currentWindowOnload();
-        }
-        execJasmine();
-      };
-
-      function execJasmine() {
-        jasmineEnv.execute();
-      }
-
-    })();
-  </script>
-
 </head>
-
 <body>
-
+  <div id="wrapper"></div>
 </body>
 </html>
-

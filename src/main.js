@@ -21,9 +21,7 @@ require.config({
         // Plugins
 
         // RequireJS
-        'use'          : '/vendor/plugins/use',
         'domready'     : '/vendor/plugins/domReady',
-        'order'        : '/vendor/plugins/order',
         'text'         : '/vendor/plugins/text',
 
         // Touch events
@@ -59,18 +57,16 @@ require.config({
         'application'  : '/application'
 
     },
-    use: {
-        "underscore": {
-            attach: "_"
+    shim: {
+        'underscore': {
+            exports: '_'
         },
-        "backbone": {
-            deps: ["use!underscore", "jquery"],
-            attach: function(_, $) {
-                return Backbone;
-            }
+        'backbone': {
+            deps: ['underscore', 'jquery'],
+            exports: 'Backbone'
         }
     },
-    priority: ['text', 'use', 'modernizr', 'json2', 'vendor', 'utils'],
+    priority: ['text', 'modernizr', 'json2', 'vendor', 'utils'],
     jquery: '1.7.2',
     waitSeconds: 30
 });

@@ -873,4 +873,5 @@ function (facade,   models,   collections,   views,   utils) {
 
     }); // describe
 
+    Channel('testing', 'once memory').publish();
 }); // require

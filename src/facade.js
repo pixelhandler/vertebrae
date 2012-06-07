@@ -7,7 +7,7 @@
 // Requires define
 // Returns {object} references to vendor / library methods
 
-define(['vendor'/*, 'order!touch'*/], function (vendor) { 
+define(['vendor'/*, 'touch'*/], function (vendor) { 
 
     var facade = {},
         domLib,

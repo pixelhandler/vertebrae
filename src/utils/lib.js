@@ -87,6 +87,7 @@ define(["facade", "utils/debug"], function(facade, debug) {
             if (flags && typeof flags === 'string') {
                 flag = flags.split(' ');
                 $.each(flag, function () {
+                    flagsOk = true;
                     if (!inArray(this, allowedFlags)) {
                         flagsOk = false;
                         return flagsOk;

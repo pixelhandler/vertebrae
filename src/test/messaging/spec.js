@@ -11,83 +11,16 @@
 // https://github.com/pivotal/jasmine/wiki
 // http://sinonjs.org/ | http://sinonjs.org/docs/
 
-// copy config from main.js for any scripts to use during unit tests
-require.config({
-    baseUrl: './',
-    locale: 'en-us',
-    paths: {
 
-        // Libraries
+require(['facade', 'models/messaging', 'collections/messaging', 'views/messaging', 'utils'], 
+function (facade,   MessagingModel,     MessagingCollection,     MessageView,       utils) {
 
-        'json2'        : '/vendor/json2',
-        'modernizr'    : '/vendor/modernizr',
-        'jquery'       : '/vendor/jquery-1.7.2.min',
-        'zepto'        : '/vendor/zepto',
-        'underscore'   : '/vendor/underscore',
-        'mustache'     : '/vendor/mustache',
-        'backbone'     : '/vendor/backbone',
-
-        // Plugins
-
-        // RequireJS
-        'use'          : '/vendor/plugins/use',
-        'domready'     : '/vendor/plugins/domReady',
-        'order'        : '/vendor/plugins/order',
-        'text'         : '/vendor/plugins/text',
-
-        // Touch events
-        'touch'        : '/vendor/plugins/touch',
-
-        // Vendor libs, packaged group of common dependencies
-        'vendor'       : '/vendor',
-
-        // Facade references to vendor / library methods
-        'facade'       : '/facade',
-
-        // Utilities and libraries
-        'utils'        : '/utils',
-
-        // Backbone syncs depend on both vendor and utils
-        'syncs'        : '/syncs',
-
-        // Should be used as required dependencies with use of `define`, 
-        'models'       : '/models',
-        'views'        : '/views',
-        'collections'  : '/collections',
-        'controller'   : '/controller',
-
-        // Packages
-
-        'packages'     : '/packages',
-        'chrome'       : '/packages/chrome',
-        'products'     : '/packages/products',
-        'hello'        : '/packages/hello',
-        'todos'        : '/packages/todos',
-
-        // Application - bootstrap for frontend app 
-        'application'  : '/application'
-
-    },
-    use: {
-        "underscore": {
-            attach: "_"
-        },
-        "backbone": {
-            deps: ["use!underscore", "jquery"],
-            attach: function(_, $) {
-                return Backbone;
-            }
-        }
-    },
-    priority: ['text', 'use', 'modernizr', 'json2', 'vendor', 'utils'],
-    jquery: '1.7.2',
-    waitSeconds: 30
-});
-
-require(['jquery', 'underscore', 'backbone', 'models/messaging', 'collections/messaging', 'views/messaging', 'utils/debug', 'utils/lib'], 
-function ($,        _,            Backbone,   MessagingModel,     MessagingCollection,     MessageView,       debug,         lib) {
-
-    var Channel = lib.Channel;
+    var $ = facade.$,
+        _ = facade._,
+        Backbone = facade.Backbone,
+        lib = utils.lib,
+        Channel = utils.lib.Channel,
+        debug = utils.debug;
 
     describe("Dependencies", function() {
         it("should load jQuery, _ and Backbone with require", function () {
@@ -357,4 +290,5 @@ function ($,        _,            Backbone,   MessagingModel,     MessagingColle
 
     }); // describe
 
+    Channel('testing', 'once memory').publish();
 }); // require

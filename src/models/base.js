@@ -66,6 +66,14 @@ define(['facade', 'utils'], function (facade, utils) {
             model.deferred.reject();
             debug.log(response);
         },
+        
+        // **Method:** `save`
+        // Wrap Backbone.Model.prototype.save with extend ajax options
+        save: function (attrs, options) {
+            options = options || {};
+            _.extend(options, ajaxOptions);
+            return this.request = Backbone.Model.prototype.save.call(this, attrs, options);
+        },
 
         // Primarily a tool for unit tests... Don't rely on calling this.isReady!!
         isReady: function () {
