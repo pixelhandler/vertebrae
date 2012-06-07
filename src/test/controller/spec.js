@@ -316,5 +316,5 @@ function (facade,   models,   collections,   Controller,   views,   utils) {
 
     }); // describe
 
-    Channel('testing', 'once memory').publish();
+    document.dispatchEvent(HL.initTestingFrameworkEvent);
 }); // require

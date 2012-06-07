@@ -290,5 +290,5 @@ function (facade,   MessagingModel,     MessagingCollection,     MessageView,   
 
     }); // describe
 
-    Channel('testing', 'once memory').publish();
+    document.dispatchEvent(HL.initTestingFrameworkEvent);
 }); // require

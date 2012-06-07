@@ -873,5 +873,5 @@ function (facade,   models,   collections,   views,   utils) {
 
     }); // describe
 
-    Channel('testing', 'once memory').publish();
+    document.dispatchEvent(HL.initTestingFrameworkEvent);
 }); // require

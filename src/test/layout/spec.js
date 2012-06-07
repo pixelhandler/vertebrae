@@ -459,5 +459,5 @@ function (facade,   models,   views,   utils) {
     // });
     // describe("Base View", function () {});
 
-    Channel('testing', 'once memory').publish();
+    document.dispatchEvent(HL.initTestingFrameworkEvent);
 }); // require

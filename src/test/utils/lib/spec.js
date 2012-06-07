@@ -48,17 +48,25 @@ function ($,        _,            Backbone,   debug,         lib,         parseD
         });
         
         it("should have an 'Channel' property which utilizes pub/sub behaviors", function () {
-            var subTest, memoryTest, Channel = lib.Channel;
+            // arrange
+            var subTest, memoryTest;
+
+            function logSubscribe(msg) {
+                debug.log('logSubscribe Fn received: ' + msg);
+                subTest = msg;
+            }
+
+            // assert
             expect(Channel).toBeDefined();
             expect(Channel('fake').publish).toBeDefined();
             expect(Channel('fake').subscribe).toBeDefined();
             expect(Channel('fake').unsubscribe).toBeDefined();
             expect(Channel('fake').disable).toBeDefined();
-            // act
-            function logSubscribe(msg) {
-                debug.log('logSubscribe Fn received: ' + msg);
-                subTest = msg;
-            }
+
+            // act...
+
+            // standard (no custom options, default is to use 'memory'
+
             Channel("test:pubsub").subscribe(logSubscribe);
             Channel("test:pubsub").publish('in a bottle');
             function logMemory(msg) {
@@ -67,10 +75,63 @@ function ($,        _,            Backbone,   debug,         lib,         parseD
             }
             Channel("test:memory").publish('genie');
             Channel("test:memory").subscribe(logMemory);
-
             // assert
             expect(subTest).toBe('in a bottle');
             expect(memoryTest).toBe('genie');
+
+            // unsubscribe
+
+            Channel("test:pubsub").unsubscribe(logSubscribe);
+            Channel("test:pubsub").publish('set free on third wish');
+            expect(subTest).not.toBe('set free on third wish');
+
+            // 'once' option
+
+            Channel("test:once", "once").subscribe(logSubscribe);
+            Channel("test:once").publish('one time only');
+            // assert
+            expect(subTest).toBe('one time only');
+            Channel("test:once").publish('Again, which should not work.');
+            // assert
+            expect(subTest).toBe('one time only');
+            Channel("test:once").unsubscribe(logSubscribe);
+
+            // 'nomemory' option
+
+            Channel("test:nomemory", "nomemory").publish("to no subscriber");
+            Channel("test:nomemory").subscribe(logSubscribe);
+            // assert
+            expect(subTest).not.toBe("to no subscriber");
+
+            // 'unique' option
+            subTest = [];
+            function testUniqueSubsOne(msg) {
+                subTest.push(msg);
+            }
+            function testUniqueSubsTwo(msg) {
+                subTest.push(msg);
+            }
+            Channel("test:unique", "unique").subscribe(testUniqueSubsOne);
+            Channel("test:unique").publish("unique subscribers only");
+            // assert
+            expect(subTest.length).toBe(1);
+            expect(subTest[0]).toBe("unique subscribers only");
+            Channel("test:unique").subscribe(testUniqueSubsTwo);
+            Channel("test:unique").publish("only works once per subscriber");
+
+            expect(subTest[1]).toBe("only works once per subscriber");
+            expect(subTest[2]).toBe("only works once per subscriber");
+            expect(subTest[3]).toBeUndefined();
+            expect(subTest.length).toBe(3);
+
+            // same subscriber as earlier, trying 3 calls to .subscribe
+            Channel("test:unique").subscribe(testUniqueSubsOne); 
+            expect(subTest.length).toBe(3);
+            Channel("test:unique").publish("called subscribe 3X but only 2 results when publishing w/ unique");
+            expect(subTest[3]).toBe("called subscribe 3X but only 2 results when publishing w/ unique");
+            expect(subTest[4]).toBe("called subscribe 3X but only 2 results when publishing w/ unique");
+            expect(subTest.length).toBe(5);
+
             debug.log("finish checking for 'Channel' property...");
         });
 
@@ -98,6 +159,6 @@ function ($,        _,            Backbone,   debug,         lib,         parseD
 
     }); // describe
 
-    Channel('testing', 'once memory').publish();
+    document.dispatchEvent(HL.initTestingFrameworkEvent);
 }); // require
 

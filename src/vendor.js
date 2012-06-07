@@ -4,8 +4,8 @@
 // this module is used with the r.js optimizer tool during build  
 // See http://requirejs.org/docs/faq-optimization.html
 
-define(["jquery", "underscore", "backbone", "modernizr", "mustache"], 
-function (jQuery, _, Backbone, Modernizr, Mustache) {
+define(['jquery', 'underscore', 'backbone', 'modernizr', 'mustache'], 
+function (jQuery,  _,            Backbone,   Modernizr,   Mustache) {
 
     jQuery.noConflict();
     _.noConflict();
@@ -15,12 +15,12 @@ function (jQuery, _, Backbone, Modernizr, Mustache) {
     // Load plugins in the facade.js not here
 
     return {
-        "jQuery": jQuery,
-        "$": jQuery,
-        "_": _,
-        "Backbone": Backbone,
-        "Modernizr": Modernizr, 
-        "Mustache": require("mustache")
+        'jQuery': jQuery,
+        '$': jQuery,
+        '_': _,
+        'Backbone': Backbone,
+        'Modernizr': Modernizr, 
+        'Mustache': Mustache
     };
 
 });
