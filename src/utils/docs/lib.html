@@ -65,6 +65,7 @@ Param {String} <code>flags</code> - set behavior of callbacks object,
             <span class="k">if</span> <span class="p">(</span><span class="nx">flags</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">flags</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">flag</span> <span class="o">=</span> <span class="nx">flags</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
                 <span class="nx">$</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">flag</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">flagsOk</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inArray</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">allowedFlags</span><span class="p">))</span> <span class="p">{</span>
                         <span class="nx">flagsOk</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="k">return</span> <span class="nx">flagsOk</span><span class="p">;</span>
