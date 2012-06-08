@@ -14,6 +14,66 @@ see: [www.hautelooktech.com - JavaSript application using packages](http://www.h
    <http://vertebrae-framework.herokuapp.com/hello/yourName>  
       * Replace the `yourName` parameter, e.g. 'joe': <http://vertebrae-framework.herokuapp.com/hello/joe>
 
+## Project / Goals
+
+*The project goals included*... dynamic script loading, AMD module format, dependency management, build with mostly open source libraries, organize code in packages, optimize and build for one or many single page apps, host on fully cached server, e.g. no server-side scripting using only an API for data, and the funnest for me, use behaviour driven development for the project. There is a description on the project at : [www.hautelooktech.com - Vertebrae post](http://www.hautelooktech.com/2012/05/24/vertebrae-front-end-framework-built-with-backbone-js-and-requirejs-using-amd/ "Vertebrae background")
+
+**The Problem:**
+
+Selected libraries for the framework (jQuery, Underscore.js, Backbone.js, RequireJS, Mustache) provide module loading, dependency management, application structure (for models, collections, views and routes), asynchronous interactions with API, various utilities and objects to manage asynchronous behaviors, e.g. (Promises) Deferreds, Callbacks. The remaining logic needed to complete the framework includes:
+
+- An object (model) to manage state of the single-page application;
+- A layout manager to present, arrange/transition and clear views, and
+- Controllers which respond to routes, get/set application state, and hand off work to layout manager.
+
+**Our Solutions** (implemented in Vertebrae):
+
+*Application State Manager* -
+
+The application manager stores data in memory and also persists data in browser storage to provide a resource for common data/metadata. Also provides data (state) to reconstruct the page views based on previous interactions (e.g. selected tab, applied filters). The application state manager provides a strategy for resources to retrieve state. Meant to act as a state machine.
+
+*Layout Manager* -
+
+The layout manager has one or many views as well as document (DOM) destinations for each (rendered) view. A page may transition between many views, so the layout manager keeps track of view states, e.g. rendered, not-rendered, displayed, not-displayed. You may use the layout manager to lazy load and render (detached) views that a site visitor is very likely to request, e.g. tab changes on a page. The transition between view states is managed by this object. An entire layout may be cleared so that view objects and their bindings are removed, preparing these objects for garbage collection (preventing memory leaks). The layout manager also communicates view state with controller(s).
+
+*Controller* -
+
+A controller object is called by a route handler function, and is responsible for getting relevant state (application models) to generate a page (layout), (also responsible for setting state when routes change). The controller passes dependent data (models/collections) and constructed view objects for a requested page to the layout manager. As a side-effect the use of controllers prevents the routes object from becoming bloated and tangled. A route should map to a controller which then kicks off the page view, keeping the route handling functions lean.
+
+The Todos app is hosted both in dev mode and optimized on Heroku... 
+
+- <http://vertebrae-framework.herokuapp.com/>
+- <http://vertebrae-optimized.herokuapp.com/>
+
+Many of the concepts in the frameworks are borrowed, e.g. the need to destroy views to prevent memory leaks, as pointed out by Derick Bailey - <http://lostechies.com/derickbailey/> ; the Layout Manager by Tim Branyen <http://tbranyen.github.com/backbone.layoutmanager/>
+
+Backbone.js is meant to be a tool in an application; the Backbone.js library does not provide the architecture needed to build a complete application, however does provide great interactions with an API and solid code structure for... *Views* (which act like controllers too), *Models* and *Collections* (the data layer), and finally* Routes*. We built the Vertebrae framework to meat the goals of our project, and decided to extract the code as a framework for others to use, learn, or whatever. 
+
+## Build and optimize using:
+
+    r.js -o build.js
+
+## To launch (Node.js) server
+
+    node app.js
+
+Based on the setting in [app.js](https://github.com/hautelook/vertebrae/blob/master/app.js) the server runs from either the `src` or `public` directory at : http://localhost:4242/  
+
+    docroot = path.join(application_root, "src"), // "src" for dev, or "public" for built version
+
+The [build.js](https://github.com/hautelook/vertebrae/blob/master/build.js) file is configured to build to the "public" directory. 
+
+So after you run `r.js -o build.js` to populate the "public" directory then you can use `node app.js` to view the site at : http://localhost:4242
+
+## Testing Framework using Jasmine, Sinon, Jasmine-jQuery
+
+* Tests run in browser / console at : <http://vertebrae-framework.herokuapp.com/test/>  
+* Source code: <https://github.com/hautelook/vertebrae/tree/master/src/test>  
+* Run tests on command line using [phantomjs](http://phantomjs.org/)  
+  * From Heroku env: `phantomjs /usr/local/lib/run-jasmine.js http://vertebrae-framework.herokuapp.com/test/`  
+  * From localhost server running via Node.js `node app.js`:  `phantomjs /usr/local/lib/run-jasmine.js http://localhost:4242/test/`  
+* phantomjs wiki, test framework integration: <http://code.google.com/p/phantomjs/wiki/TestFrameworkIntegration>  
+* phantomjs wiki: <http://code.google.com/p/phantomjs/wiki/PhantomJS?tm=6>  
 
 ## Views: 
 
@@ -154,12 +214,7 @@ References:
   * [RequireJS why AMD](http://requirejs.org/docs/whyamd.html "RequireJS why AMD")
   * [RequireJS AMD](http://requirejs.org/docs/whyamd.html#amd "RequireJS AMD")
 
-
-## Build and optimize using:
-
-    r.js -o build.js
-
-## Code examples included in framework active in application.js
+## Code examples included in framework: application.js
 
 The application.js has a few routes defined which handle a couple example code packages: `products` and `hello`. the `chrome` package has the [Twitter bootstrap](http://twitter.github.com/bootstrap/ "Twitter bootstrap")  markup for rendering header component on the page.
 
@@ -175,19 +230,10 @@ The application.js has a few routes defined which handle a couple example code p
 
 The default route above links to the products route handler loading a list of products on the default page.
 
-## To launch (Node.js) server
 
-    node app.js
 
-runs at : http://localhost:4242/
 
-The app.js is the node.js script that runs the server and expects the "public" directory to have the application. 
-
-The build.js should be configured to build to the "public" directory. 
-
-So after you run `r.js -o build.js` to populate the "public" directory then you can use `node app.js` to view the site at : http://localhost:4242
-
-## Hello World example using a Backbone View as a Layout Manager
+## Hello World *example* using a the Layout Manager (View)
 
 Routes in the hello package 
 
