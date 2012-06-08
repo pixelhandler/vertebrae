@@ -66,7 +66,7 @@ require.config({
             exports: 'Backbone'
         }
     },
-    priority: ['text', 'modernizr', 'json2', 'vendor', 'utils'],
+    priority: ['text', 'modernizr', 'json2', 'vendor', 'utils', 'facade', 'syncs', 'models', 'views', 'collections', 'controller'],
     jquery: '1.7.2',
     waitSeconds: 30
 });

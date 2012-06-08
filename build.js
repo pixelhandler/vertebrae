@@ -65,17 +65,13 @@
             exports: 'Backbone'
         }
     },
-    /*
+/*
     modules: [
         {
-            name: "vendor"
-        },
-        {
-            name: "main",
-            exclude: ['vendor']
+            name: "application"
         }
     ]
-    */
+*/
     modules: [
 
         // Common libraries, Utilities, Syncs, Models, Views, Collections
@@ -120,5 +116,4 @@
             exclude: ['vendor', 'facade', 'utils', 'syncs', 'models', 'views', 'collections']
         }
     ]
-
 })
