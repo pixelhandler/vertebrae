@@ -13,7 +13,7 @@
 // https://github.com/pivotal/jasmine/wiki
 // http://sinonjs.org/ | http://sinonjs.org/docs/
 
-require(['facade', 'models', 'collections', 'controller', 'views', 'utils'], 
+define(['facade', 'models', 'collections', 'controller', 'views', 'utils'], 
 function (facade,   models,   collections,   Controller,   views,   utils) {
 
     var $ = facade.$,
@@ -23,16 +23,16 @@ function (facade,   models,   collections,   Controller,   views,   utils) {
         ApplicationStateModel = models.ApplicationStateModel,
         ApplicationStates = collections.ApplicationStates,
         BaseModel = models.BaseModel,
-        EventModel = models.EventModel,
         BaseView = views.BaseView,
         SectionView = views.SectionView,
         LayoutView = views.LayoutView,
-        events = collections.events,
         lib = utils.lib,
         Channel = lib.Channel,
         debug = utils.debug;
 
-    describe("Dependencies", function() {
+describe("Controller Suite", function() {
+
+    describe("Controller Dependencies", function() {
 
         it("should load jQuery, _ and Backbone from within facade object using require", function () {
             expect($).toBeDefined();
@@ -74,10 +74,14 @@ function (facade,   models,   collections,   Controller,   views,   utils) {
 
     });
 
-    describe("Controller", function () {
+    describe("Controller Specs", function () {
 
         beforeEach(function () {
             var appStates = new ApplicationStates();
+
+            $('body')
+              .prepend('<div id="wrapper"><div id="content"></div></div>')
+              .prepend('<script type="text/template" id="layoutScheme"><div id="top"></div><div id="bottom"></div></script>'); 
 
             this.appStates = appStates;
             Controller.prototype.appStates = appStates;
@@ -86,6 +90,7 @@ function (facade,   models,   collections,   Controller,   views,   utils) {
         afterEach(function () {
             delete this.appStates;
             delete Controller.prototype.appStates;
+            $('#wrapper, #layoutScheme').remove();
         });
 
         it("should get data from application state manager object", function () {
@@ -121,47 +126,6 @@ function (facade,   models,   collections,   Controller,   views,   utils) {
             expect(controller.data.footer.state).toBe("displayed");
             expect(controller.data.events.state).toBe("displayed");
             expect(controller.data.upcoming.state).toBe("displayed");
-        });
-
-
-        xit("should initialize views/models with relevant data received from application state manager", function () {
-            // arrange
-            var controller, eventsControllerCtor;
-
-            this.appStates.add([
-                // sessionStorage
-                {
-                    name: "/", 
-                    data: {
-                        "tab" : "home",
-                        "route" : "/"
-                    }, 
-                    storage: 'sessionStorage'
-                }
-            ]);
-            $('#wrapper').append('<div id="events"><div class="main"></div></div>');
-
-            require(['events'], function(eventsController){
-                eventsControllerCtor = eventsController;
-            });
-
-            waitsFor(function () {
-                return eventsControllerCtor !== undefined;
-            });
-
-            runs(function () {
-                // act
-                controller = new eventsControllerCtor({
-                    route: "/",
-                    memeber: {member_id: 123456}
-                });
-
-                // assert
-                expect(controller.data.route).toBe(controller.route);
-                expect(controller.data.tab).toBe("home");
-                expect($('#events header a.active')).toHaveClass("home");
-            });
-
         });
 
         it("should call layout manager with arguments including relevant views/data", function () {
@@ -316,5 +280,6 @@ function (facade,   models,   collections,   Controller,   views,   utils) {
 
     }); // describe
 
-    document.dispatchEvent(HL.initTestingFrameworkEvent);
-}); // require
+}); // describe
+
+}); // define

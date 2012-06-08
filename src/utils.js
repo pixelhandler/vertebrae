@@ -24,26 +24,3 @@ function (require) {
     };
     // the shims should only extend native JavaScript Objects when needed, e.g. Object.create
 });
-
-/*
-function (
-        ajaxOptions,
-        docCookies,
-        debug,
-        lib,
-        storage
-        ) {
-
-    var utils;
-
-    utils = {
-        "ajaxOptions": ajaxOptions,
-        "lib": lib,
-        "docCookies": docCookies,
-        "storage": storage,
-        "debug": debug
-    };
-
-    return utils;
-});
-*/

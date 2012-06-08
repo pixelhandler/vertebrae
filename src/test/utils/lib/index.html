@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="../../testenv.js"></script>
   <script type="text/javascript" charset="utf-8">
-    HL.addScriptElem('/test/utils/lib/spec.js');
-    HL.setupTestEnv();
+    require(['/test/spec/utils-lib.spec.js'], function() {
+        HL.setupTestEnv();
+        document.dispatchEvent(HL.initTestingFrameworkEvent);
+    });
   </script>
 </head>
 <body>

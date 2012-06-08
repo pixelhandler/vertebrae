@@ -1,9 +1,11 @@
-require(['jquery', 'underscore', 'backbone', 'utils/debug', 'utils/lib', 'utils/date'], 
-function ($,        _,            Backbone,   debug,         lib,         parseDate) {
+define(['jquery', 'underscore', 'backbone', 'utils/debug', 'utils/lib'], 
+function ($,        _,           Backbone,   debug,         lib) {
 
     var Channel = lib.Channel;
 
-    describe("Dependencies", function () {
+describe("Utils/Lib Suite", function () {
+
+    describe("Utils/Lib Dependencies", function () {
 
         it("should have debug as alert", function () {
             expect(debug).toBeDefined();
@@ -17,6 +19,9 @@ function ($,        _,            Backbone,   debug,         lib,         parseD
             expect(lib).toBeDefined();
             debug.log("dependency libs defined");
         });
+    });
+    
+    describe("Utils/Lib Specs", function () {
 
         it("should have expected library methods and use utility duckTypeCheck", function () {
             // arrange
@@ -152,13 +157,9 @@ function ($,        _,            Backbone,   debug,         lib,         parseD
             });
         });
 
-        // stub
-        // it("", function () {
-        //     debug.log("finish...");
-        // });
-
     }); // describe
 
-    document.dispatchEvent(HL.initTestingFrameworkEvent);
-}); // require
+}); // describe
+
+}); // define
 

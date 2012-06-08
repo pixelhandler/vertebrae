@@ -14,7 +14,7 @@
 // https://github.com/pivotal/jasmine/wiki
 // http://sinonjs.org/ | http://sinonjs.org/docs/
 
-require(['facade', 'models', 'collections', 'views', 'utils'], 
+define(['facade', 'models', 'collections', 'views', 'utils'], 
 function (facade,   models,   collections,   views,   utils) {
 
     var $ = facade.$,
@@ -30,7 +30,9 @@ function (facade,   models,   collections,   views,   utils) {
         Channel = lib.Channel,
         debug = utils.debug;
 
-    describe("Dependencies", function() {
+describe("Application State Manager Suite", function() {
+
+    describe("Application State Manager Dependencies", function() {
 
         it("should load facade, models and utils reference objects with require", function () {
             expect(facade).toBeDefined();
@@ -70,10 +72,20 @@ function (facade,   models,   collections,   views,   utils) {
 
     });
 
-    describe("Application state manager", function () {
+    describe("Application State Manager Specs", function () {
 
         // delete existing cookie if exists
         docCookies.removeItem('member', null);
+        
+        beforeEach(function () {
+            $('body')
+              .prepend('<div id="wrapper"><div id="content"></div></div>')
+              .prepend('<script type="text/template" id="layoutScheme"><div id="top"></div><div id="bottom"></div></script>'); 
+        });
+        
+        afterEach(function () {
+            $('#wrapper, #layoutScheme').remove();
+        });
 
         it("should use options for persistent storage of data", function () {
             // arrange
@@ -157,10 +169,10 @@ function (facade,   models,   collections,   views,   utils) {
                 eventsData = {
                 "_links": {
                     "self": {
-                        "href": "/v4/events"
+                        "href": "/api/events"
                     },
                     "events/upcoming": {
-                        "href": "/v4/events?status=upcoming&days={days}"
+                        "href": "/api/events?status=upcoming&days={days}"
                     }
                 },
                 "_embedded": {
@@ -168,13 +180,13 @@ function (facade,   models,   collections,   views,   utils) {
                         {
                             "_links": {
                                 "self": {
-                                    "href": "/v4/events/15301"
+                                    "href": "/api/events/15301"
                                 },
                                 "/catalog": {
-                                    "href": "/v4/events/15301/catalog"
+                                    "href": "/api/events/15301/catalog"
                                 },
                                 "/availability": {
-                                    "href": "/v4/events/15301/availability"
+                                    "href": "/api/events/15301/availability"
                                 },
                                 "/images/event-hero": {
                                     "href": "/assets/15301leviswd/event-small.jpg"
@@ -208,13 +220,13 @@ function (facade,   models,   collections,   views,   utils) {
                         {
                             "_links": {
                                 "self": {
-                                    "href": "/v4/events/15147"
+                                    "href": "/api/events/15147"
                                 },
                                 "/catalog": {
-                                    "href": "/v4/events/15147/catalog"
+                                    "href": "/api/events/15147/catalog"
                                 },
                                 "/availability": {
-                                    "href": "/v4/events/15147/availability"
+                                    "href": "/api/events/15147/availability"
                                 },
                                 "/images/event-hero": {
                                     "href": "/assets/15147chanluuwj/event-small.jpg"
@@ -255,13 +267,13 @@ function (facade,   models,   collections,   views,   utils) {
                         {
                             "_links": {
                                 "self": {
-                                    "href": "/v4/events/14137"
+                                    "href": "/api/events/14137"
                                 },
                                 "/catalog": {
-                                    "href": "/v4/events/14137/catalog"
+                                    "href": "/api/events/14137/catalog"
                                 },
                                 "/availability": {
-                                    "href": "/v4/events/14137/availability"
+                                    "href": "/api/events/14137/availability"
                                 },
                                 "/images/event-hero": {
                                     "href": "/assets/14137frockbytracyreesewc/event-small.jpg"
@@ -302,13 +314,13 @@ function (facade,   models,   collections,   views,   utils) {
                         {
                             "_links": {
                                 "self": {
-                                    "href": "/v4/events/15099"
+                                    "href": "/api/events/15099"
                                 },
                                 "/catalog": {
-                                    "href": "/v4/events/15099/catalog"
+                                    "href": "/api/events/15099/catalog"
                                 },
                                 "/availability": {
-                                    "href": "/v4/events/15099/availability"
+                                    "href": "/api/events/15099/availability"
                                 },
                                 "/images/event-hero": {
                                     "href": "/assets/15099invictablwtunisex/event-small.jpg"
@@ -345,13 +357,13 @@ function (facade,   models,   collections,   views,   utils) {
                         {
                             "_links": {
                                 "self": {
-                                    "href": "/v4/events/15280"
+                                    "href": "/api/events/15280"
                                 },
                                 "/catalog": {
-                                    "href": "/v4/events/15280/catalog"
+                                    "href": "/api/events/15280/catalog"
                                 },
                                 "/availability": {
-                                    "href": "/v4/events/15280/availability"
+                                    "href": "/api/events/15280/availability"
                                 },
                                 "/images/event-hero": {
                                     "href": "/assets/15280viviennetamwc/event-small.jpg"
@@ -389,7 +401,7 @@ function (facade,   models,   collections,   views,   utils) {
             server = sinon.fakeServer.create();
             server.respondWith(
                 "GET",
-                "/v4/events",
+                "/api/events",
                 [
                     200,
                     {"Content-Type": "application/json"},
@@ -398,7 +410,7 @@ function (facade,   models,   collections,   views,   utils) {
             );
             server.respondWith(
                 "GET",
-                "/v4/events/15301",
+                "/api/events/15301",
                 [
                     200,
                     {"Content-Type": "application/json"},
@@ -407,25 +419,25 @@ function (facade,   models,   collections,   views,   utils) {
             );
 
             // act
-            eventsList = new events([],{url: "/v4/events"});
+            eventsList = new events([],{url: "/api/events"});
             //eventsList.fetch();
             server.respond();
 
             appData = new ApplicationStates();
             appData.add([{ 
-                name: "/v4/events", // eventsList.url
+                name: "/api/events", // eventsList.url
                 data: eventsList, 
                 storage: 'sessionStorage'
             }]);
 
             // assert
-            expect(appData.findByName('/v4/events')).toBeDefined();
-            expect(appData.findByName('/v4/events').get('name')).toBe('/v4/events');
-            expect(_.contains(ApplicationStates.references, '/v4/events')).toBeTruthy();
+            expect(appData.findByName('/api/events')).toBeDefined();
+            expect(appData.findByName('/api/events').get('name')).toBe('/api/events');
+            expect(_.contains(ApplicationStates.references, '/api/events')).toBeTruthy();
 
             // act
             EventModel = EventModel.extend({
-                urlRoot: "/v4/events"
+                urlRoot: "/api/events"
             });
             eventItem = new EventModel({id: "15301"});
             eventItem.fetch({
@@ -439,19 +451,19 @@ function (facade,   models,   collections,   views,   utils) {
 
             appData.add([
                 { 
-                    name: eventItem.url(), //"/v4/events/15301", 
+                    name: eventItem.url(), //"/api/events/15301", 
                     data: eventItem, 
                     storage: 'sessionStorage'
                 }
             ]);
 
             // assert
-            expect(appData.findByName('/v4/events/15301')).toBeDefined();
-            expect(appData.findByName('/v4/events/15301').get('name')).toBe('/v4/events/15301');
-            expect(_.contains(ApplicationStates.references, '/v4/events/15301')).toBeTruthy();
-            expect(appData.findByName('/v4/events/15301').get('data').cid).toEqual(eventItem.cid);
-            expect(appData.findByName('/v4/events/15301').get('data').id).toEqual(eventItem.id);
-            expect(appData.findByName('/v4/events/15301').get('data').get('title')).toEqual(eventItem.get('title'));
+            expect(appData.findByName('/api/events/15301')).toBeDefined();
+            expect(appData.findByName('/api/events/15301').get('name')).toBe('/api/events/15301');
+            expect(_.contains(ApplicationStates.references, '/api/events/15301')).toBeTruthy();
+            expect(appData.findByName('/api/events/15301').get('data').cid).toEqual(eventItem.cid);
+            expect(appData.findByName('/api/events/15301').get('data').id).toEqual(eventItem.id);
+            expect(appData.findByName('/api/events/15301').get('data').get('title')).toEqual(eventItem.get('title'));
 
             // act
             memberData = new MemberSummaryModel({
@@ -602,7 +614,7 @@ function (facade,   models,   collections,   views,   utils) {
                 // assert
                 expect(layoutState["Top"].state).toBe("displayed");
                 expect(layoutState["Bottom"].state).toBe("displayed");
-                expect(layoutState["route"]).toBe("/test/applicationstates/");
+                expect(layoutState["route"]).toBe("/test/");
                 //expect(layoutState["meta"]).toBeDefined();
                 expect(_.contains(ApplicationStates.references, layoutState.route)).toBeTruthy();
                 expect(appState.findByName(layoutState.route).get('data').route).toBe(layoutState.route);
@@ -612,7 +624,7 @@ function (facade,   models,   collections,   views,   utils) {
 
     }); // describe
 
-    describe("Application state manager data storage strategy", function () {
+    describe("Application State Manager storage strategy for data retrieval (memory/storage/api)", function () {
 
         /*
             when a name is requested and not in memory the app state should check for browser storage 
@@ -620,258 +632,256 @@ function (facade,   models,   collections,   views,   utils) {
             be used to utilize browser storage to save the data for retrieval later perhaps when app 
             states are removed from memory
         */
-        describe("should provide strategy for data retrieval (memory/storage/api)", function () {
+        beforeEach(function () {
 
-            beforeEach(function () {
+            ApplicationStates.references = [];
 
-                ApplicationStates.references = [];
+            this.appState = new ApplicationStates();
 
-                this.appState = new ApplicationStates();
-
-                this.appState.add([
-                    // sessionStorage
-                    { 
-                        name: "/events", 
-                        data: {
-                            "header": { "state": "displayed", "meta": { "tab" : "Women" } }, 
-                            "footer": { "state": "displayed", "meta": { "tab" : "Women" } },
-                            "events": { "state": "displayed", "meta": { "tab" : "Women" } },
-                            "upcoming": { "state": "displayed", "meta": { "tab" : "Women" } },
-                            "route" : "/events"
-                        }, 
-                        storage: 'sessionStorage'
+            this.appState.add([
+                // sessionStorage
+                { 
+                    name: "/events", 
+                    data: {
+                        "header": { "state": "displayed", "meta": { "tab" : "Women" } }, 
+                        "footer": { "state": "displayed", "meta": { "tab" : "Women" } },
+                        "events": { "state": "displayed", "meta": { "tab" : "Women" } },
+                        "upcoming": { "state": "displayed", "meta": { "tab" : "Women" } },
+                        "route" : "/events"
+                    }, 
+                    storage: 'sessionStorage'
+                },
+                // localStorage
+                { 
+                    name: "promoCode", 
+                    data: {
+                        promoCode: 9876543
+                    }, 
+                    storage: 'localStorage'
+                },
+                // cookie
+                {
+                    name: "memberId", 
+                    data: {
+                        memberId: 1234567
                     },
-                    // localStorage
-                    { 
-                        name: "promoCode", 
-                        data: {
-                            promoCode: 9876543
-                        }, 
-                        storage: 'localStorage'
+                    storage: 'cookie',
+                    expires: new Date(Date.now() + 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/365))
+                }
+            ]);
+        });
+
+        afterEach(function () {
+            delete this.appState;
+        });
+
+        it("should save items for persistent storage per items' storage property value", function () {
+            // arrange
+            var appState = this.appState, storedData, collectionData;
+
+            // act
+            // store data by storage option
+            appState.save();
+
+            // with localStorage
+            storedData = JSON.parse(localStorage.getItem('promoCode')).data.promoCode;
+            collectionData = appState.findByName('promoCode').toJSON().data.promoCode;
+
+            // assert
+            expect(storedData).toBe(9876543);
+            expect(collectionData).toBe(9876543);
+            expect(collectionData).toEqual(storedData);
+
+            // act with sessionStorage
+            storedData = JSON.parse(sessionStorage.getItem('/events')).data.events.state;
+            collectionData = appState.findByName('/events').toJSON().data.events.state;
+
+            // assert
+            expect(storedData).toBe("displayed");
+            expect(collectionData).toBe("displayed");
+            expect(collectionData).toEqual(storedData);
+
+            // act with cookie
+            storedData = JSON.parse(docCookies.getItem('memberId')).data.memberId;
+            collectionData = appState.findByName('memberId').toJSON().data.memberId;
+
+            // assert
+            expect(storedData).toBe(1234567);
+            expect(collectionData).toBe(1234567);
+            expect(collectionData).toEqual(storedData);
+        });
+
+        it("should get items from memory if exist in ApplicationStates collection", function () {
+            // arrange
+            var appState = this.appState, collectionData;
+
+            // act
+            collectionData = appState.findByName('promoCode').toJSON().data.promoCode;
+            // assert
+            expect(collectionData).toBe(9876543);
+
+            // act
+            collectionData = appState.findByName('/events').toJSON().data.events.state;
+            // assert
+            expect(collectionData).toBe("displayed");
+
+            // act
+            collectionData = appState.findByName('memberId').toJSON().data.memberId;
+            // assert
+            expect(collectionData).toBe(1234567);
+        });
+
+        it("should get item from sessionStorage (when not in memory)", function () {
+            // arrange
+            var appState = this.appState, storedData;
+
+            // act
+            appState.remove();
+            // assert
+            expect(appState.length).toBe(0);
+
+            // act
+            storedData = appState.findByNameInStorage('/events');
+            // assert
+            expect(sessionStorage.getItem('/events')).toBeTruthy();
+            expect(storedData).toBeTruthy();
+            expect(storedData.name).toBe('/events');
+        });
+
+        it("should get item from localStorage (when not in memory)", function () {
+            // arrange
+            var appState = this.appState, storedData;
+
+            // act
+            appState.remove();
+            // assert
+            expect(appState.length).toBe(0);
+
+            // act
+            storedData = appState.findByNameInStorage('promoCode');
+            // assert
+            expect(localStorage.getItem('promoCode')).toBeTruthy();
+            expect(storedData).toBeTruthy();
+            expect(storedData.name).toBe('promoCode');
+        });
+
+        it("should get item from cookie (when not in memory)", function () {
+            // arrange
+            var appState = this.appState, storedData;
+
+            // act
+            appState.remove();
+            // assert
+            expect(appState.length).toBe(0);
+
+            // act
+            storedData = appState.findByNameInStorage('memberId');
+            // assert
+            expect(docCookies.getItem('memberId')).toBeTruthy();
+            expect(storedData).toBeTruthy();
+            expect(storedData.name).toBe('memberId');
+        });
+
+        it("given callback function, should get item from api (when not in memory or storage)", function () {
+            // arrange
+            var appState = this.appState,
+                serverData,
+                server = sinon.fakeServer.create(),
+                Model = Backbone.Model.extend({urlRoot: '/api/events/'});
+                model = new Model({id: 12345});
+
+            server.respondWith(
+                "GET",
+                "/api/events/12345",
+                [
+                    200,
+                    {"Content-Type": "application/json"},
+                    JSON.stringify({
+                        "id": 12345,
+                        "title": "Levi's Made & Crafted",
+                        "start_date": "2012-04-04T08:00:00-07:00"
+                    })
+                ]
+            );
+
+            // act
+            appState.destroy();
+            appState.remove();
+
+            // assert
+            expect(appState.length).toBe(0);
+            expect(appState.findByName('/api/events/12345')).toBeNull();
+            expect(appState.findByNameInStorage('/api/events/12345')).toBeNull();
+            expect(model.urlRoot).toBe('/api/events/');
+            expect(model.id).toBe(12345);
+            expect(model.url()).toBe('/api/events/12345');
+
+            // act
+            serverData = appState.findInCollectionOrStorage('/api/events/12345', model);
+            server.respond();
+
+            // assert
+            expect(model.get("title")).toBe("Levi's Made & Crafted");
+            expect(serverData).toBeTruthy();
+        });
+
+        it("should have expiration for data objects that are in storage", function () {
+            // arrange
+            var appState = this.appState;
+
+            // act
+            appState.destroy();
+            appState.remove();
+
+            appState.add([
+                // sessionStorage
+                { 
+                    name: "/api/events/12345", 
+                    data: {
+                        "id": 12345,
+                        "title": "Levi's Made & Crafted",
+                        "start_date": "2012-04-04T08:00:00-07:00"
                     },
-                    // cookie
-                    {
-                        name: "memberId", 
-                        data: {
-                            memberId: 1234567
-                        },
-                        storage: 'cookie',
-                        expires: new Date(Date.now() + 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/365))
-                    }
-                ]);
-            });
-
-            afterEach(function () {
-                delete this.appState;
-            });
-
-            it("should save items for persistent storage per items' storage property value", function () {
-                // arrange
-                var appState = this.appState, storedData, collectionData;
-
-                // act
-                // store data by storage option
-                appState.save();
-
-                // with localStorage
-                storedData = JSON.parse(localStorage.getItem('promoCode')).data.promoCode;
-                collectionData = appState.findByName('promoCode').toJSON().data.promoCode;
-
-                // assert
-                expect(storedData).toBe(9876543);
-                expect(collectionData).toBe(9876543);
-                expect(collectionData).toEqual(storedData);
-
-                // act with sessionStorage
-                storedData = JSON.parse(sessionStorage.getItem('/events')).data.events.state;
-                collectionData = appState.findByName('/events').toJSON().data.events.state;
-
-                // assert
-                expect(storedData).toBe("displayed");
-                expect(collectionData).toBe("displayed");
-                expect(collectionData).toEqual(storedData);
-
-                // act with cookie
-                storedData = JSON.parse(docCookies.getItem('memberId')).data.memberId;
-                collectionData = appState.findByName('memberId').toJSON().data.memberId;
-
-                // assert
-                expect(storedData).toBe(1234567);
-                expect(collectionData).toBe(1234567);
-                expect(collectionData).toEqual(storedData);
-            });
-
-            it("should get items from memory if exist in ApplicationStates collection", function () {
-                // arrange
-                var appState = this.appState, collectionData;
-
-                // act
-                collectionData = appState.findByName('promoCode').toJSON().data.promoCode;
-                // assert
-                expect(collectionData).toBe(9876543);
-
-                // act
-                collectionData = appState.findByName('/events').toJSON().data.events.state;
-                // assert
-                expect(collectionData).toBe("displayed");
-
-                // act
-                collectionData = appState.findByName('memberId').toJSON().data.memberId;
-                // assert
-                expect(collectionData).toBe(1234567);
-            });
-
-            it("should get item from sessionStorage (when not in memory)", function () {
-                // arrange
-                var appState = this.appState, storedData;
-
-                // act
-                appState.remove();
-                // assert
-                expect(appState.length).toBe(0);
-
-                // act
-                storedData = appState.findByNameInStorage('/events');
-                // assert
-                expect(sessionStorage.getItem('/events')).toBeTruthy();
-                expect(storedData).toBeTruthy();
-                expect(storedData.name).toBe('/events');
-            });
-
-            it("should get item from localStorage (when not in memory)", function () {
-                // arrange
-                var appState = this.appState, storedData;
-
-                // act
-                appState.remove();
-                // assert
-                expect(appState.length).toBe(0);
-
-                // act
-                storedData = appState.findByNameInStorage('promoCode');
-                // assert
-                expect(localStorage.getItem('promoCode')).toBeTruthy();
-                expect(storedData).toBeTruthy();
-                expect(storedData.name).toBe('promoCode');
-            });
-
-            it("should get item from cookie (when not in memory)", function () {
-                // arrange
-                var appState = this.appState, storedData;
-
-                // act
-                appState.remove();
-                // assert
-                expect(appState.length).toBe(0);
-
-                // act
-                storedData = appState.findByNameInStorage('memberId');
-                // assert
-                expect(docCookies.getItem('memberId')).toBeTruthy();
-                expect(storedData).toBeTruthy();
-                expect(storedData.name).toBe('memberId');
-            });
-
-            it("given callback function, should get item from api (when not in memory or storage)", function () {
-                // arrange
-                var appState = this.appState,
-                    serverData,
-                    server = sinon.fakeServer.create(),
-                    Model = Backbone.Model.extend({urlRoot: '/v4/events/'});
-                    model = new Model({id: 12345});
-
-                server.respondWith(
-                    "GET",
-                    "/v4/events/12345",
-                    [
-                        200,
-                        {"Content-Type": "application/json"},
-                        JSON.stringify({
-                            "id": 12345,
-                            "title": "Levi's Made & Crafted",
-                            "start_date": "2012-04-04T08:00:00-07:00"
-                        })
-                    ]
-                );
-
-                // act
-                appState.destroy();
-                appState.remove();
-
-                // assert
-                expect(appState.length).toBe(0);
-                expect(appState.findByName('/v4/events/12345')).toBeNull();
-                expect(appState.findByNameInStorage('/v4/events/12345')).toBeNull();
-                expect(model.urlRoot).toBe('/v4/events/');
-                expect(model.id).toBe(12345);
-                expect(model.url()).toBe('/v4/events/12345');
-
-                // act
-                serverData = appState.findInCollectionOrStorage('/v4/events/12345', model);
-                server.respond();
-
-                // assert
-                expect(model.get("title")).toBe("Levi's Made & Crafted");
-                expect(serverData).toBeTruthy();
-            });
-
-            it("should have expiration for data objects that are in storage", function () {
-                // arrange
-                var appState = this.appState;
-
-                // act
-                appState.destroy();
-                appState.remove();
-
-                appState.add([
-                    // sessionStorage
-                    { 
-                        name: "/v4/events/12345", 
-                        data: {
-                            "id": 12345,
-                            "title": "Levi's Made & Crafted",
-                            "start_date": "2012-04-04T08:00:00-07:00"
-                        },
-                        storage: 'sessionStorage',
-                        expires: new Date(Date.now() - 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/1))
+                    storage: 'sessionStorage',
+                    expires: new Date(Date.now() - 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/1))
+                },
+                // localStorage
+                { 
+                    name: "promoCode", 
+                    data: {
+                        promoCode: 9876543
+                    }, 
+                    storage: 'localStorage',
+                    expires: new Date(Date.now() - 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/1))
+                },
+                // cookie
+                {
+                    name: "lastViewedProduct", 
+                    data: {
+                        lastViewedProduct: 12345
                     },
-                    // localStorage
-                    { 
-                        name: "promoCode", 
-                        data: {
-                            promoCode: 9876543
-                        }, 
-                        storage: 'localStorage',
-                        expires: new Date(Date.now() - 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/1))
-                    },
-                    // cookie
-                    {
-                        name: "lastViewedProduct", 
-                        data: {
-                            lastViewedProduct: 12345
-                        },
-                        storage: 'cookie',
-                        expires: new Date(Date.now() - 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/1))
-                    }
-                ]);
-                appState.save();
+                    storage: 'cookie',
+                    expires: new Date(Date.now() - 1000 * (/*secs*/60 * /*mins*/60 * /*hrs*/24 * /*days*/1))
+                }
+            ]);
+            appState.save();
 
-                // assert
-                expect(appState.findByName('/v4/events/12345')).toBeNull();
-                expect(appState.findByNameInStorage('/v4/events/12345')).toBeNull();
-                expect(_.contains(ApplicationStates.references, "/v4/events/12345")).toBeFalsy();
-                expect(appState.findByName('promoCode')).toBeNull();
-                expect(appState.findByNameInStorage('promoCode')).toBeNull();
-                expect(_.contains(ApplicationStates.references, "promoCode")).toBeFalsy();
-                expect(appState.findByName('lastViewedProduct')).toBeNull();
-                expect(appState.findByNameInStorage('lastViewedProduct')).toBeNull();
-                expect(_.contains(ApplicationStates.references, "lastViewedProduct")).toBeFalsy();
-                expect(appState.findInCollectionOrStorage('lastViewedProduct')).toBeNull();
-            });
+            // assert
+            expect(appState.findByName('/api/events/12345')).toBeNull();
+            expect(appState.findByNameInStorage('/api/events/12345')).toBeNull();
+            expect(_.contains(ApplicationStates.references, "/api/events/12345")).toBeFalsy();
+            expect(appState.findByName('promoCode')).toBeNull();
+            expect(appState.findByNameInStorage('promoCode')).toBeNull();
+            expect(_.contains(ApplicationStates.references, "promoCode")).toBeFalsy();
+            expect(appState.findByName('lastViewedProduct')).toBeNull();
+            expect(appState.findByNameInStorage('lastViewedProduct')).toBeNull();
+            expect(_.contains(ApplicationStates.references, "lastViewedProduct")).toBeFalsy();
+            expect(appState.findInCollectionOrStorage('lastViewedProduct')).toBeNull();
+        });
 
-        }); // describe
 
     }); // describe
 
-    document.dispatchEvent(HL.initTestingFrameworkEvent);
-}); // require
+}); // describe
+
+}); // define

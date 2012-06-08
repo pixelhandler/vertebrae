@@ -16,7 +16,7 @@
 // https://github.com/pivotal/jasmine/wiki
 // http://sinonjs.org/ | http://sinonjs.org/docs/
 
-require(['facade', 'models', 'views', 'utils'], 
+define(['facade', 'models', 'views', 'utils'], 
 function (facade,   models,   views,   utils) {
 
     var $ = facade.$,
@@ -31,7 +31,9 @@ function (facade,   models,   views,   utils) {
         debug = utils.debug,
         contentHTML = $('#content').html();
 
-    describe("Dependencies", function() {
+describe("Layout Manager Suite", function() {
+
+    describe("Layout Manager Dependencies", function() {
 
         it("should load facade, models, views and utils reference objects with require", function () {
             expect(facade).toBeDefined();
@@ -68,12 +70,16 @@ function (facade,   models,   views,   utils) {
 
     });
 
-    describe("Layout manager", function () {
+    describe("Layout Manager Specs", function () {
 
         beforeEach(function () {
-            var topModel, topView, 
-                bottomModel, bottomView,
-                markup = $('#layoutScheme').html();
+            var topModel, topView, bottomModel, bottomView, markup;
+
+            $('body')
+              .prepend('<div id="wrapper"><div id="content"></div></div>')
+              .prepend('<script type="text/template" id="layoutScheme"><div id="top"></div><div id="bottom"></div></script>'); 
+
+            markup = $('#layoutScheme').html();
 
             topModel = new BaseModel({desc: 'top view'});
 
@@ -105,7 +111,7 @@ function (facade,   models,   views,   utils) {
         afterEach(function () {
             this.topView = null;
             this.bottomView = null;
-            $('#content').html("render layout here");
+            $('#wrapper, #layoutScheme').remove();
         });
 
         it("should use 'destination' property for location on dom to show each view", function () {
@@ -422,7 +428,7 @@ function (facade,   models,   views,   utils) {
             expect(layout.state()["Top"].meta).toBe(undefined);
             expect(layout.state()["Bottom"].state).toBe("displayed");
             expect(layout.state()["Bottom"].meta).toBe(undefined);
-            expect(layout.state()["route"]).toBe("/test/layout/");
+            expect(layout.state()["route"]).toBe("/test/");
 
             // act
             layout.section('Top').display(false);
@@ -452,12 +458,6 @@ function (facade,   models,   views,   utils) {
 
     }); // describe
 
-    // describe("Section View", function () {
-    //     
-    //     it("should have metadata used to recreate view state", function () {});
-    //     
-    // });
-    // describe("Base View", function () {});
+}); // describe
 
-    document.dispatchEvent(HL.initTestingFrameworkEvent);
-}); // require
+}); // define

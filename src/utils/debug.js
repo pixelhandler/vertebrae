@@ -6,9 +6,10 @@
 
 // Return {Object} `debug` for normal behavior or append during development
 
-define(['jquery'], function ($) {
+define(['facade'], function (facade) {
 
-    var debug, append;
+    var debug, append,
+        $ = facade.$;
 
     debug = {
 
@@ -47,6 +48,10 @@ define(['jquery'], function ($) {
             }
         }
     };
+    
+    if (HL && HL.disableDebugMode) {
+        debug.mode = function () { return false; };
+    }
 
     return debug;
 });

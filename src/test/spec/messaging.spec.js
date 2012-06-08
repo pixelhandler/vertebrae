@@ -12,7 +12,7 @@
 // http://sinonjs.org/ | http://sinonjs.org/docs/
 
 
-require(['facade', 'models/messaging', 'collections/messaging', 'views/messaging', 'utils'], 
+define(['facade', 'models/messaging', 'collections/messaging', 'views/messaging', 'utils'], 
 function (facade,   MessagingModel,     MessagingCollection,     MessageView,       utils) {
 
     var $ = facade.$,
@@ -22,7 +22,9 @@ function (facade,   MessagingModel,     MessagingCollection,     MessageView,   
         Channel = utils.lib.Channel,
         debug = utils.debug;
 
-    describe("Dependencies", function() {
+describe("Messaging Suite", function() {
+
+    describe("Messaging Dependencies", function() {
         it("should load jQuery, _ and Backbone with require", function () {
             expect($).toBeDefined();
             expect($).toNotBe(null);
@@ -33,9 +35,10 @@ function (facade,   MessagingModel,     MessagingCollection,     MessageView,   
         });
     });
 
-    describe("Messaging Model", function () {
+    describe("Messaging Model Specs", function () {
 
         beforeEach(function () {
+            $('body').prepend('<div id="wrapper"/>');
             this.MessagingModel = MessagingModel;
             this.MessagingCollection = MessagingCollection;
             this.MessageView = MessageView;
@@ -43,6 +46,7 @@ function (facade,   MessagingModel,     MessagingCollection,     MessageView,   
         });
 
         afterEach(function () {
+            $('#wrapper').remove();
             this.MessagingModel = null;
             this.MessagingCollection = null;
             this.messagingList = null;
@@ -290,5 +294,6 @@ function (facade,   MessagingModel,     MessagingCollection,     MessageView,   
 
     }); // describe
 
-    document.dispatchEvent(HL.initTestingFrameworkEvent);
-}); // require
+}); // describe
+
+}); // define

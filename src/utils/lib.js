@@ -119,8 +119,8 @@ define(["facade", "utils/debug"], function(facade, debug) {
     };
 
     // **Method:** `loadCss`  
-    // Param {String} `url` - "/packages/events/events.css"
-    // or Param {Object} like { rel: 'stylesheet/less', href: "/packages/events/events.less" }
+    // Param {String} `url` - "/packages/todos/app.css"
+    // or Param {Object} like { rel: 'stylesheet/less', href: "/packages/todos/app.less" }
 
     Lib.prototype.loadCss = function (url) {
         var link = document.createElement("link");
