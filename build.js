@@ -3,6 +3,7 @@
     baseUrl: './',
     dir: './public',
     inlineText: true,
+    mainConfigFile: './src/main.js',
     optimize: 'uglify',
     paths: {
 
@@ -19,9 +20,7 @@
         // Plugins
 
         // RequireJS
-        'use'          : 'vendor/plugins/use',
         'domready'     : 'vendor/plugins/domReady',
-        'order'        : 'vendor/plugins/order',
         'text'         : 'vendor/plugins/text',
         
         // Touch events
@@ -56,6 +55,15 @@
         // Application - bootstrap for frontend app 
         'application'  : 'application'
 
+    },
+    shim: {
+        'underscore': {
+            exports: '_'
+        },
+        'backbone': {
+            deps: ['underscore', 'jquery'],
+            exports: 'Backbone'
+        }
     },
     /*
     modules: [
