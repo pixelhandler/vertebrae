@@ -2,7 +2,7 @@
 /*jslint regexp: true, nomen: true */
 /*global window, jasmine, jQuery */
 
-if (!window.HL) { var HL = {}; }
+if (!window.HL) { window.HL = {}; }
 
 // utils/debug module will disable logging when true...
 HL.disableDebugMode = true;

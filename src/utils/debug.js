@@ -49,7 +49,7 @@ define(['facade'], function (facade) {
         }
     };
     
-    if (HL && HL.disableDebugMode) {
+    if (window.HL && window.HL.disableDebugMode) {
         debug.mode = function () { return false; };
     }
 
