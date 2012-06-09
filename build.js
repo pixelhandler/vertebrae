@@ -27,7 +27,7 @@
         'touch'        : 'vendor/plugins/touch',
 
         // Vendor libs, packaged group of common dependencies
-        'vendor'       : 'facade',
+        'vendor'       : 'vendor',
 
         // Facade references to vendor / library methods
         'facade'       : 'facade',

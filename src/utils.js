@@ -4,16 +4,7 @@
 // Requires `define`  
 // See http://requirejs.org/docs/api.html#define
 
-define(["require",
-        "utils/ajax-options",
-        "utils/cookies",
-        "utils/debug",
-        "utils/lib",
-        "utils/storage",
-        "utils/shims"
-        ],
-
-function (require) {
+define(function (require) {
 
     return {
         "ajaxOptions": require("utils/ajax-options"),
