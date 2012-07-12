@@ -19,11 +19,11 @@
 
   
   <link rel="canonical" href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/dependencies-managed-with-require-and-define/2012/01/08">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/vertebrae/favicon.png" rel="icon">
+  <link href="/vertebrae/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/vertebrae/javascripts/modernizr-2.0.js"></script>
+  <script src="/vertebrae/javascripts/ender.js"></script>
+  <script src="/vertebrae/javascripts/octopress.js" type="text/javascript"></script>
   <link href="/atom.xml" rel="alternate" title="Vertebrae framework" type="application/atom+xml">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
@@ -35,7 +35,7 @@
 
 <body   >
   <header role="banner"><hgroup>
-  <h1><a href="/">Vertebrae framework</a></h1>
+  <h1><a href="/vertebrae/">Vertebrae framework</a></h1>
   
     <h2>built with Backbone.js and RequireJS using AMD</h2>
   
@@ -55,8 +55,8 @@
 </form>
   
 <ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/vertebrae/">Blog</a></li>
+  <li><a href="/vertebrae/blog/archives">Archives</a></li>
 </ul>
 
 </nav>
@@ -170,7 +170,7 @@
 
 <h3>The main.js file bootstraps the Web application</h3>
 
-<figure class='code'><figcaption><span> (main.js)</span> <a href='/downloads/code/javascript/main.js'>download</a></figcaption>
+<figure class='code'><figcaption><span> (main.js)</span> <a href='/vertebrae/downloads/code/javascript/main.js'>download</a></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -428,7 +428,7 @@
 
 <p>Below is an example of defining a Backbone Model object which returns a constructor rather than an instance. The recommended convention for naming variables is to use <em>Upper</em> <em>CamelCase</em> for constructors and <em>lower</em> <em>camelCase</em> for others.</p>
 
-<figure class='code'><figcaption><span> (event.js)</span> <a href='/downloads/code/javascript/models/event.js'>download</a></figcaption>
+<figure class='code'><figcaption><span> (event.js)</span> <a href='/vertebrae/downloads/code/javascript/models/event.js'>download</a></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -584,7 +584,7 @@
 
 <p>The events collection defined below returns an instance of the Backbone Collection object. In this collection constructor &#8220;EventsCollection&#8221; the event model is assigned to the model property of the object literal used to extend the base collection object (pseudo class, as in JavaScript everything is an object). Notice that one of the required scripts is &#8220;models&#8221; which contains the &#8220;Event&#8221; constructor in an object which is referenced as the variable &#8220;models.Event&#8221;.</p>
 
-<figure class='code'><figcaption><span>Events Collection  (events-example.js)</span> <a href='/downloads/code/javascript/collections/events-example.js'>download</a></figcaption>
+<figure class='code'><figcaption><span>Events Collection  (events-example.js)</span> <a href='/vertebrae/downloads/code/javascript/collections/events-example.js'>download</a></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -646,7 +646,7 @@
 
 <p>The strategy we are using for authoring modular and reusable code includes the use of site-wide or <em>global</em> objects as well as code organized in <em>packages</em> intended for specific components of the application. To provide global objects as dependencies which will be required by various packages we group (or wrap) common types of objects into a single object which can be <a href="http://requirejs.org/docs/optimization.html" title="RequireJS optimization/build script: r.js">optimized</a> in the build process with r.js. Grouping objects also helps to keep your list (array) of dependencies in the first argument of the (RequireJS) global <strong>define</strong> function call much cleaner and concise.</p>
 
-<figure class='code'><figcaption><span>models  (models.js)</span> <a href='/downloads/code/javascript/models.js'>download</a></figcaption>
+<figure class='code'><figcaption><span>models  (models.js)</span> <a href='/vertebrae/downloads/code/javascript/models.js'>download</a></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -732,7 +732,7 @@
 
 <p>Another example of grouping objects for a base library used to extend our base objects e.g. BaseModel&#8230;</p>
 
-<figure class='code'><figcaption><span>utils  (utils.js)</span> <a href='/downloads/code/javascript/utils.js'>download</a></figcaption>
+<figure class='code'><figcaption><span>utils  (utils.js)</span> <a href='/vertebrae/downloads/code/javascript/utils.js'>download</a></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -816,7 +816,7 @@
 
 <h4>Events Segments Collection</h4>
 
-<figure class='code'><figcaption><span>Events Segments Collection  (events-segments-example.js)</span> <a href='/downloads/code/javascript/collections/events-segments-example.js'>download</a></figcaption>
+<figure class='code'><figcaption><span>Events Segments Collection  (events-segments-example.js)</span> <a href='/vertebrae/downloads/code/javascript/collections/events-segments-example.js'>download</a></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -934,7 +934,7 @@
 </ul>
 
 
-<figure class='code'><figcaption><span>header nav view  (nav.js)</span> <a href='/downloads/code/javascript/packages/header/views/nav.js'>download</a></figcaption>
+<figure class='code'><figcaption><span>header nav view  (nav.js)</span> <a href='/vertebrae/downloads/code/javascript/packages/header/views/nav.js'>download</a></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1024,7 +1024,7 @@
 
 <span class="categories">
   
-    <a class='category' href='/notes/categories/amd/'>AMD</a>, <a class='category' href='/notes/categories/backbone-js/'>Backbone.js</a>, <a class='category' href='/notes/categories/requirejs/'>RequireJS</a>
+    <a class='category' href='/vertebrae/notes/categories/amd/'>AMD</a>, <a class='category' href='/vertebrae/notes/categories/backbone-js/'>Backbone.js</a>, <a class='category' href='/vertebrae/notes/categories/requirejs/'>RequireJS</a>
   
 </span>
 
@@ -1040,10 +1040,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/" title="Previous Post: Backbone.js : list of best practices">&laquo; Backbone.js : list of best practices</a>
+        <a class="basic-alignment left" href="/vertebrae/notes/backbone-dot-js-list-of-best-practices/2012/01/07/" title="Previous Post: Backbone.js : list of best practices">&laquo; Backbone.js : list of best practices</a>
       
       
-        <a class="basic-alignment right" href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/" title="next Post: File organization: building a framework using RequireJS">File organization: building a framework using RequireJS &raquo;</a>
+        <a class="basic-alignment right" href="/vertebrae/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/" title="next Post: File organization: building a framework using RequireJS">File organization: building a framework using RequireJS &raquo;</a>
       
     </p>
   </footer>
@@ -1058,43 +1058,43 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/">Vertebrae front-end framework built with Backbone.js and RequireJS using AMD</a>
+        <a href="/vertebrae/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/">Vertebrae front-end framework built with Backbone.js and RequireJS using AMD</a>
       </li>
     
       <li class="post">
-        <a href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/">Hello World Code Demo using Layout Manager and Controller</a>
+        <a href="/vertebrae/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/">Hello World Code Demo using Layout Manager and Controller</a>
       </li>
     
       <li class="post">
-        <a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>
+        <a href="/vertebrae/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>
       </li>
     
       <li class="post">
-        <a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Backbone.js CollectionView to utilize a collection rather than a model</a>
+        <a href="/vertebrae/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Backbone.js CollectionView to utilize a collection rather than a model</a>
       </li>
     
       <li class="post">
-        <a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Backbone.js and Mustache.js: Small views and templates</a>
+        <a href="/vertebrae/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Backbone.js and Mustache.js: Small views and templates</a>
       </li>
     
       <li class="post">
-        <a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes with custom library functions added to Backbone.js constructors</a>
+        <a href="/vertebrae/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes with custom library functions added to Backbone.js constructors</a>
       </li>
     
       <li class="post">
-        <a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Backbone Views using Mustache Templates</a>
+        <a href="/vertebrae/notes/backbone-views-using-mustache-templates/2012/01/08/">Backbone Views using Mustache Templates</a>
       </li>
     
       <li class="post">
-        <a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File organization: building a framework using RequireJS</a>
+        <a href="/vertebrae/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File organization: building a framework using RequireJS</a>
       </li>
     
       <li class="post">
-        <a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies managed with require() and define()</a>
+        <a href="/vertebrae/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies managed with require() and define()</a>
       </li>
     
       <li class="post">
-        <a href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Backbone.js : list of best practices</a>
+        <a href="/vertebrae/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Backbone.js : list of best practices</a>
       </li>
     
   </ul>
@@ -1126,7 +1126,7 @@
         });
     });
   </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
+  <script src="/vertebrae/javascripts/github.js" type="text/javascript"> </script>
 </section>
 
 
@@ -1140,7 +1140,7 @@
       getTwitterFeed("hautelook", 10, false);
     });
   </script>
-  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  <script src="/vertebrae/javascripts/twitter.js" type="text/javascript"> </script>
   
     <a href="http://twitter.com/hautelook" class="twitter-follow-button" data-show-count="false">Follow @hautelook</a>
   
