@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Documentation | Vertebrae framework]]></title>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/categories/documentation/atom.xml" rel="self"/>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/"/>
+  <updated>2012-07-12T11:32:22-07:00</updated>
+  <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/</id>
+  <author>
+    <name><![CDATA[Bill Heaton]]></name>
+    <email><![CDATA[pixelhandler@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone.js : list of best practices]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-dot-js-list-of-best-practices/2012/01/07/"/>
+    <updated>2012-01-07T20:30:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-dot-js-list-of-best-practices/2012/01/backbone-dot-js-list-of-best-practices</id>
+    <content type="html"><![CDATA[<h2>Documentation:</h2>
+
+<h3>Frontend Framework built with Backbone.js, Require.JS</h3>
+
+<ul>
+<li><a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies via require() or define()</a></li>
+<li><a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File Organization</a></li>
+<li><a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Mustache Templates</a></li>
+<li><a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes - constructor objects</a></li>
+<li><a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Small Views and Templates</a></li>
+<li><a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">CollectionView and ViewManager</a></li>
+<li><a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">RequireJS Optimizer build process</a></li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>Standards</h2>
+
+<ul>
+<li>No "var that = this;" usage
+
+<ul>
+<li>be descriptive if assigning this to a variable</li>
+<li>try not to pass "this" as context as much as possible</li>
+</ul>
+</li>
+<li>Use Backbone, Underscore and RequireJS conventions as much as possible
+
+<ul>
+<li>the frontend favors convention over configuration</li>
+</ul>
+</li>
+<li>Use the CollectionView for managing a the relationship between a Collection and the View that relates to those models.</li>
+<li>Need to define a more formal ViewManager class or define a set of best practices</li>
+<li>The Backbone.Model.parse method should only be used for things like virtual fields
+
+<ul>
+<li>example: the member model may create a name field that concats first and last names</li>
+<li>most parsing should be done on the sync specific to that version</li>
+</ul>
+</li>
+<li>Use small views and templates
+
+<ul>
+<li>rendering (and re*rendering) is faster and the DOM is easier to maintain</li>
+</ul>
+</li>
+<li>All dependencies must go through RequireJS require() or define() functions
+
+<ul>
+<li>no global state even for jQuery, Backbone, Underscore, etc</li>
+</ul>
+</li>
+<li>No manual jQuery DOM manipulation
+
+<ul>
+<li>the DOM fragments should be rendered through the View objects</li>
+</ul>
+</li>
+<li>No logic in the templates
+
+<ul>
+<li>too hard to test the logic</li>
+<li>use Mustache templates only</li>
+</ul>
+</li>
+<li>Base classes are used for Models, Collections, and Views to add common behavior</li>
+<li>Unit tests <code>should</code> be maintained using Jasmine (BDD style) for site*wide scripts:
+
+<ul>
+<li>e.g. models, views, collections, base classes and (utils) libraries</li>
+</ul>
+</li>
+<li>Comments should use <code>//</code> syntax, and also may include markdown syntax
+
+<ul>
+<li><code>docco</code> documentation generator parsed best with <code>//</code>.</li>
+<li>Routinely run <code>docco</code> (node package) to generate documentation (html files)
+
+<ul>
+<li>at least, following major releases.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Maintain examples by documenting best practices (Backbone and RequireJS) within code repository
+
+<ul>
+<li><code>docco</code> generates a <code>docs</code> folder; each package should have a docs folder</li>
+<li>docs folder has implementation notes highlighting frontend standards.</li>
+</ul>
+</li>
+<li>Document the build process using RequireJS Optimizer</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

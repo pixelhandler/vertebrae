@@ -1,0 +1,33 @@
+{
+    "event_id": "12366",
+    "event_code": "12366stellaandjamiewc",
+    "start_date": "2011-12-28T08:00:00-08:00",
+    "end_date": "2011-12-30T08:00:00-08:00",
+    "image_url": "/assets/12366stellaandjamiewc/event-small.jpg",
+    "info": "/assets/12366stellaandjamiewc/info.txt",
+    "video": "/assets/12366stellaandjamiewc/video.mp4",
+    "title": "Stella & jamie",
+    "tagline": "Sequins and detailing that dress things up",
+    "event_types": [
+        {
+            "name": "Women"
+        }
+    ],
+    "meta": {
+        "msa": [],
+        "status": "Active",
+        "private_event": false,
+        "exclusive": false,
+        "preview": false,
+        "nested": {
+            "parents": [],
+            "children": [],
+            "siblings": []
+        }
+    },
+    "description": "Sequins and detailing that dress things up.",
+    "coa": "womens_apparel",
+    "sort_order": "2",
+    "category": "Accessories",
+    "event_display_format": "Regular"
+}

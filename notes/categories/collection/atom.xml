@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: collection | Vertebrae framework]]></title>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/categories/collection/atom.xml" rel="self"/>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/"/>
+  <updated>2012-07-12T11:32:22-07:00</updated>
+  <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/</id>
+  <author>
+    <name><![CDATA[Bill Heaton]]></name>
+    <email><![CDATA[pixelhandler@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone.js CollectionView to utilize a collection rather than a model]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/"/>
+    <updated>2012-01-09T02:33:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model</id>
+    <content type="html"><![CDATA[<p><a href="http://documentcloud.github.com/backbone/" title="Backbone is an open-source component of DocumentCloud">Backbone.js</a> does not provide a view or controller that specifically manages a collection. <a href="http://documentcloud.github.com/backbone/#View" title="Backbone.View">Backbone view</a> objects are coupled with a <a href="http://documentcloud.github.com/backbone/#Model" title="Backbone.Model">model</a> and have render methods for presented the model data using an HTML template. However there are many instanced where a <a href="http://documentcloud.github.com/backbone/#Collection" title="Backbone.Collection">Backbone collection</a> objects (has many models) needs to be presented or managed with a single view object. Thus the need for a CollectionView constructor that implements an interface to manage many child views which render each model represented in the collection. A collection view object that generates view for each model preserves the <a href="http://documentcloud.github.com/backbone/docs/backbone.html" title="Backbone source code with inline documentation">core Backbone behavior</a> (link is to documented source, search for 'change') of firing change events on a model and a view that renders the changed data in response to the change event that was triggered by specific models.</p>
+
+<p>Liquid Media has posted tutorials on Backbone in a 3-part series <a href="http://liquidmedia.ca/blog/2011/01/backbone-js-part-1/" title="An Intro to Backbone.js: Part 1 – Models and Collections - Liquid Media">1</a>, <a href="http://liquidmedia.ca/blog/2011/01/an-intro-to-backbone-js-part-2-controllers-and-views/" title="An Intro to Backbone.js: Part 2 – Controllers and Views - Liquid Media">2</a>, <a href="http://liquidmedia.ca/blog/2011/02/backbone-js-part-3/" title="An Intro to Backbone.js: Part 3 – Binding a Collection to a View - Liquid Media">3</a>; and the third article demonstrates the use of a <a href="http://liquidmedia.ca/blog/2011/02/backbone-js-part-3/" title="An Intro to Backbone.js: Part 3 – Binding a Collection to a View - Liquid Media">Collection View constructor</a> which does what is described above.</p>
+
+<!--more-->
+
+
+<h2>CollectionView</h2>
+
+<p>This constructor is based on the article by Liquid Media</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Collection View  (collection.js)</span> <a href='/downloads/code/javascript/views/collection.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Collection View</span>
+</span><span class='line'><span class="c1">// ---------------</span>
+</span><span class='line'><span class="c1">// Manages rendering many views with a collection </span>
+</span><span class='line'><span class="c1">// See: &lt;http://liquidmedia.ca/blog/2011/02/backbone-js-part-3/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// The CollectionView extends BaseView and is intended for rendering a collection.</span>
+</span><span class='line'><span class="c1">// A item view is required for rendering withing each iteration over the models.</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Requires `define`</span>
+</span><span class='line'><span class="c1">// Returns {CollectionView} constructor </span>
+</span><span class='line'><span class="c1">// - instances must have a collection property</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">,</span><span class="s1">&#39;views/base&#39;</span><span class="p">,</span><span class="s1">&#39;utils&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">facade</span><span class="p">,</span> <span class="nx">BaseView</span><span class="p">,</span> <span class="nx">utils</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">CollectionView</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">_</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">debug</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Constructor `{CollectionView}` extends the BaseView.prototype</span>
+</span><span class='line'>    <span class="c1">// object literal argument to extend is the prototype for the CollectionView Constructor</span>
+</span><span class='line'>    <span class="nx">CollectionView</span> <span class="o">=</span> <span class="nx">BaseView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `initialize`  </span>
+</span><span class='line'>        <span class="c1">// Param {Object} `options` must have a child view and tagname  </span>
+</span><span class='line'>        <span class="c1">// - options should have properties: `view`, `tagName` </span>
+</span><span class='line'>        <span class="nx">initialize</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">collection</span><span class="p">,</span> <span class="nx">msg</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="k">instanceof</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;CollectionView initialize: no collection provided.&quot;</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">BaseView</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initialize</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_view</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">view</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_view</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_view</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;CollectionView initialize: no view provided.&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_tagName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">tagName</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_tagName</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_tagName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;CollectionView initialize: no tag name provided.&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_className</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_decorator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">decorator</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_id</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_views</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>            <span class="nx">_</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">bindAll</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;remove&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">setupCollection</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `setupCollection`  </span>
+</span><span class='line'>        <span class="c1">// bindings for adding and removing of models within the collection</span>
+</span><span class='line'>        <span class="nx">setupCollection</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">collection</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">collection</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">collection</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">collection</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">collection</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">collection</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">collection</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">);</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `add`  </span>
+</span><span class='line'>        <span class="c1">// Param {Model} `model` object that extends Backbone.Model</span>
+</span><span class='line'>        <span class="c1">// Creates a new view for models added to the collection</span>
+</span><span class='line'>        <span class="nx">add</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">view</span> <span class="o">=</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">_view</span><span class="p">({</span>
+</span><span class='line'>                <span class="s2">&quot;tagName&quot;</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_tagName</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;model&quot;</span><span class="o">:</span> <span class="nx">model</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;className&quot;</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_className</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;decorator&quot;</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_decorator</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_views</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_rendered</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `remove`  </span>
+</span><span class='line'>        <span class="c1">// Param {Model} `model` object that extends Backbone.Model</span>
+</span><span class='line'>        <span class="c1">// removes view when model is removed from collection</span>
+</span><span class='line'>        <span class="nx">remove</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">viewToRemove</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">viewToRemove</span> <span class="o">=</span> <span class="nx">_</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_views</span><span class="p">).</span><span class="nx">select</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">cv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">model</span> <span class="o">===</span> <span class="nx">model</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">})[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_views</span> <span class="o">=</span> <span class="nx">_</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_views</span><span class="p">).</span><span class="nx">without</span><span class="p">(</span><span class="nx">viewToRemove</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_rendered</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">viewToRemove</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span> <span class="c1">// $(viewToRemove.el).off().remove();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `render`  </span>
+</span><span class='line'>        <span class="c1">// Iterates over collection appending views to this.$el</span>
+</span><span class='line'>        <span class="c1">// When a {Function} decorator option is available manipulte views&#39; this.$el</span>
+</span><span class='line'>        <span class="nx">render</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">confirmElement</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">_rendered</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">empty</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">_</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_views</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">view</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">decorator</span> <span class="o">&amp;&amp;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">decorator</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">view</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">decorator</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">CollectionView</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Header view with factory method to generate multiple collection views</h2>
+
+<p>This view has a custom method <code>buildCollectionView</code> with is a factory for generating multiple collection view objects based on a multi-dimensional array containing segments of events by type and schedule. See the block that contains...</p>
+
+<p>```javascript
+view[schedule][type] = new views.CollectionView({</p>
+
+<pre><code>'collection': collections[schedule][type],
+'view': EventView,
+'tagName': 'li',
+'el': view.$('section.' + className + ' ul'),
+'className': className
+</code></pre>
+
+<p>});
+```</p>
+
+<p>The CollectionView constructor requires a Backbone collection instance and a Backbone Model constructor as well as properties <code>tagname</code> and <code>el</code> which are used when initializing instances of the view constructor for each model in the collection instance.</p>
+
+<p><em>Full implementation example</em></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Header View  (header.js)</span> <a href='/downloads/code/javascript/packages/header/views/header.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * header view </span>
+</span><span class='line'><span class="cm"> * @requires define</span>
+</span><span class='line'><span class="cm"> * @return {HL.View} constructor object</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span>
+</span><span class='line'>        <span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;underscore&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;collections&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;views/base&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;views&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;packages/header/views/event&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;packages/header/models/branding&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;packages/header/views/branding&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;packages/header/models/nav&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;packages/header/views/nav&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">collections</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">BaseView</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">views</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">EventView</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">brandingModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">BrandingView</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">navModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">NavView</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// global header view</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">HeaderView</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">HeaderView</span> <span class="o">=</span> <span class="nx">BaseView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;header&#39;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">_el</span> <span class="o">=</span> <span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>            <span class="nx">view</span><span class="p">.</span><span class="nx">schedules</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">schedules</span> <span class="o">||</span> <span class="p">[</span><span class="s1">&#39;today&#39;</span><span class="p">,</span><span class="s1">&#39;endingSoon&#39;</span><span class="p">];</span>
+</span><span class='line'>            <span class="nx">view</span><span class="p">.</span><span class="nx">types</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">types</span> <span class="o">||</span> <span class="p">[</span><span class="s1">&#39;women&#39;</span><span class="p">,</span><span class="s1">&#39;home&#39;</span><span class="p">,</span><span class="s1">&#39;kids&#39;</span><span class="p">,</span><span class="s1">&#39;beauty&#39;</span><span class="p">,</span><span class="s1">&#39;men&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="s1">&#39;getaways&#39;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">view</span><span class="p">.</span><span class="nx">branding</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BrandingView</span><span class="p">({</span>
+</span><span class='line'>                <span class="nx">el</span> <span class="o">:</span> <span class="nx">_el</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">model</span> <span class="o">:</span> <span class="nx">brandingModel</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>            <span class="nx">view</span><span class="p">.</span><span class="nx">nav</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NavView</span><span class="p">({</span>
+</span><span class='line'>                <span class="nx">el</span> <span class="o">:</span> <span class="nx">_el</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">model</span><span class="o">:</span> <span class="nx">navModel</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>            <span class="nx">view</span><span class="p">.</span><span class="nx">iterateSchedulesAndTypes</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">view</span><span class="p">,</span> <span class="nx">view</span><span class="p">.</span><span class="nx">setupCollectionReference</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;HeaderView init&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">branding</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">nav</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">iterateSchedulesAndTypes</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">buildCollectionView</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">iterateSchedulesAndTypes</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderCollectionView</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Header views rendered&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// list of collections, set order of appearance in menu by order in arrays.  </span>
+</span><span class='line'>        <span class="c1">// the segmented `collections` object has multidimentional array </span>
+</span><span class='line'>        <span class="c1">// using properties matching these strings. These properties can be set using</span>
+</span><span class='line'>        <span class="c1">// the options object as argument durig initialization.</span>
+</span><span class='line'>        <span class="c1">// TODO function to resort by members type prior to rendering</span>
+</span><span class='line'>        <span class="nx">schedules</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">types</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">iterateSchedulesAndTypes</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">schedules</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">schedule</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">types</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">view</span><span class="p">,</span> <span class="p">[</span><span class="nx">schedule</span><span class="p">,</span> <span class="nx">type</span><span class="p">]);</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">setupCollectionReference</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">schedule</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">view</span><span class="p">[</span><span class="nx">schedule</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">view</span><span class="p">[</span><span class="nx">schedule</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">view</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">view</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">buildCollectionView</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">schedule</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">collection</span><span class="p">,</span> <span class="nx">className</span> <span class="o">=</span> <span class="nx">view</span><span class="p">.</span><span class="nx">setClassName</span><span class="p">(</span><span class="nx">schedule</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// `collections` object should have properties with event segments</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">collections</span><span class="p">[</span><span class="nx">schedule</span><span class="p">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">collections</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;buildCollectionView cannot access collection in: collecions.&#39;</span> <span class="o">+</span> <span class="nx">schedule</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">view</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">views</span><span class="p">.</span><span class="nx">CollectionView</span><span class="p">({</span>
+</span><span class='line'>                <span class="s1">&#39;collection&#39;</span><span class="o">:</span> <span class="nx">collections</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">],</span>
+</span><span class='line'>                <span class="s1">&#39;view&#39;</span><span class="o">:</span> <span class="nx">EventView</span><span class="p">,</span>
+</span><span class='line'>                <span class="s1">&#39;tagName&#39;</span><span class="o">:</span> <span class="s1">&#39;li&#39;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s1">&#39;el&#39;</span><span class="o">:</span> <span class="nx">view</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;section.&#39;</span> <span class="o">+</span> <span class="nx">className</span> <span class="o">+</span> <span class="s1">&#39; ul&#39;</span><span class="p">),</span>
+</span><span class='line'>                <span class="s1">&#39;className&#39;</span><span class="o">:</span> <span class="nx">className</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;created collection: &#39;</span> <span class="o">+</span> <span class="nx">schedule</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">setClassName</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">schedule</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">className</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">toUpperCase</span><span class="p">();</span>
+</span><span class='line'>            <span class="nx">className</span> <span class="o">+=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">className</span> <span class="o">+=</span> <span class="s1">&#39;-&#39;</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">className</span> <span class="o">+=</span> <span class="nx">schedule</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">className</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">renderCollectionView</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">schedule</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">view</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">].</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;rendered collection: &#39;</span> <span class="o">+</span> <span class="nx">schedule</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">HeaderView</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Examples when Collection Views are used as a product's variants for color and size</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Information View  (information.js)</span> <a href='/downloads/code/javascript/packages/product/views/information.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// information view</span>
+</span><span class='line'><span class="c1">// ----------------</span>
+</span><span class='line'><span class="c1">// manages many views on product page</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span>
+</span><span class='line'>    <span class="s1">&#39;jquery&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;underscore&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;backbone&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;mustache&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;text!packages/product/templates/information.html&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;views/collection&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;packages/product/views/color&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;packages/product/views/size&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;packages/product/views/price&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;packages/product/views/quantity&#39;</span>
+</span><span class='line'><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Mustache</span><span class="p">,</span> <span class="nx">information_template</span><span class="p">,</span> <span class="nx">CollectionView</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">ColorView</span><span class="p">,</span> <span class="nx">SizeView</span><span class="p">,</span> <span class="nx">PriceView</span><span class="p">,</span> <span class="nx">QuantityView</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;product&#39;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="s1">&#39;click img.swatch&#39;</span><span class="o">:</span> <span class="s1">&#39;updateColor&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;click .size&#39;</span><span class="o">:</span> <span class="s1">&#39;updateSize&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;click .cart&#39;</span><span class="o">:</span> <span class="s1">&#39;addToCart&#39;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;render&#39;</span><span class="p">,</span> <span class="s1">&#39;updateColor&#39;</span><span class="p">,</span> <span class="s1">&#39;updateSize&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">colors</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CollectionView</span><span class="p">({</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">colors</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">view</span><span class="o">:</span> <span class="nx">ColorView</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;li&#39;</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">sizesCollection</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">sizes</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">sizes</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CollectionView</span><span class="p">({</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">sizesCollection</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">view</span><span class="o">:</span> <span class="nx">SizeView</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;li&#39;</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">quantityView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">QuantityView</span><span class="p">({</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">priceView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PriceView</span><span class="p">({</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">quantityView</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">quantityView</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">Mustache</span><span class="p">.</span><span class="nx">to_html</span><span class="p">(</span><span class="nx">information_template</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()));</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">colors</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;section.colors ul&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">colors</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// sizes are rendered based off the color</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">sizes</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;section.sizes ul&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">priceView</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;section.price&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">quantityView</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;section.quantity&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">defaultColor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;img.swatch&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="s1">&#39;:first&#39;</span><span class="p">).</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">updateColor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">({</span><span class="nx">currentColor</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">color</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">sizesCollection</span><span class="p">.</span><span class="nx">byColor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">priceView</span><span class="p">.</span><span class="nx">byColorAndSize</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">updateSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">({</span><span class="nx">currentSize</span><span class="o">:</span> <span class="nx">size</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">priceView</span><span class="p">.</span><span class="nx">byColorAndSize</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span> <span class="nx">size</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">addToCart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">addCurrentItemToCart</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>The color collection and view used by the Information view which acts as a view manager</p>
+
+<p><strong>Colors Collection</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Colors Collection  (colors.js)</span> <a href='/downloads/code/javascript/packages/product/collections/colors.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">define</span><span class="p">([</span>
+</span><span class='line'>    <span class="s1">&#39;underscore&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;backbone&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;packages/product/models/color&#39;</span>
+</span><span class='line'><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Color</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">model</span><span class="o">:</span> <span class="nx">Color</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><strong>Colors View</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Colors View  (color.js)</span> <a href='/downloads/code/javascript/packages/product/views/color.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">define</span><span class="p">([</span>
+</span><span class='line'>    <span class="s1">&#39;jquery&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;underscore&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;backbone&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;mustache&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;text!packages/product/templates/color.html&#39;</span>
+</span><span class='line'><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Mustache</span><span class="p">,</span> <span class="nx">colorTemplate</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;li&#39;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    		<span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">Mustache</span><span class="p">.</span><span class="nx">to_html</span><span class="p">(</span><span class="nx">colorTemplate</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()));</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>

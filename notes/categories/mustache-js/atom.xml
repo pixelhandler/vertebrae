@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Mustache.js | Vertebrae framework]]></title>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/categories/mustache-js/atom.xml" rel="self"/>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/"/>
+  <updated>2012-07-12T11:32:22-07:00</updated>
+  <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/</id>
+  <author>
+    <name><![CDATA[Bill Heaton]]></name>
+    <email><![CDATA[pixelhandler@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone.js and Mustache.js: Small views and templates]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/"/>
+    <updated>2012-01-09T01:48:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/backbone-dot-js-and-mustache-dot-js-small-views-and-templates</id>
+    <content type="html"><![CDATA[<p>Short and concise HTML templates that represent repeatable blocks or isolated components of a page are easier to manage and easier for other developers to edit than longer templates which encompass larger portions of a page. A view object with the responsibility of rendering and managing multiple child views is used to organize the components of a page.</p>
+
+<p>Consider navigation elements organized in lists under top level list items...</p>
+
+<p>Each top level item likely uses the same child list to present it's dropdowns. Rather then use one large template and one large collection of models utilizing smaller templates as components of the view remove hardcoding the hierarchy into both the model and the template but rather move the hierarchy to the view objects used to build the page. When the structure of the child lists needs to go through the change control process for added or removed presentation or a change in the hierarchy as directed by the business, the change is simple perhaps changed one portion of a template and the order of an array which dictates the hierarchy via enumerating. Also the business may dictate that the order of the menu follows various orders depending on visitor properties (e.g. member object either male or female). Then the menu's components display order can be dictated programmatically, utilizing the small views and templates.</p>
+
+<p>The best practice or goal emphasized above with respect to templates and views is KISS and DRY. As long as the implementation does not become overly complex and difficult to grok, keep the template code DRY, otherwise KISS principle overrides the need to have template code that does not repeat itself.</p>
+
+<!--more-->
+
+
+<h2>Code examples</h2>
+
+<p><em>A list item that will become part of various lists:</em></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (event.html)</span> <a href='/downloads/code/javascript/packages/header/templates/event.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/{{event_code}}&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;{{sort_order}}&quot;</span><span class="nt">&gt;</span>{{title}}<span class="nt">&lt;/a&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><em>A menu structure, which can be segmented using classes to target sections within the child list</em></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (nav.html)</span> <a href='/downloads/code/javascript/packages/header/templates/nav.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;nav&gt;</span>
+</span><span class='line'>  {{#types}}
+</span><span class='line'>  <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;{{.}}&quot;</span><span class="nt">&gt;&lt;strong&gt;</span>{{.}}<span class="nt">&lt;/strong&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;{{.}}-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;em&gt;</span>Today&#39;s Events<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;ul&gt;&lt;/ul&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;{{.}}-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;em&gt;</span>Ending Soon<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;ul&gt;&lt;/ul&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>  {{/types}}
+</span><span class='line'><span class="nt">&lt;/nav&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>HTML generated from the two templates using multiple CollectionView objects managed by a parent view object</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (nav-example.html)</span> <a href='/downloads/code/html/nav-example.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;nav&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;strong&gt;</span>Women<span class="nt">&lt;/strong&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Women-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Today&#39;s Events<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12366stellaandjamiewc&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>Stella <span class="ni">&amp;amp;</span> jamie<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12590classiqueblwtwc&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>Classique<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Ending Soon<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12125tahariblowoutwo&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;8&quot;</span><span class="nt">&gt;</span>Tahari Outerwear Blowout<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12588ecoskinblwtwc&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;10&quot;</span><span class="nt">&gt;</span>EcoSkin Blowout<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12053jewelmakblwtwj&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;11&quot;</span><span class="nt">&gt;</span>Jewelmak Blowout<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12393elfcosmeticswb&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;15&quot;</span><span class="nt">&gt;</span>e.l.f. Cosmetics<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12056tedbakerwatchesunisex&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;16&quot;</span><span class="nt">&gt;</span>Ted Baker Watches<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/11634bootsitootsiwf&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;17&quot;</span><span class="nt">&gt;</span>BootsiTootsi<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Women-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12057lillybeewf&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;18&quot;</span><span class="nt">&gt;</span>Lillybee<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;strong&gt;</span>Home<span class="nt">&lt;/strong&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Home-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Today&#39;s Events<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/11296bedfordcottageblwtda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>Bedford Cottage: Throws under $49<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12368ldchomebyjoeldessauleshda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>LDC Home by Joel Dessaules<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Home-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Ending Soon<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12054ltdedthomaspaulfurniturehda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;12&quot;</span><span class="nt">&gt;</span>Limited Edition: Thomas Paul Furniture<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12367pinodenaifinearthda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;14&quot;</span><span class="nt">&gt;</span>Pino Denai (1939-2010) Fine Art Collection<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12592napastylewinecellarhda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;20&quot;</span><span class="nt">&gt;</span>Napa Style: The Wine Cellar<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12170luxuryhotelsheetsblwthda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;21&quot;</span><span class="nt">&gt;</span>Luxury Hotel Sheets Blowout<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Home-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12169floorcoutureblwthda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;22&quot;</span><span class="nt">&gt;</span>Floor Couture Blowout<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Kids&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;strong&gt;</span>Kids<span class="nt">&lt;/strong&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Kids-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Today&#39;s Events<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Kids-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12369miabellebabycm&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;4&quot;</span><span class="nt">&gt;</span>Mia Belle Baby<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Kids-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Ending Soon<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Kids-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12240stencilkidsblowoutcm&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;19&quot;</span><span class="nt">&gt;</span>Stencil Kids Blowout<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Getaways&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;strong&gt;</span>Getaways<span class="nt">&lt;/strong&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Getaways-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Today&#39;s Events<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Getaways-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/Smoke_Tree_Ranch_Palm_Springs_622&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>Smoke Tree Ranch Palm Springs <span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Getaways-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/Amara_Resort_Sedona_623&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;6&quot;</span><span class="nt">&gt;</span>Sedona, Amara Resort <span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Getaways-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/The_Andrew_Pinckney_Inn_Charleston_609&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;7&quot;</span><span class="nt">&gt;</span>The Andrew Pinckney Inn Charleston<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Getaways-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Ending Soon<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Getaways-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/Millennium_Scottsdale_Resort_Villas_608&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;23&quot;</span><span class="nt">&gt;</span>Scottsdale, Millennium Resort <span class="ni">&amp;amp;</span> Villas <span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Getaways-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/Hawaii_Prince_Hotel_Waikiki_610&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;24&quot;</span><span class="nt">&gt;</span>Hawaii Prince Hotel Waikiki<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Men&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;strong&gt;</span>Men<span class="nt">&lt;/strong&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Men-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Today&#39;s Events<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Men-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Ending Soon<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Men-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12003tedbakermc&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;9&quot;</span><span class="nt">&gt;</span>Ted Baker Men<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Men-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12406mackagemo&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;13&quot;</span><span class="nt">&gt;</span>Mackage Men<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Men-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12367pinodenaifinearthda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;14&quot;</span><span class="nt">&gt;</span>Pino Denai (1939-2010) Fine Art Collection<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Men-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12056tedbakerwatchesunisex&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;16&quot;</span><span class="nt">&gt;</span>Ted Baker Watches<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Men-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12592napastylewinecellarhda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;20&quot;</span><span class="nt">&gt;</span>Napa Style: The Wine Cellar<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Men-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12170luxuryhotelsheetsblwthda&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;21&quot;</span><span class="nt">&gt;</span>Luxury Hotel Sheets Blowout<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Beauty&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;strong&gt;</span>Beauty<span class="nt">&lt;/strong&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Beauty-today&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Today&#39;s Events<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;Beauty-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;em&gt;</span>Ending Soon<span class="nt">&lt;/em&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;Beauty-endingSoon&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/12393elfcosmeticswb&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;15&quot;</span><span class="nt">&gt;</span>e.l.f. Cosmetics<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="nt">&lt;/nav&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Views using Mustache Templates]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-views-using-mustache-templates/2012/01/08/"/>
+    <updated>2012-01-08T23:35:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-views-using-mustache-templates/2012/01/backbone-views-using-mustache-templates</id>
+    <content type="html"><![CDATA[<h2>Using Mustache.js</h2>
+
+<p>Mustache is a template library based on logic-less templates and the JavaScript implementation can be executed on the client side. The basic usage takes two components:</p>
+
+<ol>
+<li>An HTML template with variables embedded inside double curly braces, e.g. <em>&lt;p&gt;&#123;&#123;myVar&#125;&#125;&lt;/p&gt;</em></li>
+<li>A JSON object with data containing the named object referenced in the template e.g. <em>{ "myVar" : "Sting value here" }</em>.</li>
+</ol>
+
+
+<p>The <a href="https://github.com/janl/mustache.js" title="Mustache.js source code and documentation on github">Mustache.js</a> api provides a method <code>Mustache.to_html()</code> which compiles the template code with the JSON object to produce a string to insert into the DOM. For example: <code>rendered = Mustache.to_html(view.template, view.model.toJSON());</code></p>
+
+<h2>Simple template used to render a list item</h2>
+
+<p>This example will be used by a Backbone View object's render method which will be used within a CollectionView object with the responsibility of building views from a Backbone collection object</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (event.html)</span> <a href='/downloads/code/javascript/packages/header/templates/event.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/{{event_code}}&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;{{sort_order}}&quot;</span><span class="nt">&gt;</span>{{title}}<span class="nt">&lt;/a&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>JSON Data: Event object</h2>
+
+<p>The data below includes the variables (<em>event_code</em>, <em>sort_order</em>, <em>title</em>) referenced in the the template and other data not utilized in the template.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (event-object.json)</span> <a href='/downloads/code/json/event-object.json'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;event_id&quot;</span><span class="o">:</span> <span class="s2">&quot;12366&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;event_code&quot;</span><span class="o">:</span> <span class="s2">&quot;12366stellaandjamiewc&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;start_date&quot;</span><span class="o">:</span> <span class="s2">&quot;2011-12-28T08:00:00-08:00&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;end_date&quot;</span><span class="o">:</span> <span class="s2">&quot;2011-12-30T08:00:00-08:00&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;image_url&quot;</span><span class="o">:</span> <span class="s2">&quot;/assets/12366stellaandjamiewc/event-small.jpg&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;info&quot;</span><span class="o">:</span> <span class="s2">&quot;/assets/12366stellaandjamiewc/info.txt&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;video&quot;</span><span class="o">:</span> <span class="s2">&quot;/assets/12366stellaandjamiewc/video.mp4&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Stella &amp; jamie&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;tagline&quot;</span><span class="o">:</span> <span class="s2">&quot;Sequins and detailing that dress things up&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;event_types&quot;</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Women&quot;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">],</span>
+</span><span class='line'>    <span class="s2">&quot;meta&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;msa&quot;</span><span class="o">:</span> <span class="p">[],</span>
+</span><span class='line'>        <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="s2">&quot;Active&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;private_event&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;exclusive&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;preview&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;nested&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="s2">&quot;parents&quot;</span><span class="o">:</span> <span class="p">[],</span>
+</span><span class='line'>            <span class="s2">&quot;children&quot;</span><span class="o">:</span> <span class="p">[],</span>
+</span><span class='line'>            <span class="s2">&quot;siblings&quot;</span><span class="o">:</span> <span class="p">[]</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Sequins and detailing that dress things up.&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;coa&quot;</span><span class="o">:</span> <span class="s2">&quot;womens_apparel&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;sort_order&quot;</span><span class="o">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;category&quot;</span><span class="o">:</span> <span class="s2">&quot;Accessories&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;event_display_format&quot;</span><span class="o">:</span> <span class="s2">&quot;Regular&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Backbone View in a AMD module utilizing Mustache within it's render() method</h2>
+
+<p>The module requires a text/html file by including a string in the dependencies array : <code>'text!packages/header/templates/event.html'</code> and assigns the text string to the variable listed in the anonymous function's arguments named: <code>eventTemplate</code>. The JSON data is injected when this view constructor is initialized by calling the construction function with the "new" operator and passing in the JSON object as the model data, e.g. <code>"model" : new EventView(model),</code></p>
+
+<p>The code <code>rendered = Mustache.to_html(view.template, view.model.toJSON());</code> has a (string) template as the first argument and the second argument is the JSON data object. The result of this <code>to_html</code> method is assigned to the variable <code>rendered</code>. Then the view instance's "render()" method inserts the rendered html into the DOM reference by the Backbone View object's "el" property... <code>$(view.el).html(rendered);</code></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (event.js)</span> <a href='/downloads/code/javascript/packages/header/views/event.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// event view </span>
+</span><span class='line'><span class="c1">// ----------</span>
+</span><span class='line'><span class="c1">// @requires define</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;underscore&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;backbone&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;views/base&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;text!packages/header/templates/event.html&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;mustache&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">BaseView</span><span class="p">,</span> <span class="nx">eventTemplate</span><span class="p">,</span> <span class="nx">Mustache</span><span class="p">,</span> <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">EventView</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">EventView</span> <span class="o">=</span> <span class="nx">BaseView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="nx">eventTemplate</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventView init&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">rendered</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">rendered</span> <span class="o">=</span> <span class="nx">Mustache</span><span class="p">.</span><span class="nx">to_html</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="nx">view</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">());</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">rendered</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventView rendered&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">view</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">EventView</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Summary</h2>
+
+<p>Mustache.js is the template library selected primarily because of the fact that the library is "logic-less" and also is a popular choice since <a href="http://mustache.github.com/" title="Mustache library">Mustache</a> is implemmented in a wide variety of languages. The fact that no logic is executed in rendering a Mustache template insures that bugs are highly unlikely to be caused due to some logic failing within the operation of executing the template method to render an object as HTML. Logic can be added to the Mustache template within the JavaScript code (e.g. a module for creating a View constructor) which allows for unit testing and debugging utilizing a breakpoint in the code. See the <a href="https://github.com/janl/mustache.js" title="Mustache.js source code and documentation on github">Mustache.js documentation</a> for using conditions, enumerable objects, partials an other Mustache interface functions to for authoring templates with JavaScript, HTML and JSON.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Building a framework with Backbone.js]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/building-framework-with-backbone/2012/01/07/"/>
+    <updated>2012-01-07T20:00:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/building-framework-with-backbone/2012/01/building-framework-with-backbone</id>
+    <content type="html"><![CDATA[<p>Below is a collection of links for code documentation and learning about the preferred libraries for building a JavaScript web application. The libraries selected provide code organization, script/file loading, dependency management, utility library, DOM manipulation, and ajax support for asynchronous application development and interaction with a REST api.</p>
+
+<h2>Web book</h2>
+
+<p><strong>Backbone.js Fundamentals</strong> - <a href="https://github.com/addyosmani/backbone-fundamentals">https://github.com/addyosmani/backbone-fundamentals</a></p>
+
+<p>A creative-commons book on Backbone.js for beginners and advanced users
+alike. How to write modular JavaScript apps for desktop and mobile</p>
+
+<h2>Learning from the source</h2>
+
+<p><strong>Source code documentation</strong></p>
+
+<ul>
+<li><a href="http://documentcloud.github.com/backbone/">http://documentcloud.github.com/backbone/</a></li>
+<li><a href="http://documentcloud.github.com/backbone/docs/backbone.html">http://documentcloud.github.com/backbone/docs/backbone.html</a></li>
+<li><a href="http://documentcloud.github.com/underscore/">http://documentcloud.github.com/underscore/</a></li>
+<li><a href="http://requirejs.org/">http://requirejs.org/</a></li>
+<li><a href="http://requirejs.org/docs/whyamd.html">http://requirejs.org/docs/whyamd.html</a></li>
+<li><a href="http://mustache.github.com/">http://mustache.github.com/</a> | <a href="https://github.com/janl/mustache.js/">https://github.com/janl/mustache.js/</a></li>
+</ul>
+
+
+<!--more-->
+
+
+<p><strong>Code examples</strong></p>
+
+<ul>
+<li><a href="https://github.com/addyosmani/todomvc/tree/master/todo-example/backbone">https://github.com/addyosmani/todomvc/tree/master/todo-example/backbone</a></li>
+<li><a href="https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone">https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone</a></li>
+</ul>
+
+
+<p><strong>Demos</strong></p>
+
+<ul>
+<li><a href="http://addyosmani.github.com/todomvc/todo-example/backbone/index.html">http://addyosmani.github.com/todomvc/todo-example/backbone/index.html</a></li>
+</ul>
+
+
+<p><strong>Tutorials</strong></p>
+
+<ul>
+<li><a href="http://backbonetutorials.com/organizing-backbone-using-modules/">http://backbonetutorials.com/organizing-backbone-using-modules/</a></li>
+<li><a href="https://github.com/documentcloud/backbone/wiki/Tutorials,-blog-posts-and-example-sites">https://github.com/documentcloud/backbone/wiki/Tutorials,-blog-posts-and-example-sites</a></li>
+</ul>
+
+
+<p><strong>Videos</strong></p>
+
+<ul>
+<li><a href="http://peepcode.com/products/backbone-js">http://peepcode.com/products/backbone-js</a></li>
+<li><a href="http://backbonescreencasts.com/">http://backbonescreencasts.com/</a></li>
+</ul>
+
+
+<p><strong>Unit Testing</strong></p>
+
+<ul>
+<li><a href="https://github.com/pivotal/jasmine/wiki/Suites-and-specs">https://github.com/pivotal/jasmine/wiki/Suites-and-specs</a></li>
+<li><a href="http://pivotal.github.com/jasmine/jsdoc/symbols/jasmine.Matchers.html">http://pivotal.github.com/jasmine/jsdoc/symbols/jasmine.Matchers.html</a></li>
+<li><a href="https://github.com/pivotal/jasmine/wiki/Asynchronous-specs">https://github.com/pivotal/jasmine/wiki/Asynchronous-specs</a></li>
+<li><a href="http://sinonjs.org/">http://sinonjs.org/</a> | <a href="http://sinonjs.org/docs/">http://sinonjs.org/docs/</a></li>
+<li><a href="http://tinnedfruit.com/2011/03/03/testing-backbone-apps-with-jasmine-sinon.html">http://tinnedfruit.com/2011/03/03/testing-backbone-apps-with-jasmine-sinon.html</a></li>
+<li><a href="http://tinnedfruit.com/2011/03/25/testing-backbone-apps-with-jasmine-sinon-2.html">http://tinnedfruit.com/2011/03/25/testing-backbone-apps-with-jasmine-sinon-2.html</a></li>
+<li><a href="http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html">http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html</a></li>
+</ul>
+
+
+<h2>Community / Projects</h2>
+
+<p><strong>Apps</strong></p>
+
+<ul>
+<li><a href="http://nrabinowitz.github.com/gapvis/#index">http://nrabinowitz.github.com/gapvis/#index</a></li>
+</ul>
+
+
+<p><strong>Blog Posts</strong></p>
+
+<ul>
+<li><a href="http://googleancientplaces.wordpress.com/">http://googleancientplaces.wordpress.com/</a></li>
+<li><a href="http://www.netmagazine.com/tutorials/use-backbonejs-speed-interactions">http://www.netmagazine.com/tutorials/use-backbonejs-speed-interactions</a></li>
+</ul>
+
+
+<p><strong>Code</strong></p>
+
+<ul>
+<li><a href="https://github.com/zurb/flickrbomb">https://github.com/zurb/flickrbomb</a></li>
+</ul>
+
+
+<p><strong>Community</strong></p>
+
+<ul>
+<li><strong>Stackoverflow</strong> - <a href="http://stackoverflow.com/questions/tagged/backbone.js">http://stackoverflow.com/questions/tagged/backbone.js</a></li>
+<li><strong>irc</strong> - <code>#documentcloud</code> on irc.freenode.net</li>
+<li><strong>Forum</strong> - <a href="https://groups.google.com/forum/#!forum/backbonejs">https://groups.google.com/forum/#!forum/backbonejs</a></li>
+<li><strong>tweets</strong> - @documentcloud</li>
+</ul>
+
+
+<h3>jQuery Mobile</h3>
+
+<ul>
+<li><a href="http://jquerymobile.com/demos/1.0/">http://jquerymobile.com/demos/1.0/</a></li>
+<li><a href="http://jquerymobile.com/test/docs/api/themes.html">http://jquerymobile.com/test/docs/api/themes.html</a></li>
+<li><a href="http://docs.jquery.com/">http://docs.jquery.com/</a></li>
+</ul>
+
+
+<h2>Miscellaneous</h2>
+
+<p><strong>Similar MVC projects</strong></p>
+
+<ul>
+<li>Ember.JS - <a href="http://www.emberjs.com/">http://www.emberjs.com/</a></li>
+</ul>
+
+
+<p><strong>General JavaScript / jQuery learning...</strong></p>
+
+<ul>
+<li>Interactive way to learn about javascript... <a href="http://www.codecademy.com/">http://www.codecademy.com/</a></li>
+<li><a href="http://jqfundamentals.com/">http://jqfundamentals.com/</a></li>
+<li><a href="http://learn.appendto.com/">http://learn.appendto.com/</a></li>
+<li><a href="http://docs.jquery.com/Tutorials">http://docs.jquery.com/Tutorials</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

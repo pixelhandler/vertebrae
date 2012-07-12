@@ -1,0 +1,11 @@
+/* Welcome styles */
+
+#welcome {
+    margin: 0 50%;
+    padding: 5em 0;
+    font: normal 2em/1.5em monospace;
+}
+.article p {
+    color: blue;
+    text-align: center;
+}

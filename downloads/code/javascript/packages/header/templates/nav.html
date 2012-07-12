@@ -1,0 +1,14 @@
+<nav>
+  {{#types}}
+  <li class="{{.}}"><strong>{{.}}</strong>
+  <section class="{{.}}-today">
+      <em>Today's Events</em>
+      <ul></ul>
+    </section>
+    <section class="{{.}}-endingSoon">
+      <em>Ending Soon</em>
+      <ul></ul>
+    </section>
+  </li>
+  {{/types}}
+</nav>

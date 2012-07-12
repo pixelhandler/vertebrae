@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Vertebrae framework</title>
+  <title>Hello World Code Demo using Layout Manager and Controller - Vertebrae framework</title>
   <meta name="author" content="Bill Heaton">
 
   
-  <meta name="description" content="Vertebrae provides AMD structure and additional objects for extending Backbone.js as an application framework. Github source : https://github.com/ &hellip;">
+  <meta name="description" content="Overview of Hello World &#8220;Layout&#8221; Code demonstration of adding a route, route handler function in App, new &#8220;hello&#8221; package &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae">
+  <link rel="canonical" href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -62,265 +62,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/">Vertebrae Front-end Framework Built With Backbone.js and RequireJS Using AMD</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-23T12:59:00-07:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>Vertebrae</strong> provides <em>AMD</em> structure and additional objects for extending <em>Backbone.js</em> as an application framework.</p>
-
-<ul>
-<li>Github source : <a href="https://github.com/hautelook/vertebrae">https://github.com/hautelook/vertebrae</a></li>
-</ul>
-
-
-<h3>The plan: build an application, mostly with open source libraries</h3>
-
-<p>Following a review of many MV* front-end frameworks/libraries, such as Ember, JavaScriptMVC, Spine, Knockout, and Backbone.js our team decided to begin building a framework with Backbone.js, RequireJS, Underscore.js, jQuery, Mustache.js with code organized in packages of (AMD) modules, see previous post: <a href="http://www.hautelooktech.com/2012/02/01/optimize-and-build-a-backbone-js-javascript-application-with-require-js-using-packages/" title="Organize Backbone.js application using packages">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>&#8230;</p>
-
-<h4>We needed to add some logic on top of the chosen stack of libraries</h4>
-
-<p>The libraries we selected provide: module loading, dependency management, application structure (for models, collections, views and routes), asynchronous interactions with API, various utilities and objects to manage asynchronous behaviors, e.g. (Promises) Deferreds, Callbacks. The remaining logic needed to complete the application include:</p>
-
-<ul>
-<li>An object (collection) to manage state(s) in the single-page application;</li>
-<li>A layout manager to present, arrange/transition and clear views, and</li>
-<li>Controllers which respond to routes, get/set application state, and hand off views and models/collections to layout manager.</li>
-</ul>
-
-
-<p>The project goals include:</p>
-
-<ul>
-<li>Modules for code organization (a module should have a single responsibility)</li>
-<li>MVC structure for separation of concerns</li>
-<li>Dependency management using a script loader</li>
-<li>Build tools for optimization in packages which should support various experiences in the app</li>
-<li>Well documented and actively used open source libraries</li>
-<li>Framework code should have unit tests, build framework by writing unit tests.</li>
-<li>Solutions for managing asynchronous behaviors, e.g. Promises</li>
-</ul>
-
-
-<p><em>We are using: RequireJS, Underscore.js, jQuery, Backbone.js, Mustache.js; and for BDD&#8230; Jasmine, Sinon, jQuery-Jasmine.</em></p>
-
-<h4>Solutions</h4>
-
-<p><strong>Application state manager</strong></p>
-
-<p>The application manager stores data in memory (collection) and also persists data in browser storage to provide a resource for storing and retrieving data/metadata. The application states collection also provides data (state) to reconstruct a page (layout view) based on previous interactions (e.g. selected tab, active views, etc.). The application state manager provides a strategy for resources to retrieve state for a common interface for localStorage, sessionStorage, or a cookie; also sets an <code>expires</code> property.</p>
-
-<p>Also, data used to bootstrap a page can be stored as well, e.g. user/visitor information (items in cart, etc.), data that is reused for many pages, interactions on a page that should be recalled when a user revisits the page.</p>
-
-<p><strong>Layout manager</strong></p>
-
-<p>The layout manager has one or many views as well as document (DOM) <code>destinations</code> for each (rendered) view. A page may transition between views, so the layout manager keeps track of view states, e.g. rendered, not-rendered, displayed, not-displayed. The layout manager can load and render (detached) views that a user/visitor is very likely to request, e.g. tab changes on page. The transition between view states is managed by this object. An entire layout may be cleared so that view objects and their bindings are removed, preparing these objects for garbage collection (preventing memory leaks). The layout manager also communicates view state with controller(s).</p>
-
-<p><strong>Controller</strong></p>
-
-<p>A controller object is called by a route handler function, is responsible for getting relevant state (application models), and does the work to construct a page (layout); also responsible for setting state when routes change. The controller passes dependent data (models/collections) and constructed view objects for a requested page to the layout manager. As a side-effect the use of controllers prevents the routes object from becoming bloated and tangled. A route should map to a controller which then kicks off the page view, keeping the route handling functions lean.</p>
-
-<h2>Behavior Driven Development -</h2>
-
-<p>We made the decision to develop the framework using behavior driven development. Jamsine is the test framework we selected, below are the specs that were used to discover the solutions for our need to have the additional logic we wanted to add on top of the open source stack of libraries&#8230;</p>
-
-<h3>Specs</h3>
-
-<p><strong>Application state manager specs</strong><br/>
-(an model object to manage state within the single-page application)</p>
-
-<p>should use options for persistent storage of JSON data<br/>
-should reference stored data with string name, e.g. route name<br/>
-should have expiration for data objects that are persisted in localStorage<br/>
-should store (in memory) reference to model/collection objects for reuse<br/>
-should be a singleton object<br/>
-should provide strategy for data retrieval (memory/storage/api)<br/>
-should store view state of page layouts</p>
-
-<p><strong>Layout manager specs</strong><br/>
-(presents, arranges, transitions and clears views)</p>
-
-<p>should use ‘destination’ property for location on dom to show each view
-should keep track of current state for view objects, e.g. not-rendered, shown, hidden
-should lazy/load or render hidden (detached) views within a layout
-should have show and close methods to render and display a view
-should manage transition between views within a layout scheme
-should close (destroy) managed views/bindings within a layout (e.g. on transition to new layout)
-should have access to view’s deferred object (returned on render) for asynchronous display
-should have option to display layout when all views’ deferreds are resolved or as ready</p>
-
-<p><strong>Controller specs</strong><br/>
-(gets/sets application state, and delegates work to a layout manager object, used within route handlers)</p>
-
-<p>should get data from application state manager object<br/>
-should initialize views/models with relevant data received from application state manager<br/>
-should call layout manager with arguments including relevant views/data<br/>
-should send data to manager when route changes to store view state or dependent data<br/>
-should receive data from view objects which publish change in view state</p>
-
-<h2>Views:</h2>
-
-<p>We studied many posts on the topic of Backbone.js and came up with a set of views that will support all the work we needed and provide some patterns to reuse in our application&#8230;</p>
-
-<p><strong><code>BaseView</code>, <code>CollectionView</code>, <code>SectionView</code>, <code>LayoutView</code> (Manages Sections)</strong></p>
-
-<p>All the views extend the BaseView which extends the Backbone.View object.</p>
-
-<h3>Base View</h3>
-
-<p>A view object to construct a standard view with common properties and utilties The base view extends Backbone.View adding methods for resolving deferreds,  rendering, decorating data just in time for rendering, adding child views to  form a composite of views under one view object, add a destroy method.</p>
-
-<h3>Collection View</h3>
-
-<p>Manages rendering many views with a collection. The CollectionView extends BaseView and is intended for rendering a collection. A item view is required for rendering within each iteration over the models. This was a great source for the CollectionView: <a href="http://liquidmedia.ca/blog/2011/02/lib-js-part-3/">http://liquidmedia.ca/blog/2011/02/lib-js-part-3/</a></p>
-
-<h3>Section View</h3>
-
-<p>View object to track view&#8217;s state &#8216;not-rendered&#8217;, &#8216;rendered&#8217;, &#8216;not-displayed&#8217;, &#8216;displayed&#8217;; can be mixed in to another view type, e.g. CollectionView.</p>
-
-<p>A section view is the required view object for a layout view which expects views to track their own state. This view may be extended as need. to use in a layout, perhaps adding the Section prototype properties to another view.</p>
-
-<h3>Layout Manager View</h3>
-
-<p>Presents, arranges, transitions and clears views</p>
-
-<p>The layout manager has one or many views as well as document (DOM)  destinations for each (rendered) view. A page may transition between  many views, so the layout manager keeps track of view states, e.g.  &#8216;not-rendered&#8217;, &#8216;rendered&#8217;, &#8216;not-displayed&#8217;, &#8216;displayed&#8217;.</p>
-
-<p>The layout manager can lazy load and render (detached) views that a member is very likely to request, e.g. tab changes on events page. The transition between view states is managed by this object. An entire layout may be cleared so that view objects and their bindings are removed, preparing these objects for garbage collection (preventing memory leaks). The layout manager also communicates view state with controller(s).</p>
-
-<h2>Models:</h2>
-
-<p><strong><code>BaseModel</code>, <code>ApplicationState</code></strong></p>
-
-<h3>Application State Model</h3>
-
-<p>A model object to manage state within the single-page application Attributes: {String} <code>name</code>, {Object} <code>data</code>, {String} <code>storage</code>, {Date} <code>expires</code></p>
-
-<p>All the models extend the BaseModel which extends the Backbone.Model object.</p>
-
-<h2>Collections</h2>
-
-<p><strong><code>BaseCollection</code>, <code>ApplicationStates</code></strong></p>
-
-<h3>Application State Collection</h3>
-
-<p>A collection object to reference various states in the application.</p>
-
-<p>The application manager stores data in memory and also persists data in browser storage to provide a resource for common data/metadata. Also provides data (state) to reconstruct the page views based on previous interactions (e.g. selected tab, applied filters). The application state manager provides a strategy for resources to retrieve state.</p>
-
-<p>All the collections extend the BaseCollection which extends the Backbone.Collection object.</p>
-
-<h2>Syncs:</h2>
-
-<p><strong>syncFactory, application-state, storageFactory</strong></p>
-
-<p>We have a sync to use localStorage, sessionStorage, or a cookie using the same interface. The application state manager (collection) uses a specific sync object for the browser storage options.</p>
-
-<h2>Utils:</h2>
-
-<p><strong>ajax-options, docCookies, debug, storage, shims, lib [checkType, duckTypeCheck, Channel (pub/sub), loadCss, formatCase, formatMoney]</strong></p>
-
-<p>We put any of our utilities into a library module.</p>
-
-<h2>Controller</h2>
-
-<p>A controller object should called within a route handler function, and may be responsible for getting relevant state (application models) to generate a page (layout), (also responsible for setting state when routes change). The controller passes dependent data (models/collections) and constructed view objects for a requested page to the layout manager. As a side-effect the use of controllers prevents the routes object from becoming bloated and tangled. A route should map to a controller which then kicks off the page view, keeping the route handling functions lean.</p>
-
-<h2>Facade</h2>
-
-<p>Vendor libraries and specific methods used in the framework are required in the facade, and referenced from the facade module in the views, models, collections, lib and other objects in the framework.</p>
-
-<h2>AMD - Asynchronous Module Definition</h2>
-
-<p>The the examples below show how we are using facade module as a dependency. RequireJS has various options for the syntax you can use to manage dependencies, below are a couple we use:</p>
-
-<pre><code>define(['facade','utils'], function (facade, utils) {
-
-    var ModuleName,
-        // References to objects nested in dependencies
-        Backbone = facade.Backbone,
-        $ = facade.$,
-        _ = facade._,
-        lib = utils.lib;
-
-    ModuleName = DO SOMETHING HERE
-
-    return ModuleName;
-});
-
-
-define(['require','facade','utils'], function (require) {
-
-    var ModuleName,
-        // Dependencies
-        facade = require('facade'),
-        utils = require('utils'),
-        // References to objects nested in dependencies
-        Backbone = facade.Backbone,
-        $ = facade.$,
-        _ = facade._,
-        lib = utils.lib;
-
-    ModuleName = DO SOMETHING HERE
-
-    return ModuleName;
-});
-</code></pre>
-
-<p>References:<br/>
-  * <a href="https://github.com/amdjs/amdjs-api/wiki/AMD" title="AMD spec">AMD spec</a>
-  * <a href="http://requirejs.org/docs/whyamd.html" title="RequireJS why AMD">RequireJS why AMD</a>
-  * <a href="http://requirejs.org/docs/whyamd.html#amd" title="RequireJS AMD">RequireJS AMD</a></p>
-
-<h2>Docs</h2>
-
-<p>View docs on the demo site, hosted on Heroku at:</p>
-
-<p><a href="http://vertebrae-framework.herokuapp.com/docs/">http://vertebrae-framework.herokuapp.com/docs/</a><br/>
-<a href="http://vertebrae-framework.herokuapp.com/models/docs/">http://vertebrae-framework.herokuapp.com/models/docs/</a><br/>
-<a href="http://vertebrae-framework.herokuapp.com/collections/docs/">http://vertebrae-framework.herokuapp.com/collections/docs/</a><br/>
-<a href="http://vertebrae-framework.herokuapp.com/syncs/docs/">http://vertebrae-framework.herokuapp.com/syncs/docs/</a><br/>
-<a href="http://vertebrae-framework.herokuapp.com/utils/docs/">http://vertebrae-framework.herokuapp.com/utils/docs/</a><br/>
-<a href="http://vertebrae-framework.herokuapp.com/views/docs/">http://vertebrae-framework.herokuapp.com/views/docs/</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/">Hello World Code Demo Using Layout Manager and Controller</a></h1>
+      <h1 class="entry-title">Hello World Code Demo Using Layout Manager and Controller</h1>
     
     
       <p class="meta">
@@ -343,7 +90,7 @@ define(['require','facade','utils'], function (require) {
   </header>
 
 
-  <div class="entry-content"><h1>Overview of Hello World &#8220;Layout&#8221;</h1>
+<div class="entry-content"><h1>Overview of Hello World &#8220;Layout&#8221;</h1>
 
 <p>Code demonstration of adding a route, route handler function in App, new &#8220;hello&#8221; package with a template and view. The package controller file <em>hello.js</em> extends the Controller.prototype and is based on a (template) copy of the Controller.prototype in <em>src/controller.js</em>. The WelcomeSectionView prototype extends the SectionView prototype (class) and requries both <strong>name</strong> and <strong>destination</strong> properties when instantiated. The <em>application.js</em> method &#8216;showHello&#8217; is mapped to the route &#8216;/hello/:name&#8217; and the showHello method instantiates a controller object</p>
 
@@ -1519,74 +1266,16 @@ src/packages/hello/welcome.css
 </span></code></pre></td></tr></table></div></figure>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Optimize and Build a Backbone.js JavaScript Application With Require.JS Using Packages</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Bill Heaton</span></span>
 
-<time datetime="2012-01-09T03:19:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>When a JavaScript application is too complex or large to build in a single file, grouping the application’s components into packages allows for script dependencies to download in parallel, and facilitates only loading <strong>packaged</strong> and other modular code as the site experience requires the specific set of dependencies.</p>
-
-<p>Require.JS, the (JavaScript) module loading library, has an <a href="http://requirejs.org/docs/optimization.html" title="Require.JS optimizer">optimizer</a> to build a JavaScript-based application and provides various options. A build profile is the recipe for your build, much like a build.xml file is used to build a project with ANT. The benefit of building with <strong>r.js</strong> not only results in speedy script loading with minified code, but also provides a way to package components of your application.</p>
-
-<ul>
-<li><a href="http://requirejs.org/docs/optimization.html#onejs" title="Optimizing one JavaScript file">Optimizing one JavaScript file</a></li>
-<li><a href="http://requirejs.org/docs/optimization.html#wholeproject" title="Optimizing a whole project">Optimizing a whole project</a></li>
-<li><a href="http://requirejs.org/docs/faq-optimization.html#priority" title="Optimizing a project in layers or packages">Optimizing a project in layers or packages</a></li>
-</ul>
-
-
-<p>In a complex application, organizing code into <em>packages</em> is an attractive build strategy. The build profile in this article is based on an test application currently under development (files list below). The application framework is built with open source libraries. The main objective in this build profile is to optimize an application developed with <a href="http://documentcloud.github.com/backbone/" title="Backbone.js">Backbone.js</a> using modular code, following the <a href="https://github.com/amdjs/amdjs-api/wiki/AMD" title="Asynchronous Module Definition (AMD) wiki page">Asynchronous Module Definition (AMD)</a> format. AMD and Require.JS provide the structure for writing modular code with dependencies. Backbone.js provides the code organization for developing models, views and collections and also interactions with a RESTful API.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Backbone.js CollectionView to Utilize a Collection Rather Than a Model</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -1598,507 +1287,32 @@ src/packages/hello/welcome.css
   
 
 
-<time datetime="2012-01-09T02:33:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://documentcloud.github.com/backbone/" title="Backbone is an open-source component of DocumentCloud">Backbone.js</a> does not provide a view or controller that specifically manages a collection. <a href="http://documentcloud.github.com/backbone/#View" title="Backbone.View">Backbone view</a> objects are coupled with a <a href="http://documentcloud.github.com/backbone/#Model" title="Backbone.Model">model</a> and have render methods for presented the model data using an HTML template. However there are many instanced where a <a href="http://documentcloud.github.com/backbone/#Collection" title="Backbone.Collection">Backbone collection</a> objects (has many models) needs to be presented or managed with a single view object. Thus the need for a CollectionView constructor that implements an interface to manage many child views which render each model represented in the collection. A collection view object that generates view for each model preserves the <a href="http://documentcloud.github.com/backbone/docs/backbone.html" title="Backbone source code with inline documentation">core Backbone behavior</a> (link is to documented source, search for &#8216;change&#8217;) of firing change events on a model and a view that renders the changed data in response to the change event that was triggered by specific models.</p>
-
-<p>Liquid Media has posted tutorials on Backbone in a 3-part series <a href="http://liquidmedia.ca/blog/2011/01/backbone-js-part-1/" title="An Intro to Backbone.js: Part 1 – Models and Collections - Liquid Media">1</a>, <a href="http://liquidmedia.ca/blog/2011/01/an-intro-to-backbone-js-part-2-controllers-and-views/" title="An Intro to Backbone.js: Part 2 – Controllers and Views - Liquid Media">2</a>, <a href="http://liquidmedia.ca/blog/2011/02/backbone-js-part-3/" title="An Intro to Backbone.js: Part 3 – Binding a Collection to a View - Liquid Media">3</a>; and the third article demonstrates the use of a <a href="http://liquidmedia.ca/blog/2011/02/backbone-js-part-3/" title="An Intro to Backbone.js: Part 3 – Binding a Collection to a View - Liquid Media">Collection View constructor</a> which does what is described above.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2012-04-30T17:17:00-07:00" pubdate data-updated="true">Apr 30<span>th</span>, 2012</time>
       
-  <header>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Backbone.js and Mustache.js: Small Views and Templates</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
+      <div class="sharing">
   
-
-
-<time datetime="2012-01-09T01:48:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Short and concise HTML templates that represent repeatable blocks or isolated components of a page are easier to manage and easier for other developers to edit than longer templates which encompass larger portions of a page. A view object with the responsibility of rendering and managing multiple child views is used to organize the components of a page.</p>
-
-<p>Consider navigation elements organized in lists under top level list items&#8230;</p>
-
-<p>Each top level item likely uses the same child list to present it&#8217;s dropdowns. Rather then use one large template and one large collection of models utilizing smaller templates as components of the view remove hardcoding the hierarchy into both the model and the template but rather move the hierarchy to the view objects used to build the page. When the structure of the child lists needs to go through the change control process for added or removed presentation or a change in the hierarchy as directed by the business, the change is simple perhaps changed one portion of a template and the order of an array which dictates the hierarchy via enumerating. Also the business may dictate that the order of the menu follows various orders depending on visitor properties (e.g. member object either male or female). Then the menu&#8217;s components display order can be dictated programmatically, utilizing the small views and templates.</p>
-
-<p>The best practice or goal emphasized above with respect to templates and views is KISS and DRY. As long as the implementation does not become overly complex and difficult to grok, keep the template code DRY, otherwise KISS principle overrides the need to have template code that does not repeat itself.</p>
-
+  
+  
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base Classes With Custom Library Functions Added to Backbone.js Constructors</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-09T00:51:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Authoring Code with Backbone.js with extendability in mind</h2>
-
-<p>The main objective in choosing the <a href="http://documentcloud.github.com/backbone/" title="Backbone is an open-source component of DocumentCloud">Backbone.js</a> library for our frontend framework is to author code in an organized and repeatable manner, building an application &#8220;the Backbone way&#8221;. The benefits are that the community has contributed documenation, blogs, code examples, tutorials, videos and books so that building a JavaScript application with our framework should be straight forward (not too much magic under cover).</p>
-
-<p>However when building both the mobile and desktop applications or in the future we need added behavior recuired to provide a solution for the business requirements/needs of the Web application. Hence the need for an (abstract class) object as the <strong>base constructor</strong> for our framework. Each <strong>base</strong> object extends the appropriate Backbone constructor method: <a href="http://documentcloud.github.com/backbone/#Model" title="Backbone.Model">Backbone.Model</a>, <a href="http://documentcloud.github.com/backbone/#View" title="Backbone.View">Backbone.View</a>, <a href="http://documentcloud.github.com/backbone/#Collection" title="Backbone.Collection">Backbone.Collection</a> and <a href="http://documentcloud.github.com/backbone/#Router" title="Backbone.Router">Backbone.Router</a>.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment left" href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/" title="Previous Post: Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages">&laquo; Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Backbone Views Using Mustache Templates</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-08T23:35:00-08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Using Mustache.js</h2>
-
-<p>Mustache is a template library based on logic-less templates and the JavaScript implementation can be executed on the client side. The basic usage takes two components:</p>
-
-<ol>
-<li>An HTML template with variables embedded inside double curly braces, e.g. <em>&lt;p&gt;&#123;&#123;myVar&#125;&#125;&lt;/p&gt;</em></li>
-<li>A JSON object with data containing the named object referenced in the template e.g. <em>{ &#8220;myVar&#8221; : &#8220;Sting value here&#8221; }</em>.</li>
-</ol>
-
-
-<p>The <a href="https://github.com/janl/mustache.js" title="Mustache.js source code and documentation on github">Mustache.js</a> api provides a method <code>Mustache.to_html()</code> which compiles the template code with the JSON object to produce a string to insert into the DOM. For example: <code>rendered = Mustache.to_html(view.template, view.model.toJSON());</code></p>
-
-<h2>Simple template used to render a list item</h2>
-
-<p>This example will be used by a Backbone View object&#8217;s render method which will be used within a CollectionView object with the responsibility of building views from a Backbone collection object</p>
-
-<figure class='code'><figcaption><span> (event.html)</span> <a href='/downloads/code/javascript/packages/header/templates/event.html'>download</a></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;/event/{{event_code}}&quot;</span> <span class="na">data-sort=</span><span class="s">&quot;{{sort_order}}&quot;</span><span class="nt">&gt;</span>{{title}}<span class="nt">&lt;/a&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>JSON Data: Event object</h2>
-
-<p>The data below includes the variables (<em>event_code</em>, <em>sort_order</em>, <em>title</em>) referenced in the the template and other data not utilized in the template.</p>
-
-<figure class='code'><figcaption><span> (event-object.json)</span> <a href='/downloads/code/json/event-object.json'>download</a></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="s2">&quot;event_id&quot;</span><span class="o">:</span> <span class="s2">&quot;12366&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;event_code&quot;</span><span class="o">:</span> <span class="s2">&quot;12366stellaandjamiewc&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;start_date&quot;</span><span class="o">:</span> <span class="s2">&quot;2011-12-28T08:00:00-08:00&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;end_date&quot;</span><span class="o">:</span> <span class="s2">&quot;2011-12-30T08:00:00-08:00&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;image_url&quot;</span><span class="o">:</span> <span class="s2">&quot;/assets/12366stellaandjamiewc/event-small.jpg&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;info&quot;</span><span class="o">:</span> <span class="s2">&quot;/assets/12366stellaandjamiewc/info.txt&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;video&quot;</span><span class="o">:</span> <span class="s2">&quot;/assets/12366stellaandjamiewc/video.mp4&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Stella &amp; jamie&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;tagline&quot;</span><span class="o">:</span> <span class="s2">&quot;Sequins and detailing that dress things up&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;event_types&quot;</span><span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>        <span class="p">{</span>
-</span><span class='line'>            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Women&quot;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">],</span>
-</span><span class='line'>    <span class="s2">&quot;meta&quot;</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>        <span class="s2">&quot;msa&quot;</span><span class="o">:</span> <span class="p">[],</span>
-</span><span class='line'>        <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="s2">&quot;Active&quot;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s2">&quot;private_event&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-</span><span class='line'>        <span class="s2">&quot;exclusive&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-</span><span class='line'>        <span class="s2">&quot;preview&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-</span><span class='line'>        <span class="s2">&quot;nested&quot;</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>            <span class="s2">&quot;parents&quot;</span><span class="o">:</span> <span class="p">[],</span>
-</span><span class='line'>            <span class="s2">&quot;children&quot;</span><span class="o">:</span> <span class="p">[],</span>
-</span><span class='line'>            <span class="s2">&quot;siblings&quot;</span><span class="o">:</span> <span class="p">[]</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">},</span>
-</span><span class='line'>    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Sequins and detailing that dress things up.&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;coa&quot;</span><span class="o">:</span> <span class="s2">&quot;womens_apparel&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;sort_order&quot;</span><span class="o">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;category&quot;</span><span class="o">:</span> <span class="s2">&quot;Accessories&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;event_display_format&quot;</span><span class="o">:</span> <span class="s2">&quot;Regular&quot;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Backbone View in a AMD module utilizing Mustache within it&#8217;s render() method</h2>
-
-<p>The module requires a text/html file by including a string in the dependencies array : <code>'text!packages/header/templates/event.html'</code> and assigns the text string to the variable listed in the anonymous function&#8217;s arguments named: <code>eventTemplate</code>. The JSON data is injected when this view constructor is initialized by calling the construction function with the &#8220;new&#8221; operator and passing in the JSON object as the model data, e.g. <code>"model" : new EventView(model),</code></p>
-
-<p>The code <code>rendered = Mustache.to_html(view.template, view.model.toJSON());</code> has a (string) template as the first argument and the second argument is the JSON data object. The result of this <code>to_html</code> method is assigned to the variable <code>rendered</code>. Then the view instance&#8217;s &#8220;render()&#8221; method inserts the rendered html into the DOM reference by the Backbone View object&#8217;s &#8220;el&#8221; property&#8230; <code>$(view.el).html(rendered);</code></p>
-
-<figure class='code'><figcaption><span> (event.js)</span> <a href='/downloads/code/javascript/packages/header/views/event.js'>download</a></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// event view </span>
-</span><span class='line'><span class="c1">// ----------</span>
-</span><span class='line'><span class="c1">// @requires define</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;underscore&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;backbone&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;views/base&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;text!packages/header/templates/event.html&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;mustache&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
-</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">BaseView</span><span class="p">,</span> <span class="nx">eventTemplate</span><span class="p">,</span> <span class="nx">Mustache</span><span class="p">,</span> <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">EventView</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">EventView</span> <span class="o">=</span> <span class="nx">BaseView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="nx">eventTemplate</span><span class="p">;</span>
-</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventView init&#39;</span><span class="p">);</span>
-</span><span class='line'>        <span class="p">},</span>
-</span><span class='line'>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">rendered</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="nx">rendered</span> <span class="o">=</span> <span class="nx">Mustache</span><span class="p">.</span><span class="nx">to_html</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="nx">view</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">());</span>
-</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">rendered</span><span class="p">);</span>
-</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventView rendered&#39;</span><span class="p">);</span>
-</span><span class='line'>            <span class="k">return</span> <span class="nx">view</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">EventView</span><span class="p">;</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Summary</h2>
-
-<p>Mustache.js is the template library selected primarily because of the fact that the library is &#8220;logic-less&#8221; and also is a popular choice since <a href="http://mustache.github.com/" title="Mustache library">Mustache</a> is implemmented in a wide variety of languages. The fact that no logic is executed in rendering a Mustache template insures that bugs are highly unlikely to be caused due to some logic failing within the operation of executing the template method to render an object as HTML. Logic can be added to the Mustache template within the JavaScript code (e.g. a module for creating a View constructor) which allows for unit testing and debugging utilizing a breakpoint in the code. See the <a href="https://github.com/janl/mustache.js" title="Mustache.js source code and documentation on github">Mustache.js documentation</a> for using conditions, enumerable objects, partials an other Mustache interface functions to for authoring templates with JavaScript, HTML and JSON.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File Organization: Building a Framework Using RequireJS</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-08T16:44:00-08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>When a JavaScript application is to complex or large to build in a single file, grouping the application&#8217;s components into packages allows for script dependencies to download in parallel; and facilitates only loading <strong>packaged</strong> and other modular code as the site experience requires the specific set of dependencies.</p>
-
-<p>AMD and Require.JS provide the structure for writing modular code with dependencies. Backbone.js provides the code organization for developing models, views and collections and also interactions with a RESTful API. Below is an outline of the Web application&#8217;s file organization</p>
-
-<h3>File organization</h3>
-
-<p>Assume the following directories and file organization, with app.build.js as the build profile (a sibling to both source and release directories). Note that the files in the list below named <em>section</em> can be any component of the application, e.g. <em>header</em>, <em>login</em>)</p>
-
-<p>This structure groups common (or site-wide) code of (core) <em>models</em>, <em>views</em>, <em>collections</em> which are extended from a base.js constructor. These base constructors extend the appropriate backbone method, e.g. Backbone.Model.</p>
-
-<p>The <em>packages</em> directory organizes code by section / responsibility, e.g. cart, checkout, etc. Notice that within the example <em>header</em> package the directory structure is similar to the app root directory file structure.</p>
-
-<p>A <em>package</em> (of modularized code) has dependencies from the common libraries in your application and also has specific code for the packages execution alone; other packages should not require another packages dependencies.</p>
-
-<p>A <em>utils</em> directory has shims, helpers, and common library code to support the application.</p>
-
-<p>A <em>syncs</em> directory to define persistence with your RESTful api and/or localStorage.</p>
-
-<p>The <em>vendor</em> libraries folder will not be built, there is no need to do so.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment right" href="/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/" title="next Post: Vertebrae front-end framework built with Backbone.js and RequireJS using AMD">Vertebrae front-end framework built with Backbone.js and RequireJS using AMD &raquo;</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies Managed With Require() and Define()</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-08T15:11:00-08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Modular Code Dependencies</h2>
-
-<p>RequireJS and AMD (Asynchronous Module Definition) provide a pattern for authoring modular code and also managing dependencies without complex namespacing or even adding any properties to the (head) window object. When we write modules in JavaScript, we want to handle the reuse of code intelligently and have the option to build an entire application into a single script or load modules as they are required to execute the business requirements of the application.</p>
-
-<ul>
-<li><a href="http://requirejs.org/docs/requirements.html" title="RequireJS is designed to meet these requirements">RequireJS Requirements/Design</a></li>
-<li><a href="https://github.com/jrburke/requirejs" title="requirejs on github">RequireJS Source</a></li>
-<li><a href="http://requirejs.org/docs/whyamd.html" title="AMD benefits">Why AMD</a></li>
-</ul>
-
-
-<h3>Writing AMD modules with RequireJS</h3>
-
-<p><em>Note - This section &#8220;Writing AMD modules with RequireJS&#8221; is an excerpt from <a href="https://github.com/addyosmani/backbone-fundamentals#modularjs" title="Backbone Fundamentals online book project by addyosmani">Backbone Fundamentals</a></em></p>
-
-<p>The overall goal for the AMD format is to provide a solution for modular JavaScript that developers can use today. The two key concepts you need to be aware of when using it with a script-loader are a <code>define()</code> method for facilitating module definition and a <code>require()</code> method for handling dependency loading. <code>define()</code> is used to define named or unnamed modules based on the proposal using the following signature:</p>
+    </p>
+  </footer>
+</article>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Backbone.js : List of Best Practices</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-07T20:30:00-08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Documentation:</h2>
-
-<h3>Frontend Framework built with Backbone.js, Require.JS</h3>
-
-<ul>
-<li><a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies via require() or define()</a></li>
-<li><a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File Organization</a></li>
-<li><a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Mustache Templates</a></li>
-<li><a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes - constructor objects</a></li>
-<li><a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Small Views and Templates</a></li>
-<li><a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">CollectionView and ViewManager</a></li>
-<li><a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">RequireJS Optimizer build process</a></li>
-</ul>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-      <a class="prev" href="/notes/page/2/">&larr; Older</a>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -2151,7 +1365,7 @@ src/packages/hello/welcome.css
 <section>
   <h1>Github Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/hautelook">@hautelook</a> on Github
@@ -2181,7 +1395,7 @@ src/packages/hello/welcome.css
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -2197,6 +1411,7 @@ src/packages/hello/welcome.css
 
   
 </aside>
+
 
     </div>
   </div>

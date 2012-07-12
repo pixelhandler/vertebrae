@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: framework | Vertebrae framework]]></title>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/categories/framework/atom.xml" rel="self"/>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/"/>
+  <updated>2012-07-12T11:32:22-07:00</updated>
+  <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/</id>
+  <author>
+    <name><![CDATA[Bill Heaton]]></name>
+    <email><![CDATA[pixelhandler@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building a framework with Backbone.js]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/building-framework-with-backbone/2012/01/07/"/>
+    <updated>2012-01-07T20:00:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/building-framework-with-backbone/2012/01/building-framework-with-backbone</id>
+    <content type="html"><![CDATA[<p>Below is a collection of links for code documentation and learning about the preferred libraries for building a JavaScript web application. The libraries selected provide code organization, script/file loading, dependency management, utility library, DOM manipulation, and ajax support for asynchronous application development and interaction with a REST api.</p>
+
+<h2>Web book</h2>
+
+<p><strong>Backbone.js Fundamentals</strong> - <a href="https://github.com/addyosmani/backbone-fundamentals">https://github.com/addyosmani/backbone-fundamentals</a></p>
+
+<p>A creative-commons book on Backbone.js for beginners and advanced users
+alike. How to write modular JavaScript apps for desktop and mobile</p>
+
+<h2>Learning from the source</h2>
+
+<p><strong>Source code documentation</strong></p>
+
+<ul>
+<li><a href="http://documentcloud.github.com/backbone/">http://documentcloud.github.com/backbone/</a></li>
+<li><a href="http://documentcloud.github.com/backbone/docs/backbone.html">http://documentcloud.github.com/backbone/docs/backbone.html</a></li>
+<li><a href="http://documentcloud.github.com/underscore/">http://documentcloud.github.com/underscore/</a></li>
+<li><a href="http://requirejs.org/">http://requirejs.org/</a></li>
+<li><a href="http://requirejs.org/docs/whyamd.html">http://requirejs.org/docs/whyamd.html</a></li>
+<li><a href="http://mustache.github.com/">http://mustache.github.com/</a> | <a href="https://github.com/janl/mustache.js/">https://github.com/janl/mustache.js/</a></li>
+</ul>
+
+
+<!--more-->
+
+
+<p><strong>Code examples</strong></p>
+
+<ul>
+<li><a href="https://github.com/addyosmani/todomvc/tree/master/todo-example/backbone">https://github.com/addyosmani/todomvc/tree/master/todo-example/backbone</a></li>
+<li><a href="https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone">https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone</a></li>
+</ul>
+
+
+<p><strong>Demos</strong></p>
+
+<ul>
+<li><a href="http://addyosmani.github.com/todomvc/todo-example/backbone/index.html">http://addyosmani.github.com/todomvc/todo-example/backbone/index.html</a></li>
+</ul>
+
+
+<p><strong>Tutorials</strong></p>
+
+<ul>
+<li><a href="http://backbonetutorials.com/organizing-backbone-using-modules/">http://backbonetutorials.com/organizing-backbone-using-modules/</a></li>
+<li><a href="https://github.com/documentcloud/backbone/wiki/Tutorials,-blog-posts-and-example-sites">https://github.com/documentcloud/backbone/wiki/Tutorials,-blog-posts-and-example-sites</a></li>
+</ul>
+
+
+<p><strong>Videos</strong></p>
+
+<ul>
+<li><a href="http://peepcode.com/products/backbone-js">http://peepcode.com/products/backbone-js</a></li>
+<li><a href="http://backbonescreencasts.com/">http://backbonescreencasts.com/</a></li>
+</ul>
+
+
+<p><strong>Unit Testing</strong></p>
+
+<ul>
+<li><a href="https://github.com/pivotal/jasmine/wiki/Suites-and-specs">https://github.com/pivotal/jasmine/wiki/Suites-and-specs</a></li>
+<li><a href="http://pivotal.github.com/jasmine/jsdoc/symbols/jasmine.Matchers.html">http://pivotal.github.com/jasmine/jsdoc/symbols/jasmine.Matchers.html</a></li>
+<li><a href="https://github.com/pivotal/jasmine/wiki/Asynchronous-specs">https://github.com/pivotal/jasmine/wiki/Asynchronous-specs</a></li>
+<li><a href="http://sinonjs.org/">http://sinonjs.org/</a> | <a href="http://sinonjs.org/docs/">http://sinonjs.org/docs/</a></li>
+<li><a href="http://tinnedfruit.com/2011/03/03/testing-backbone-apps-with-jasmine-sinon.html">http://tinnedfruit.com/2011/03/03/testing-backbone-apps-with-jasmine-sinon.html</a></li>
+<li><a href="http://tinnedfruit.com/2011/03/25/testing-backbone-apps-with-jasmine-sinon-2.html">http://tinnedfruit.com/2011/03/25/testing-backbone-apps-with-jasmine-sinon-2.html</a></li>
+<li><a href="http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html">http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html</a></li>
+</ul>
+
+
+<h2>Community / Projects</h2>
+
+<p><strong>Apps</strong></p>
+
+<ul>
+<li><a href="http://nrabinowitz.github.com/gapvis/#index">http://nrabinowitz.github.com/gapvis/#index</a></li>
+</ul>
+
+
+<p><strong>Blog Posts</strong></p>
+
+<ul>
+<li><a href="http://googleancientplaces.wordpress.com/">http://googleancientplaces.wordpress.com/</a></li>
+<li><a href="http://www.netmagazine.com/tutorials/use-backbonejs-speed-interactions">http://www.netmagazine.com/tutorials/use-backbonejs-speed-interactions</a></li>
+</ul>
+
+
+<p><strong>Code</strong></p>
+
+<ul>
+<li><a href="https://github.com/zurb/flickrbomb">https://github.com/zurb/flickrbomb</a></li>
+</ul>
+
+
+<p><strong>Community</strong></p>
+
+<ul>
+<li><strong>Stackoverflow</strong> - <a href="http://stackoverflow.com/questions/tagged/backbone.js">http://stackoverflow.com/questions/tagged/backbone.js</a></li>
+<li><strong>irc</strong> - <code>#documentcloud</code> on irc.freenode.net</li>
+<li><strong>Forum</strong> - <a href="https://groups.google.com/forum/#!forum/backbonejs">https://groups.google.com/forum/#!forum/backbonejs</a></li>
+<li><strong>tweets</strong> - @documentcloud</li>
+</ul>
+
+
+<h3>jQuery Mobile</h3>
+
+<ul>
+<li><a href="http://jquerymobile.com/demos/1.0/">http://jquerymobile.com/demos/1.0/</a></li>
+<li><a href="http://jquerymobile.com/test/docs/api/themes.html">http://jquerymobile.com/test/docs/api/themes.html</a></li>
+<li><a href="http://docs.jquery.com/">http://docs.jquery.com/</a></li>
+</ul>
+
+
+<h2>Miscellaneous</h2>
+
+<p><strong>Similar MVC projects</strong></p>
+
+<ul>
+<li>Ember.JS - <a href="http://www.emberjs.com/">http://www.emberjs.com/</a></li>
+</ul>
+
+
+<p><strong>General JavaScript / jQuery learning...</strong></p>
+
+<ul>
+<li>Interactive way to learn about javascript... <a href="http://www.codecademy.com/">http://www.codecademy.com/</a></li>
+<li><a href="http://jqfundamentals.com/">http://jqfundamentals.com/</a></li>
+<li><a href="http://learn.appendto.com/">http://learn.appendto.com/</a></li>
+<li><a href="http://docs.jquery.com/Tutorials">http://docs.jquery.com/Tutorials</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Backbone.js : list of best practices - Vertebrae framework</title>
+  <meta name="author" content="Bill Heaton">
+
+  
+  <meta name="description" content="Documentation: Frontend Framework built with Backbone.js, Require.JS Dependencies via require() or define()
+File Organization
+Mustache Templates
+Base &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/backbone-dot-js-list-of-best-practices/2012/01/07">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Vertebrae framework" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Vertebrae framework</a></h1>
+  
+    <h2>built with Backbone.js and RequireJS using AMD</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pixelhandler.github.com/vertebrae pixelhandler.github.com/vertebrae" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Backbone.js : List of Best Practices</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-07T20:30:00-08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Documentation:</h2>
+
+<h3>Frontend Framework built with Backbone.js, Require.JS</h3>
+
+<ul>
+<li><a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies via require() or define()</a></li>
+<li><a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File Organization</a></li>
+<li><a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Mustache Templates</a></li>
+<li><a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes - constructor objects</a></li>
+<li><a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Small Views and Templates</a></li>
+<li><a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">CollectionView and ViewManager</a></li>
+<li><a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">RequireJS Optimizer build process</a></li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>Standards</h2>
+
+<ul>
+<li>No &#8220;var that = this;&#8221; usage
+
+<ul>
+<li>be descriptive if assigning this to a variable</li>
+<li>try not to pass &#8220;this&#8221; as context as much as possible</li>
+</ul>
+</li>
+<li>Use Backbone, Underscore and RequireJS conventions as much as possible
+
+<ul>
+<li>the frontend favors convention over configuration</li>
+</ul>
+</li>
+<li>Use the CollectionView for managing a the relationship between a Collection and the View that relates to those models.</li>
+<li>Need to define a more formal ViewManager class or define a set of best practices</li>
+<li>The Backbone.Model.parse method should only be used for things like virtual fields
+
+<ul>
+<li>example: the member model may create a name field that concats first and last names</li>
+<li>most parsing should be done on the sync specific to that version</li>
+</ul>
+</li>
+<li>Use small views and templates
+
+<ul>
+<li>rendering (and re*rendering) is faster and the DOM is easier to maintain</li>
+</ul>
+</li>
+<li>All dependencies must go through RequireJS require() or define() functions
+
+<ul>
+<li>no global state even for jQuery, Backbone, Underscore, etc</li>
+</ul>
+</li>
+<li>No manual jQuery DOM manipulation
+
+<ul>
+<li>the DOM fragments should be rendered through the View objects</li>
+</ul>
+</li>
+<li>No logic in the templates
+
+<ul>
+<li>too hard to test the logic</li>
+<li>use Mustache templates only</li>
+</ul>
+</li>
+<li>Base classes are used for Models, Collections, and Views to add common behavior</li>
+<li>Unit tests <code>should</code> be maintained using Jasmine (BDD style) for site*wide scripts:
+
+<ul>
+<li>e.g. models, views, collections, base classes and (utils) libraries</li>
+</ul>
+</li>
+<li>Comments should use <code>//</code> syntax, and also may include markdown syntax
+
+<ul>
+<li><code>docco</code> documentation generator parsed best with <code>//</code>.</li>
+<li>Routinely run <code>docco</code> (node package) to generate documentation (html files)
+
+<ul>
+<li>at least, following major releases.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Maintain examples by documenting best practices (Backbone and RequireJS) within code repository
+
+<ul>
+<li><code>docco</code> generates a <code>docs</code> folder; each package should have a docs folder</li>
+<li>docs folder has implementation notes highlighting frontend standards.</li>
+</ul>
+</li>
+<li>Document the build process using RequireJS Optimizer</li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Bill Heaton</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-07T20:30:00-08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/notes/categories/backbone-js/'>Backbone.js</a>, <a class='category' href='/notes/categories/best-practices/'>Best Practices</a>, <a class='category' href='/notes/categories/documentation/'>Documentation</a>, <a class='category' href='/notes/categories/standards/'>Standards</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/notes/building-framework-with-backbone/2012/01/07/" title="Previous Post: Building a framework with Backbone.js">&laquo; Building a framework with Backbone.js</a>
+      
+      
+        <a class="basic-alignment right" href="/notes/dependencies-managed-with-require-and-define/2012/01/08/" title="next Post: Dependencies managed with require() and define()">Dependencies managed with require() and define() &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/">Vertebrae front-end framework built with Backbone.js and RequireJS using AMD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/">Hello World Code Demo using Layout Manager and Controller</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Backbone.js CollectionView to utilize a collection rather than a model</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Backbone.js and Mustache.js: Small views and templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes with custom library functions added to Backbone.js constructors</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Backbone Views using Mustache Templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File organization: building a framework using RequireJS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies managed with require() and define()</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Backbone.js : list of best practices</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/hautelook">@hautelook</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'hautelook',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("hautelook", 10, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/hautelook" class="twitter-follow-button" data-show-count="false">Follow @hautelook</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Bill Heaton -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

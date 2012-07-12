@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages - Vertebrae framework</title>
+  <meta name="author" content="Bill Heaton">
+
+  
+  <meta name="description" content="When a JavaScript application is too complex or large to build in a single file, grouping the application’s components into packages allows for &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Vertebrae framework" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Vertebrae framework</a></h1>
+  
+    <h2>built with Backbone.js and RequireJS using AMD</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pixelhandler.github.com/vertebrae pixelhandler.github.com/vertebrae" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Optimize and Build a Backbone.js JavaScript Application With Require.JS Using Packages</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-09T03:19:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>When a JavaScript application is too complex or large to build in a single file, grouping the application’s components into packages allows for script dependencies to download in parallel, and facilitates only loading <strong>packaged</strong> and other modular code as the site experience requires the specific set of dependencies.</p>
+
+<p>Require.JS, the (JavaScript) module loading library, has an <a href="http://requirejs.org/docs/optimization.html" title="Require.JS optimizer">optimizer</a> to build a JavaScript-based application and provides various options. A build profile is the recipe for your build, much like a build.xml file is used to build a project with ANT. The benefit of building with <strong>r.js</strong> not only results in speedy script loading with minified code, but also provides a way to package components of your application.</p>
+
+<ul>
+<li><a href="http://requirejs.org/docs/optimization.html#onejs" title="Optimizing one JavaScript file">Optimizing one JavaScript file</a></li>
+<li><a href="http://requirejs.org/docs/optimization.html#wholeproject" title="Optimizing a whole project">Optimizing a whole project</a></li>
+<li><a href="http://requirejs.org/docs/faq-optimization.html#priority" title="Optimizing a project in layers or packages">Optimizing a project in layers or packages</a></li>
+</ul>
+
+
+<p>In a complex application, organizing code into <em>packages</em> is an attractive build strategy. The build profile in this article is based on an test application currently under development (files list below). The application framework is built with open source libraries. The main objective in this build profile is to optimize an application developed with <a href="http://documentcloud.github.com/backbone/" title="Backbone.js">Backbone.js</a> using modular code, following the <a href="https://github.com/amdjs/amdjs-api/wiki/AMD" title="Asynchronous Module Definition (AMD) wiki page">Asynchronous Module Definition (AMD)</a> format. AMD and Require.JS provide the structure for writing modular code with dependencies. Backbone.js provides the code organization for developing models, views and collections and also interactions with a RESTful API.</p>
+
+<!--more-->
+
+
+<p>Below is an outline of the application’s file organization, followed by the build profile to build modular (or packaged) layers a JavaScript driven application.</p>
+
+<h3>File organization</h3>
+
+<p>Assume the following directories and file organization, with app.build.js as the build profile (a sibling to both source and release directories). Note that the files in the list below named <em>section</em> can be any component of the application, e.g. <em>header</em>, <em>login</em>)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>.-- app.build.js
+</span><span class='line'>|-- app-release
+</span><span class='line'>`-- app-src
+</span><span class='line'>    |-- collections
+</span><span class='line'>    |   |-- base.js
+</span><span class='line'>    |   |-- sections-segments.js
+</span><span class='line'>    |   `-- sections.js
+</span><span class='line'>    |-- docs
+</span><span class='line'>    |   `--docco.css
+</span><span class='line'>    |-- models
+</span><span class='line'>    |   |-- base.js
+</span><span class='line'>    |   |-- branding.js
+</span><span class='line'>    |   `-- section.js
+</span><span class='line'>    |-- packages
+</span><span class='line'>    |   |-- header
+</span><span class='line'>    |   |   |-- models
+</span><span class='line'>    |   |   |   |-- nav.js
+</span><span class='line'>    |   |   |   `-- link.js
+</span><span class='line'>    |   |   |-- templates
+</span><span class='line'>    |   |   |   |-- branding.js
+</span><span class='line'>    |   |   |   |-- nav.js
+</span><span class='line'>    |   |   |   `-- links.js
+</span><span class='line'>    |   |   `-- views
+</span><span class='line'>    |   |       |-- nav.js
+</span><span class='line'>    |   |       |-- branding.js
+</span><span class='line'>    |   |       `-- link.js
+</span><span class='line'>    |   |-- header.js
+</span><span class='line'>    |   `-- ... more packages here e.g. cart, checkout ...
+</span><span class='line'>    |-- syncs
+</span><span class='line'>    |   |-- rest
+</span><span class='line'>    |   |   `-- sections.js
+</span><span class='line'>    |   |-- factory.js
+</span><span class='line'>    |   `-- localstorage.js
+</span><span class='line'>    |-- test
+</span><span class='line'>    |   |-- fixtures
+</span><span class='line'>    |   |   `-- sections.json
+</span><span class='line'>    |   |-- header
+</span><span class='line'>    |   |   |-- index.html
+</span><span class='line'>    |   |   `-- spec.js
+</span><span class='line'>    |   |-- lib
+</span><span class='line'>    |   |   `-- Jasmine
+</span><span class='line'>    |   |-- models
+</span><span class='line'>    |   |-- utils
+</span><span class='line'>    |   |-- global-spec.js
+</span><span class='line'>    |-- utils
+</span><span class='line'>    |   |-- ajax.js
+</span><span class='line'>    |   |-- baselib.js
+</span><span class='line'>    |   |-- debug.js
+</span><span class='line'>    |   |-- localstorage.js
+</span><span class='line'>    |   `-- shims.js
+</span><span class='line'>    |-- vendor
+</span><span class='line'>    |-- |-- backbone-min.js
+</span><span class='line'>    |   |-- jquery-1.7.1.min.js
+</span><span class='line'>    |   |-- jquery.mobile-1.0.min.js
+</span><span class='line'>    |   |-- json2.js
+</span><span class='line'>    |   |-- modernizr-1.6.min.js
+</span><span class='line'>    |   |-- mustache.js
+</span><span class='line'>    |   |-- require.js
+</span><span class='line'>    |   |-- text.js
+</span><span class='line'>    |   `-- underscore.js
+</span><span class='line'>    |-- views
+</span><span class='line'>    |   |-- base.js
+</span><span class='line'>    |   `-- collection.js
+</span><span class='line'>    |-- application.js
+</span><span class='line'>    |-- collections.js
+</span><span class='line'>    |-- index.html
+</span><span class='line'>    |-- main.js
+</span><span class='line'>    |-- models.js
+</span><span class='line'>    |-- syncs.js
+</span><span class='line'>    |-- utils.js
+</span><span class='line'>    |-- vendor.js
+</span><span class='line'>    `-- views.js
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Build profile to optimize modular dependencies with code organized in packages</h3>
+
+<p>The build profile can be organized to <a href="http://requirejs.org/docs/faq-optimization.html#priority" title="optimize modular dependencies in packages">divide parallel downloads for various sections of the application</a>.</p>
+
+<p>This strategy demonstrated builds common or site-wide groups of (core) <em>models</em>, <em>views</em>, collections which are extended from a base.js constructor which extends the appropriate backbone method, e.g. Backbone.Model. The <em>packages</em> directory organizes code by section / responsibility, e.g. cart, checkout, etc. Notice that within the example <em>header</em> package the directory structure is similar to the app root directory file structure. A <em>package</em> (of modularized code) has dependencies from the common libraries in your application and also has specific code for the packages execution alone; other packages should not require another packages dependencies. A <em>utils</em> directory has shims, helpers, and common library code to support the application. A <em>syncs</em> directory to define persistence with your RESTful api and/or localStorage. The <em>vendor</em> libraries folder will not be built, there is no need to do so, you may decide to use a CDN (then set these paths to : <em><a href="http://requirejs.org/docs/optimization.html#empty" title="empty:">empty:</a></em>). And finally a <em>test</em> directory for <a href="http://pivotal.github.com/jasmine/" title="Jasmine is a behavior-driven development framework for testing your JavaScript code">Jasmine</a> unit test specs, which may be ignored in the build as well if you choose.</p>
+
+<p>Also notice the there are .js files named the same as the directories, these are the files listed in the paths. these are strategic to group sets of files to build, examples follow the build profile below.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">({</span>
+</span><span class='line'>    <span class="nx">appDir</span><span class="o">:</span> <span class="s1">&#39;./app-src&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">baseUrl</span><span class="o">:</span> <span class="s1">&#39;./&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">dir</span><span class="o">:</span> <span class="s1">&#39;./app-build&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">optimize</span><span class="o">:</span> <span class="s1">&#39;uglify&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// will not build 3rd party code, it&#39;s already built</span>
+</span><span class='line'>        <span class="s1">&#39;text&#39;</span>         <span class="o">:</span> <span class="s1">&#39;vendor/text&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;json2&#39;</span>        <span class="o">:</span> <span class="s1">&#39;vendor/json2.min&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;modernizr&#39;</span>    <span class="o">:</span> <span class="s1">&#39;vendor/modernizr-1.6.min&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;jquery&#39;</span>       <span class="o">:</span> <span class="s1">&#39;vendor/jquery-1.7.1&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;jquerymobile&#39;</span> <span class="o">:</span> <span class="s1">&#39;vendor/jquery.mobile-1.0.min.js&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;underscore&#39;</span>   <span class="o">:</span> <span class="s1">&#39;vendor/underscore&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;mustache&#39;</span>     <span class="o">:</span> <span class="s1">&#39;vendor/mustache&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;backbone&#39;</span>     <span class="o">:</span> <span class="s1">&#39;vendor/backbone&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// files that define dependencies...</span>
+</span><span class='line'>        <span class="c1">// ignore vendor libraries, but need a group to do so</span>
+</span><span class='line'>        <span class="s1">&#39;vendor&#39;</span>       <span class="o">:</span> <span class="s1">&#39;vendor&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// application modules/packages these files define dependencies</span>
+</span><span class='line'>        <span class="c1">// and may also group modules into objects if needed to require</span>
+</span><span class='line'>        <span class="c1">// by groups rather than individual files</span>
+</span><span class='line'>        <span class="s1">&#39;utils&#39;</span>        <span class="o">:</span> <span class="s1">&#39;utils&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;models&#39;</span>       <span class="o">:</span> <span class="s1">&#39;models&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;views&#39;</span>        <span class="o">:</span> <span class="s1">&#39;views&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;collections&#39;</span>  <span class="o">:</span> <span class="s1">&#39;collections&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// packages to build</span>
+</span><span class='line'>        <span class="s1">&#39;header&#39;</span>       <span class="o">:</span> <span class="s1">&#39;packages/header&#39;</span>
+</span><span class='line'>        <span class="c1">//... more packages</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">modules</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>        <span class="c1">// Common libraries, Utilities, Syncs, Models, Views, Collections</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;utils&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">exclude</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;vendor&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;syncs&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">exclude</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;models&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">exclude</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">,</span> <span class="s1">&#39;syncs&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;views&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">exclude</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">,</span> <span class="s1">&#39;syncs&#39;</span><span class="p">,</span> <span class="s1">&#39;models&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;collections&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">exclude</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">,</span> <span class="s1">&#39;syncs&#39;</span><span class="p">,</span> <span class="s1">&#39;models&#39;</span><span class="p">,</span> <span class="s1">&#39;views&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="c1">// Packages</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;header&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">exclude</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">,</span> <span class="s1">&#39;syncs&#39;</span><span class="p">,</span> <span class="s1">&#39;models&#39;</span><span class="p">,</span> <span class="s1">&#39;views&#39;</span><span class="p">,</span> <span class="s1">&#39;collections&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="c1">// ... and so much more ...</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above build profile is designed for balancing scalability and performance.</p>
+
+<p><strong>Examples of the grouped sets of code dependencies</strong></p>
+
+<p>The contents of the vendor.js which is not built into a package may use some <em>no conflict</em> calls as well.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// List of vendor libraries, e.g. jQuery, Underscore, Backbone, etc.  </span>
+</span><span class='line'><span class="c1">// this module is used with the r.js optimizer tool during build  </span>
+</span><span class='line'><span class="c1">// @see &lt;http://requirejs.org/docs/faq-optimization.html&gt;</span>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span> <span class="s2">&quot;jquery&quot;</span><span class="p">,</span> <span class="s2">&quot;underscore&quot;</span><span class="p">,</span> <span class="s2">&quot;backbone&quot;</span><span class="p">,</span> <span class="s2">&quot;modernizr&quot;</span><span class="p">,</span> <span class="s2">&quot;mustache&quot;</span> <span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span>        <span class="nx">_</span><span class="p">,</span>            <span class="nx">Backbone</span><span class="p">,</span>   <span class="nx">Modernizr</span><span class="p">,</span>   <span class="nx">Mustache</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// call no conflicts so if needed you can use multiple versions of $</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">.</span><span class="nx">noConflict</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">_</span><span class="p">.</span><span class="nx">noConflict</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">Backbone</span><span class="p">.</span><span class="nx">noConflict</span><span class="p">();</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For your application common library code.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// List of utility libraries,</span>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span> <span class="s2">&quot;utils/ajax&quot;</span><span class="p">,</span> <span class="s2">&quot;utils/baselib&quot;</span><span class="p">,</span> <span class="s2">&quot;utils/localstorage&quot;</span><span class="p">,</span> <span class="s2">&quot;utils/debug&quot;</span><span class="p">,</span> <span class="s2">&quot;utils/shims&quot;</span> <span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">ajax</span><span class="p">,</span>         <span class="nx">baselib</span><span class="p">,</span>         <span class="nx">localstorage</span><span class="p">,</span>         <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;ajax&quot;</span> <span class="o">:</span> <span class="nx">ajax</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;baselib&quot;</span> <span class="o">:</span> <span class="nx">baselib</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;localstorage&quot;</span> <span class="o">:</span> <span class="nx">localstorage</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;debug&quot;</span> <span class="o">:</span> <span class="nx">debug</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>    <span class="c1">// the shim only extend JavaScript when needed, e.g. Object.create</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>An example where you intend to use require the common models in another package file.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// List of models  </span>
+</span><span class='line'><span class="c1">// models in this directory are intended for site-wide usage  </span>
+</span><span class='line'><span class="c1">// grouping site-wide models in this module (object)</span>
+</span><span class='line'><span class="c1">// optimizes the performance and keeps dependencies organized</span>
+</span><span class='line'><span class="c1">// when the (build) optimizer is run.</span>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span> <span class="s2">&quot;models/branding&quot;</span><span class="p">,</span> <span class="s2">&quot;models/section&quot;</span> <span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">Branding</span><span class="p">,</span>          <span class="nx">Section</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;Branding&quot;</span> <span class="o">:</span> <span class="nx">Branding</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;Section&quot;</span>  <span class="o">:</span> <span class="nx">Section</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>A quick note on code standards</h3>
+
+<p>Notice that in the above examples the parameters may begin with lower or upper case characters. The variable names uses in the parameters that begin with <em>Uppercase</em> are <em>Constructors</em> and the <em>lowercase</em> variable names are not, they may be instances created by a constructor, or perhaps an object or function that is not meant to used with <em>new</em>.</p>
+
+<p>The convention recommended is to use Upper CamelCase for constructors and lower camelCase for others.</p>
+
+<h3>Common pitfall when organizing code in modules</h3>
+
+<p>Be careful not define circular dependencies. For example, in a common <em>models</em> package (models.js) dependencies are listed for the files in your models directory</p>
+
+<pre><code>define([ "models/branding", "models/section" ], function (branding, section)  
+// ...  
+return { "branding" : branding, "section", section }  
+</code></pre>
+
+<p>Then when another packages requires a common model you can access the models objects returned from your common models.js file like so&#8230;</p>
+
+<pre><code>define([ "models", "utils" ], function (models, utils) {  
+var branding = models.branding, debug = utils.debug;  
+</code></pre>
+
+<p>Perhaps after using the model a few times you get into the habit of requiring &#8220;model&#8221;. Later you need add another common model with extends a model you already defined. So the pitfall begins, you add a new model inside your models directory and add a reference this same model in the model.js:</p>
+
+<pre><code>define([ "models/branding", "models/section", "models/section-b" ], function (branding, section)  
+// ...  
+return { "branding" : branding, "section", section, "section-b" : section-b }
+</code></pre>
+
+<p>However in your <em>models/section-b.js</em> file you define a dependency using the model.js which returns the models in an object like so&#8230;</p>
+
+<pre><code>define([ "models" ], function (models, utils) {  
+var section = models.section;
+</code></pre>
+
+<p>Above is the mistake in models.js a dependency was added for models/section-b and in section-b a dependency is defined for model. The new models/section-b.js requires <em>model</em> and model.js requires <em>models/section-b.js</em> - a circular dependency. This should result in a load timeout error from require.js, but not tell you about the circular dependency.</p>
+
+<p>For other common mistakes see the <a href="http://requirejs.org/docs/errors.html" title="RequireJS common errors page">COMMON ERRORS</a> page on the RequireJS site.</p>
+
+<h4>Executing the Build with r.js</h4>
+
+<p>If you intalled r.js with Node&#8217;s npm (package manager) like so&#8230;</p>
+
+<pre><code>&gt; npm install requirejs
+</code></pre>
+
+<p>&#8230;you can execute the build on the command line:</p>
+
+<pre><code>&gt; r.js -o app.build.js
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Bill Heaton</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-09T03:19:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/notes/categories/backbone-js/'>Backbone.js</a>, <a class='category' href='/notes/categories/requirejs/'>RequireJS</a>, <a class='category' href='/notes/categories/build/'>build</a>, <a class='category' href='/notes/categories/optimize/'>optimize</a>, <a class='category' href='/notes/categories/packages/'>packages</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/" title="Previous Post: Backbone.js CollectionView to utilize a collection rather than a model">&laquo; Backbone.js CollectionView to utilize a collection rather than a model</a>
+      
+      
+        <a class="basic-alignment right" href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/" title="next Post: Hello World Code Demo using Layout Manager and Controller">Hello World Code Demo using Layout Manager and Controller &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/">Vertebrae front-end framework built with Backbone.js and RequireJS using AMD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/">Hello World Code Demo using Layout Manager and Controller</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Backbone.js CollectionView to utilize a collection rather than a model</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Backbone.js and Mustache.js: Small views and templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes with custom library functions added to Backbone.js constructors</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Backbone Views using Mustache Templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File organization: building a framework using RequireJS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies managed with require() and define()</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Backbone.js : list of best practices</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/hautelook">@hautelook</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'hautelook',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("hautelook", 10, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/hautelook" class="twitter-follow-button" data-show-count="false">Follow @hautelook</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Bill Heaton -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

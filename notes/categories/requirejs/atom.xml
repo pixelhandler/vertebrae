@@ -1,0 +1,1443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: RequireJS | Vertebrae framework]]></title>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/categories/requirejs/atom.xml" rel="self"/>
+  <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/"/>
+  <updated>2012-07-12T11:32:22-07:00</updated>
+  <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/</id>
+  <author>
+    <name><![CDATA[Bill Heaton]]></name>
+    <email><![CDATA[pixelhandler@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/"/>
+    <updated>2012-01-09T03:19:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages</id>
+    <content type="html"><![CDATA[<p>When a JavaScript application is too complex or large to build in a single file, grouping the application’s components into packages allows for script dependencies to download in parallel, and facilitates only loading <strong>packaged</strong> and other modular code as the site experience requires the specific set of dependencies.</p>
+
+<p>Require.JS, the (JavaScript) module loading library, has an <a href="http://requirejs.org/docs/optimization.html" title="Require.JS optimizer">optimizer</a> to build a JavaScript-based application and provides various options. A build profile is the recipe for your build, much like a build.xml file is used to build a project with ANT. The benefit of building with <strong>r.js</strong> not only results in speedy script loading with minified code, but also provides a way to package components of your application.</p>
+
+<ul>
+<li><a href="http://requirejs.org/docs/optimization.html#onejs" title="Optimizing one JavaScript file">Optimizing one JavaScript file</a></li>
+<li><a href="http://requirejs.org/docs/optimization.html#wholeproject" title="Optimizing a whole project">Optimizing a whole project</a></li>
+<li><a href="http://requirejs.org/docs/faq-optimization.html#priority" title="Optimizing a project in layers or packages">Optimizing a project in layers or packages</a></li>
+</ul>
+
+
+<p>In a complex application, organizing code into <em>packages</em> is an attractive build strategy. The build profile in this article is based on an test application currently under development (files list below). The application framework is built with open source libraries. The main objective in this build profile is to optimize an application developed with <a href="http://documentcloud.github.com/backbone/" title="Backbone.js">Backbone.js</a> using modular code, following the <a href="https://github.com/amdjs/amdjs-api/wiki/AMD" title="Asynchronous Module Definition (AMD) wiki page">Asynchronous Module Definition (AMD)</a> format. AMD and Require.JS provide the structure for writing modular code with dependencies. Backbone.js provides the code organization for developing models, views and collections and also interactions with a RESTful API.</p>
+
+<!--more-->
+
+
+<p>Below is an outline of the application’s file organization, followed by the build profile to build modular (or packaged) layers a JavaScript driven application.</p>
+
+<h3>File organization</h3>
+
+<p>Assume the following directories and file organization, with app.build.js as the build profile (a sibling to both source and release directories). Note that the files in the list below named <em>section</em> can be any component of the application, e.g. <em>header</em>, <em>login</em>)</p>
+
+<p><code>``text  
+.-- app.build.js
+|-- app-release
+</code>-- app-src</p>
+
+<pre><code>|-- collections
+|   |-- base.js
+|   |-- sections-segments.js
+|   `-- sections.js
+|-- docs
+|   `--docco.css
+|-- models
+|   |-- base.js
+|   |-- branding.js
+|   `-- section.js
+|-- packages
+|   |-- header
+|   |   |-- models
+|   |   |   |-- nav.js
+|   |   |   `-- link.js
+|   |   |-- templates
+|   |   |   |-- branding.js
+|   |   |   |-- nav.js
+|   |   |   `-- links.js
+|   |   `-- views
+|   |       |-- nav.js
+|   |       |-- branding.js
+|   |       `-- link.js
+|   |-- header.js
+|   `-- ... more packages here e.g. cart, checkout ...
+|-- syncs
+|   |-- rest
+|   |   `-- sections.js
+|   |-- factory.js
+|   `-- localstorage.js
+|-- test
+|   |-- fixtures
+|   |   `-- sections.json
+|   |-- header
+|   |   |-- index.html
+|   |   `-- spec.js
+|   |-- lib
+|   |   `-- Jasmine
+|   |-- models
+|   |-- utils
+|   |-- global-spec.js
+|-- utils
+|   |-- ajax.js
+|   |-- baselib.js
+|   |-- debug.js
+|   |-- localstorage.js
+|   `-- shims.js
+|-- vendor
+|-- |-- backbone-min.js
+|   |-- jquery-1.7.1.min.js
+|   |-- jquery.mobile-1.0.min.js
+|   |-- json2.js
+|   |-- modernizr-1.6.min.js
+|   |-- mustache.js
+|   |-- require.js
+|   |-- text.js
+|   `-- underscore.js
+|-- views
+|   |-- base.js
+|   `-- collection.js
+|-- application.js
+|-- collections.js
+|-- index.html
+|-- main.js
+|-- models.js
+|-- syncs.js
+|-- utils.js
+|-- vendor.js
+`-- views.js
+</code></pre>
+
+<p>```</p>
+
+<h3>Build profile to optimize modular dependencies with code organized in packages</h3>
+
+<p>The build profile can be organized to <a href="http://requirejs.org/docs/faq-optimization.html#priority" title="optimize modular dependencies in packages">divide parallel downloads for various sections of the application</a>.</p>
+
+<p>This strategy demonstrated builds common or site-wide groups of (core) <em>models</em>, <em>views</em>, collections which are extended from a base.js constructor which extends the appropriate backbone method, e.g. Backbone.Model. The <em>packages</em> directory organizes code by section / responsibility, e.g. cart, checkout, etc. Notice that within the example <em>header</em> package the directory structure is similar to the app root directory file structure. A <em>package</em> (of modularized code) has dependencies from the common libraries in your application and also has specific code for the packages execution alone; other packages should not require another packages dependencies. A <em>utils</em> directory has shims, helpers, and common library code to support the application. A <em>syncs</em> directory to define persistence with your RESTful api and/or localStorage. The <em>vendor</em> libraries folder will not be built, there is no need to do so, you may decide to use a CDN (then set these paths to : <em><a href="http://requirejs.org/docs/optimization.html#empty" title="empty:">empty:</a></em>). And finally a <em>test</em> directory for <a href="http://pivotal.github.com/jasmine/" title="Jasmine is a behavior-driven development framework for testing your JavaScript code">Jasmine</a> unit test specs, which may be ignored in the build as well if you choose.</p>
+
+<p>Also notice the there are .js files named the same as the directories, these are the files listed in the paths. these are strategic to group sets of files to build, examples follow the build profile below.</p>
+
+<p>```javascript
+({</p>
+
+<pre><code>appDir: './app-src',
+baseUrl: './',
+dir: './app-build',
+optimize: 'uglify',
+paths: {
+    // will not build 3rd party code, it's already built
+    'text'         : 'vendor/text',
+    'json2'        : 'vendor/json2.min',
+    'modernizr'    : 'vendor/modernizr-1.6.min',
+    'jquery'       : 'vendor/jquery-1.7.1',
+    'jquerymobile' : 'vendor/jquery.mobile-1.0.min.js',
+    'underscore'   : 'vendor/underscore',
+    'mustache'     : 'vendor/mustache',
+    'backbone'     : 'vendor/backbone',
+    // files that define dependencies...
+    // ignore vendor libraries, but need a group to do so
+    'vendor'       : 'vendor',
+    // application modules/packages these files define dependencies
+    // and may also group modules into objects if needed to require
+    // by groups rather than individual files
+    'utils'        : 'utils',
+    'models'       : 'models',
+    'views'        : 'views',
+    'collections'  : 'collections',
+    // packages to build
+    'header'       : 'packages/header'
+    //... more packages
+},
+modules: [
+    // Common libraries, Utilities, Syncs, Models, Views, Collections
+    {
+        name: 'utils',
+        exclude: ['vendor']
+    },
+    {
+        name: 'syncs',
+        exclude: ['vendor', 'utils']
+    },
+    {
+        name: 'models',
+        exclude: ['vendor', 'utils', 'syncs']
+    },
+    {
+        name: 'views',
+        exclude: ['vendor', 'utils', 'syncs', 'models']
+    },
+    {
+        name: 'collections',
+        exclude: ['vendor', 'utils', 'syncs', 'models', 'views']
+    },
+    // Packages
+    {
+        name: 'header',
+        exclude: ['vendor', 'utils', 'syncs', 'models', 'views', 'collections']
+    }
+    // ... and so much more ...
+]
+</code></pre>
+
+<p>})
+```</p>
+
+<p>The above build profile is designed for balancing scalability and performance.</p>
+
+<p><strong>Examples of the grouped sets of code dependencies</strong></p>
+
+<p>The contents of the vendor.js which is not built into a package may use some <em>no conflict</em> calls as well.</p>
+
+<p>```javascript
+// List of vendor libraries, e.g. jQuery, Underscore, Backbone, etc.<br/>
+// this module is used with the r.js optimizer tool during build<br/>
+// @see <a href="http://requirejs.org/docs/faq-optimization.html">http://requirejs.org/docs/faq-optimization.html</a>
+define([ "jquery", "underscore", "backbone", "modernizr", "mustache" ],
+function ($,        _,            Backbone,   Modernizr,   Mustache) {</p>
+
+<pre><code>// call no conflicts so if needed you can use multiple versions of $
+$.noConflict();
+_.noConflict();
+Backbone.noConflict();
+</code></pre>
+
+<p>});
+```</p>
+
+<p>For your application common library code.</p>
+
+<p>```javascript
+// List of utility libraries,
+define([ "utils/ajax", "utils/baselib", "utils/localstorage", "utils/debug", "utils/shims" ],
+function (ajax,         baselib,         localstorage,         debug) {</p>
+
+<pre><code>return {
+    "ajax" : ajax,
+    "baselib" : baselib,
+    "localstorage" : localstorage,
+    "debug" : debug
+};
+// the shim only extend JavaScript when needed, e.g. Object.create
+</code></pre>
+
+<p>});
+```</p>
+
+<p>An example where you intend to use require the common models in another package file.</p>
+
+<p>```javascript
+// List of models<br/>
+// models in this directory are intended for site-wide usage<br/>
+// grouping site-wide models in this module (object)
+// optimizes the performance and keeps dependencies organized
+// when the (build) optimizer is run.
+define([ "models/branding", "models/section" ],
+function (Branding,          Section) {</p>
+
+<pre><code>return {
+    "Branding" : Branding,
+    "Section"  : Section
+};
+</code></pre>
+
+<p>});
+```</p>
+
+<h3>A quick note on code standards</h3>
+
+<p>Notice that in the above examples the parameters may begin with lower or upper case characters. The variable names uses in the parameters that begin with <em>Uppercase</em> are <em>Constructors</em> and the <em>lowercase</em> variable names are not, they may be instances created by a constructor, or perhaps an object or function that is not meant to used with <em>new</em>.</p>
+
+<p>The convention recommended is to use Upper CamelCase for constructors and lower camelCase for others.</p>
+
+<h3>Common pitfall when organizing code in modules</h3>
+
+<p>Be careful not define circular dependencies. For example, in a common <em>models</em> package (models.js) dependencies are listed for the files in your models directory</p>
+
+<pre><code>define([ "models/branding", "models/section" ], function (branding, section)  
+// ...  
+return { "branding" : branding, "section", section }  
+</code></pre>
+
+<p>Then when another packages requires a common model you can access the models objects returned from your common models.js file like so...</p>
+
+<pre><code>define([ "models", "utils" ], function (models, utils) {  
+var branding = models.branding, debug = utils.debug;  
+</code></pre>
+
+<p>Perhaps after using the model a few times you get into the habit of requiring "model". Later you need add another common model with extends a model you already defined. So the pitfall begins, you add a new model inside your models directory and add a reference this same model in the model.js:</p>
+
+<pre><code>define([ "models/branding", "models/section", "models/section-b" ], function (branding, section)  
+// ...  
+return { "branding" : branding, "section", section, "section-b" : section-b }
+</code></pre>
+
+<p>However in your <em>models/section-b.js</em> file you define a dependency using the model.js which returns the models in an object like so...</p>
+
+<pre><code>define([ "models" ], function (models, utils) {  
+var section = models.section;
+</code></pre>
+
+<p>Above is the mistake in models.js a dependency was added for models/section-b and in section-b a dependency is defined for model. The new models/section-b.js requires <em>model</em> and model.js requires <em>models/section-b.js</em> - a circular dependency. This should result in a load timeout error from require.js, but not tell you about the circular dependency.</p>
+
+<p>For other common mistakes see the <a href="http://requirejs.org/docs/errors.html" title="RequireJS common errors page">COMMON ERRORS</a> page on the RequireJS site.</p>
+
+<h4>Executing the Build with r.js</h4>
+
+<p>If you intalled r.js with Node's npm (package manager) like so...</p>
+
+<pre><code>&gt; npm install requirejs
+</code></pre>
+
+<p>...you can execute the build on the command line:</p>
+
+<pre><code>&gt; r.js -o app.build.js
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[File organization: building a framework using RequireJS]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/"/>
+    <updated>2012-01-08T16:44:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/file-organization-building-a-framework-using-requirejs/2012/01/file-organization-building-a-framework-using-requirejs</id>
+    <content type="html"><![CDATA[<p>When a JavaScript application is to complex or large to build in a single file, grouping the application's components into packages allows for script dependencies to download in parallel; and facilitates only loading <strong>packaged</strong> and other modular code as the site experience requires the specific set of dependencies.</p>
+
+<p>AMD and Require.JS provide the structure for writing modular code with dependencies. Backbone.js provides the code organization for developing models, views and collections and also interactions with a RESTful API. Below is an outline of the Web application's file organization</p>
+
+<h3>File organization</h3>
+
+<p>Assume the following directories and file organization, with app.build.js as the build profile (a sibling to both source and release directories). Note that the files in the list below named <em>section</em> can be any component of the application, e.g. <em>header</em>, <em>login</em>)</p>
+
+<p>This structure groups common (or site-wide) code of (core) <em>models</em>, <em>views</em>, <em>collections</em> which are extended from a base.js constructor. These base constructors extend the appropriate backbone method, e.g. Backbone.Model.</p>
+
+<p>The <em>packages</em> directory organizes code by section / responsibility, e.g. cart, checkout, etc. Notice that within the example <em>header</em> package the directory structure is similar to the app root directory file structure.</p>
+
+<p>A <em>package</em> (of modularized code) has dependencies from the common libraries in your application and also has specific code for the packages execution alone; other packages should not require another packages dependencies.</p>
+
+<p>A <em>utils</em> directory has shims, helpers, and common library code to support the application.</p>
+
+<p>A <em>syncs</em> directory to define persistence with your RESTful api and/or localStorage.</p>
+
+<p>The <em>vendor</em> libraries folder will not be built, there is no need to do so.</p>
+
+<!--more-->
+
+
+<p><code>``text  
+.-- app.build.js
+|-- app-release
+</code>-- app-src</p>
+
+<pre><code>|-- collections
+|   |-- base.js
+|   |-- sections-segments.js
+|   `-- sections.js
+|-- docs
+|   `--docco.css
+|-- models
+|   |-- base.js
+|   |-- branding.js
+|   `-- section.js
+|-- packages
+|   |-- header
+|   |   |-- models
+|   |   |   |-- nav.js
+|   |   |   `-- link.js
+|   |   |-- templates
+|   |   |   |-- branding.js
+|   |   |   |-- nav.js
+|   |   |   `-- links.js
+|   |   `-- views
+|   |       |-- nav.js
+|   |       |-- branding.js
+|   |       `-- link.js
+|   |-- header.js
+|   `-- ... more packages here e.g. cart, checkout ...
+|-- syncs
+|   |-- rest
+|   |   `-- sections.js
+|   |-- factory.js
+|   `-- localstorage.js
+|-- test
+|   |-- fixtures
+|   |   `-- sections.json
+|   |-- header
+|   |   |-- index.html
+|   |   `-- spec.js
+|   |-- lib
+|   |   `-- Jasmine
+|   |-- models
+|   |-- utils
+|   |-- global-spec.js
+|-- utils
+|   |-- ajax.js
+|   |-- baselib.js
+|   |-- debug.js
+|   |-- localstorage.js
+|   `-- shims.js
+|-- vendor
+|-- |-- backbone-min.js
+|   |-- jquery-1.7.1.min.js
+|   |-- jquery.mobile-1.0.min.js
+|   |-- json2.js
+|   |-- modernizr-1.6.min.js
+|   |-- mustache.js
+|   |-- require.js
+|   |-- text.js
+|   `-- underscore.js
+|-- views
+|   |-- base.js
+|   `-- collection.js
+|-- application.js
+|-- collections.js
+|-- index.html
+|-- main.js
+|-- models.js
+|-- syncs.js
+|-- utils.js
+|-- vendor.js
+`-- views.js
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dependencies managed with require() and define()]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/dependencies-managed-with-require-and-define/2012/01/08/"/>
+    <updated>2012-01-08T15:11:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/dependencies-managed-with-require-and-define/2012/01/dependencies-managed-with-require-and-define</id>
+    <content type="html"><![CDATA[<h2>Modular Code Dependencies</h2>
+
+<p>RequireJS and AMD (Asynchronous Module Definition) provide a pattern for authoring modular code and also managing dependencies without complex namespacing or even adding any properties to the (head) window object. When we write modules in JavaScript, we want to handle the reuse of code intelligently and have the option to build an entire application into a single script or load modules as they are required to execute the business requirements of the application.</p>
+
+<ul>
+<li><a href="http://requirejs.org/docs/requirements.html" title="RequireJS is designed to meet these requirements">RequireJS Requirements/Design</a></li>
+<li><a href="https://github.com/jrburke/requirejs" title="requirejs on github">RequireJS Source</a></li>
+<li><a href="http://requirejs.org/docs/whyamd.html" title="AMD benefits">Why AMD</a></li>
+</ul>
+
+
+<h3>Writing AMD modules with RequireJS</h3>
+
+<p><em>Note - This section "Writing AMD modules with RequireJS" is an excerpt from <a href="https://github.com/addyosmani/backbone-fundamentals#modularjs" title="Backbone Fundamentals online book project by addyosmani">Backbone Fundamentals</a></em></p>
+
+<p>The overall goal for the AMD format is to provide a solution for modular JavaScript that developers can use today. The two key concepts you need to be aware of when using it with a script-loader are a <code>define()</code> method for facilitating module definition and a <code>require()</code> method for handling dependency loading. <code>define()</code> is used to define named or unnamed modules based on the proposal using the following signature:</p>
+
+<!--more-->
+
+
+<p>```javascript
+define(</p>
+
+<pre><code>module_id /*optional*/, 
+[dependencies] /*optional*/, 
+definition function /*function for instantiating the module or object*/
+</code></pre>
+
+<p>);
+```</p>
+
+<p>As you can tell by the inline comments, the <code>module_id</code> is an optional argument which is typically only required when non-AMD concatenation tools are being used (there may be some other edge cases where it's useful too). When this argument is left out, we call the module 'anonymous'. When working with anonymous modules, the idea of a module's identity is DRY, making it trivial to avoid duplication of filenames and code.</p>
+
+<p>Back to the define signature, the dependencies argument represents an array of dependencies which are required by the module you are defining and the third argument ('definition function') is a function that's executed to instantiate your module. A barebone module (compatible with RequireJS) could be defined using <code>define()</code> as follows:</p>
+
+<p>```javascript
+// A module ID has been omitted here to make the module anonymous</p>
+
+<p>define(['foo', 'bar'],</p>
+
+<pre><code>// module definition function
+// dependencies (foo and bar) are mapped to function parameters
+function ( foo, bar ) {
+    // return a value that defines the module export
+    // (i.e the functionality we want to expose for consumption)
+
+    // create your module here
+    var myModule = {
+        doStuff:function(){
+            console.log('Yay! Stuff');
+        }
+    }
+
+    return myModule;
+</code></pre>
+
+<p>});
+```</p>
+
+<h3>The main.js file bootstraps the Web application</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (main.js)</span> <a href='/downloads/code/javascript/main.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// main.js</span>
+</span><span class='line'><span class="c1">// ------- </span>
+</span><span class='line'><span class="c1">// See require.js, underscore.js, backbone.js</span>
+</span><span class='line'><span class="c1">// Requires `require`, `define`</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">window</span><span class="p">.</span><span class="nx">HL</span><span class="p">)</span> <span class="p">{</span> <span class="kd">var</span> <span class="nx">HL</span> <span class="o">=</span> <span class="p">{};</span> <span class="p">}</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">HL</span><span class="p">.</span><span class="nx">buildVersion</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">HL</span><span class="p">.</span><span class="nx">buildVersion</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Param (string) str is a path beginning with &#39;/&#39; (src directory)</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">HL</span><span class="p">.</span><span class="nx">buildVersion</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">buildVersion</span> <span class="o">+</span> <span class="nx">str</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">path</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">require</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">baseUrl</span><span class="o">:</span> <span class="s1">&#39;./&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">locale</span><span class="o">:</span> <span class="s1">&#39;en-us&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ** Libraries **</span>
+</span><span class='line'>        <span class="s1">&#39;json2&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/json2.min&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;modernizr&#39;</span>    <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/modernizr.min&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;requirejquery&#39;</span><span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/require-jquery&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;jquery&#39;</span>       <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/jquery-1.7.2.min&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;zepto&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/zepto&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;underscore&#39;</span>   <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/underscore&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;mustache&#39;</span>     <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/mustache&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;backbone&#39;</span>     <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/backbone&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// r.js plugins</span>
+</span><span class='line'>        <span class="s1">&#39;use&#39;</span>          <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/use&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;domready&#39;</span>     <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/domReady&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;order&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/order&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;text&#39;</span>         <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/text&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// jQuery plugins should be loaded in the facade.js file</span>
+</span><span class='line'>        <span class="s1">&#39;jquerycookie&#39;</span> <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/jquery.cookie&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Zepto plugins should be loaded in the facade.js file</span>
+</span><span class='line'>        <span class="c1">// these need the following order! type, callbacks, deferred</span>
+</span><span class='line'>        <span class="s1">&#39;type&#39;</span>         <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/type&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;callbacks&#39;</span>    <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/callbacks&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;deferred&#39;</span>     <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/deferred&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Touch events</span>
+</span><span class='line'>        <span class="s1">&#39;touch&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor/plugins/touch&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Facade references to vendor / library methods</span>
+</span><span class='line'>        <span class="s1">&#39;facade&#39;</span>       <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/facade&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Vendor libs and plugin, packaged group of common dependencies</span>
+</span><span class='line'>        <span class="s1">&#39;vendor&#39;</span>       <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/vendor&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Utilities, Mixins and HauteLook libraries</span>
+</span><span class='line'>        <span class="s1">&#39;utils&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/utils&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// (Backbone) Syncs depend on both vendor and utils</span>
+</span><span class='line'>        <span class="s1">&#39;syncs&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/syncs&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Should be used as required dependencies with use of `define`, </span>
+</span><span class='line'>        <span class="s1">&#39;models&#39;</span>       <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/models&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;views&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/views&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;collections&#39;</span>  <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/collections&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;controller&#39;</span>   <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/controller&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ** Packages **</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="s1">&#39;chrome&#39;</span>       <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/packages/chrome&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;events&#39;</span>       <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/packages/events&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;catalog&#39;</span>      <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/packages/catalog&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;product&#39;</span>      <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/packages/product&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;hello&#39;</span>        <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/packages/hello&#39;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ** Application ** bootstrap for frontend app </span>
+</span><span class='line'>        <span class="s1">&#39;application&#39;</span>  <span class="o">:</span> <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s1">&#39;/application&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">use</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;underscore&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">attach</span><span class="o">:</span> <span class="s2">&quot;_&quot;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="s2">&quot;backbone&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">deps</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;use!underscore&quot;</span><span class="p">,</span> <span class="s2">&quot;jquery&quot;</span><span class="p">],</span>
+</span><span class='line'>            <span class="nx">attach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="nx">Backbone</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">priority</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;use&#39;</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="s1">&#39;modernizr&#39;</span><span class="p">,</span> <span class="s1">&#39;json2&#39;</span><span class="p">,</span> <span class="s1">&#39;vendor&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">],</span>
+</span><span class='line'>    <span class="nx">jquery</span><span class="o">:</span> <span class="s1">&#39;1.7.2&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">waitSeconds</span><span class="o">:</span> <span class="mi">33</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nx">require</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">facade</span><span class="p">,</span>   <span class="nx">App</span><span class="p">,</span>           <span class="nx">utils</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Channel</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">baselib</span><span class="p">.</span><span class="nx">Channel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">debug</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">cssArr</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>            <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s2">&quot;/css/base.css&quot;</span><span class="p">),</span>
+</span><span class='line'>            <span class="nx">HL</span><span class="p">.</span><span class="nx">prependBuild</span><span class="p">(</span><span class="s2">&quot;/css/global.css&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// load style sheets</span>
+</span><span class='line'>    <span class="nx">Channel</span><span class="p">(</span><span class="s1">&#39;load:css&#39;</span><span class="p">).</span><span class="nx">publish</span><span class="p">(</span><span class="nx">cssArr</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="c1">// doc ready</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">app</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">// run the application, it all starts here.</span>
+</span><span class='line'>        <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;initialize application...&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">App</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span><span class="nx">pushState</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+</span><span class='line'>        <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;...app router active&quot;</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Example of Backbone.js Model definition using AMD</h3>
+
+<p>Below is an example of defining a Backbone Model object which returns a constructor rather than an instance. The recommended convention for naming variables is to use <em>Upper</em> <em>CamelCase</em> for constructors and <em>lower</em> <em>camelCase</em> for others.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (event.js)</span> <a href='/downloads/code/javascript/models/event.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Event Model</span>
+</span><span class='line'><span class="c1">// -----------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Requires define</span>
+</span><span class='line'><span class="c1">// Return {Event} constructor</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;models/base&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">BaseModel</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">Event</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">Event</span> <span class="o">=</span> <span class="nx">BaseModel</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">defaults</span> <span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// v4 (JSON HAL) Events format...</span>
+</span><span class='line'>            <span class="s2">&quot;_links&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s2">&quot;self&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="kc">null</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>                <span class="s2">&quot;http://hautelook.com/rels/catalog&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="kc">null</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>                <span class="s2">&quot;http://hautelook.com/rels/availability&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="kc">null</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>                <span class="s2">&quot;http://hautelook.com/rels/images/event-hero&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="kc">null</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>                <span class="s2">&quot;http://hautelook.com/rels/images/seals/event-hero&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="kc">null</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>                <span class="s2">&quot;http://hautelook.com/rels/images/seals/catalog-banner&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="s2">&quot;href&quot;</span><span class="o">:</span> <span class="kc">null</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>            <span class="p">},</span>
+</span><span class='line'>            <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;13454&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;Pour La Victoire&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;start_date&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;2012-02-01 08:00:00&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;end_date&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;2012-02-03 08:00:00&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;tagline&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;Fashionable platform pumps and ballet flats&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;active&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;visibility&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;public&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;sale_type&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">//&quot;default&quot;,</span>
+</span><span class='line'>            <span class="s2">&quot;verticals&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="p">{</span> <span class="s2">&quot;vertical&quot;</span><span class="o">:</span> <span class="kc">null</span> <span class="cm">/* &quot;Women&quot; */</span> <span class="p">}</span> <span class="p">],</span>
+</span><span class='line'>            <span class="s2">&quot;images&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s2">&quot;hero&quot;</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="c1">// PARSED from _links data</span>
+</span><span class='line'>            <span class="p">},</span>
+</span><span class='line'>            <span class="s2">&quot;seals&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s2">&quot;hero&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="p">},</span>
+</span><span class='line'>            <span class="s2">&quot;nesting&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s2">&quot;parents&quot;</span><span class="o">:</span> <span class="p">[],</span>
+</span><span class='line'>                <span class="s2">&quot;children&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="cm">/*{ &quot;id&quot;: &quot;12638&quot; },...*/</span> <span class="p">],</span>
+</span><span class='line'>                <span class="s2">&quot;siblings&quot;</span><span class="o">:</span> <span class="p">[]</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">urlRoot</span><span class="o">:</span> <span class="s2">&quot;/v4/events&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">parse</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">data</span><span class="p">.</span><span class="nx">images</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">_links</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">data</span><span class="p">.</span><span class="nx">images</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nx">hero</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">_links</span><span class="p">[</span><span class="s2">&quot;http://hautelook.com/rels/images/event-hero&quot;</span><span class="p">].</span><span class="nx">href</span>
+</span><span class='line'>                    <span class="p">};</span>
+</span><span class='line'>                    <span class="nx">data</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">hero</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">hero</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;event-small&quot;</span><span class="p">,</span> <span class="s2">&quot;event-large&quot;</span><span class="p">);</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Event</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Example of Backbone.js Collection definition using AMD</h3>
+
+<p>The events collection defined below returns an instance of the Backbone Collection object. In this collection constructor "EventsCollection" the event model is assigned to the model property of the object literal used to extend the base collection object (pseudo class, as in JavaScript everything is an object). Notice that one of the required scripts is "models" which contains the "Event" constructor in an object which is referenced as the variable "models.Event".</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Events Collection  (events-example.js)</span> <a href='/downloads/code/javascript/collections/events-example.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Events Collection  </span>
+</span><span class='line'><span class="c1">// -----------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// @requires `define`  </span>
+</span><span class='line'><span class="c1">// @return {BaseCollection} EventsCollection instance</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;underscore&#39;</span><span class="p">,</span><span class="s1">&#39;models&#39;</span><span class="p">,</span><span class="s1">&#39;collections/base&#39;</span><span class="p">,</span><span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span>      <span class="nx">_</span><span class="p">,</span>           <span class="nx">models</span><span class="p">,</span>  <span class="nx">BaseCollection</span><span class="p">,</span>    <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">EventsCollection</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">eventsModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">models</span><span class="p">.</span><span class="nx">EventsData</span><span class="p">(),</span>
+</span><span class='line'>        <span class="nx">Event</span> <span class="o">=</span> <span class="nx">models</span><span class="p">.</span><span class="nx">Event</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">EventsCollection</span> <span class="o">=</span> <span class="nx">BaseCollection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">model</span><span class="o">:</span> <span class="nx">Event</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">models</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">EventsCollection</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>In the code above there is a <em>single var</em> statement which lists the local variables in the current scope. This is a best practice and encouraged so the developers have a common place to find the local variables for this module. Also it provide some syntax to how the code dependencies are used at the top of the module. For example the <em>eventsModel</em> is a new instance of the required <em>EventsData</em> constructor and <em>Event</em> is the constructor included in the required <em>models</em> object.</p>
+
+<blockquote><p><em>The previous code examples that the objects used to extend when defining the constructors are : BaseModel and BaseCollection not Backbone.Model and Backbone.Collection. We are using base classes so that they may be extended similar to the use of an abstract class.</em></p></blockquote>
+
+<h3>Grouping objects simplifies dependency management and also facilitates an organized build</h3>
+
+<p>The strategy we are using for authoring modular and reusable code includes the use of site-wide or <em>global</em> objects as well as code organized in <em>packages</em> intended for specific components of the application. To provide global objects as dependencies which will be required by various packages we group (or wrap) common types of objects into a single object which can be <a href="http://requirejs.org/docs/optimization.html" title="RequireJS optimization/build script: r.js">optimized</a> in the build process with r.js. Grouping objects also helps to keep your list (array) of dependencies in the first argument of the (RequireJS) global <strong>define</strong> function call much cleaner and concise.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>models  (models.js)</span> <a href='/downloads/code/javascript/models.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// List of models  </span>
+</span><span class='line'><span class="c1">// --------------</span>
+</span><span class='line'><span class="c1">// Models in this directory are intended for site-wide usage  </span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// This module is used with the r.js optimizer tool during build  </span>
+</span><span class='line'><span class="c1">// See http://requirejs.org/docs/faq-optimization.html</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Requires `define`  See &lt;http://requirejs.org/docs/api.html#define&gt;  </span>
+</span><span class='line'><span class="c1">// Returns {Object} model constructor references</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span>
+</span><span class='line'>        <span class="s2">&quot;models/application-state&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;models/base&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;models/event&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;models/member-summary&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;models/messaging&quot;</span>
+</span><span class='line'>        <span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span>
+</span><span class='line'>        <span class="nx">ApplicationStateModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">BaseModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">EventModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">MemberSummaryModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">MessagingModel</span>
+</span><span class='line'>        <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Add models in this same directory to this object, </span>
+</span><span class='line'>    <span class="c1">// for use when requiring this module.</span>
+</span><span class='line'>    <span class="c1">// grouping site-wide models in this module (object)</span>
+</span><span class='line'>    <span class="c1">// optimizes the performance and keeps dependencies organized</span>
+</span><span class='line'>    <span class="c1">// when the (build) optimizer is run.</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;ApplicationStateModel&quot;</span><span class="o">:</span> <span class="nx">ApplicationStateModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;BaseModel&quot;</span><span class="o">:</span> <span class="nx">BaseModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;EventModel&quot;</span><span class="o">:</span> <span class="nx">EventModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;MemberSummaryModel&quot;</span><span class="o">:</span> <span class="nx">MemberSummaryModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;MessagingModel&quot;</span><span class="o">:</span> <span class="nx">MessagingModel</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h4>Wrapper: Utils Library</h4>
+
+<p>Another example of grouping objects for a base library used to extend our base objects e.g. BaseModel...</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>utils  (utils.js)</span> <a href='/downloads/code/javascript/utils.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// List of utility libraries</span>
+</span><span class='line'><span class="c1">// -------------------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// this module is used with the r.js optimizer tool during build  </span>
+</span><span class='line'><span class="c1">// See http://requirejs.org/docs/faq-optimization.html</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Requires `define` see &lt;http://requirejs.org/docs/api.html#define&gt;  </span>
+</span><span class='line'><span class="c1">// Returns {Object} reference to utiltiy modules</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span>
+</span><span class='line'>       <span class="s2">&quot;utils/ajax-options&quot;</span><span class="p">,</span>
+</span><span class='line'>       <span class="s2">&quot;utils/baselib&quot;</span><span class="p">,</span>
+</span><span class='line'>       <span class="s2">&quot;utils/cookies&quot;</span><span class="p">,</span>
+</span><span class='line'>       <span class="s2">&quot;utils/storage&quot;</span><span class="p">,</span>
+</span><span class='line'>       <span class="s2">&quot;utils/debug&quot;</span><span class="p">,</span>
+</span><span class='line'>       <span class="s2">&quot;utils/date&quot;</span><span class="p">,</span>
+</span><span class='line'>       <span class="s2">&quot;utils/shims&quot;</span>
+</span><span class='line'>        <span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span>
+</span><span class='line'>        <span class="nx">ajaxOptions</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">baselib</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">docCookies</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">storage</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">debug</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">parseDate</span>
+</span><span class='line'>        <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;ajaxOptions&quot;</span><span class="o">:</span> <span class="nx">ajaxOptions</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;baselib&quot;</span><span class="o">:</span> <span class="nx">baselib</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;docCookies&quot;</span><span class="o">:</span> <span class="nx">docCookies</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;storage&quot;</span><span class="o">:</span> <span class="nx">storage</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;debug&quot;</span><span class="o">:</span> <span class="nx">debug</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;parseDate&quot;</span><span class="o">:</span> <span class="nx">parseDate</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>    <span class="c1">// the shim only extend JavaScript when needed, e.g. Object.create</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h4>Events Collection</h4>
+
+<p>The events collection object can be <em>extended</em> to further segment the collection for specific lists presented to site visitors. In the example below the required script <em>'collections/events'</em> returns an instance, however the instance's constructor is easily referenced like so <em>eventsCollection.constructor</em> and extended to create a new constructor which will have methods to filter the collection by segment.</p>
+
+<h4>Events Segments Collection</h4>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Events Segments Collection  (events-segments-example.js)</span> <a href='/downloads/code/javascript/collections/events-segments-example.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Events Segments Collection  </span>
+</span><span class='line'><span class="c1">// -----------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// @requires `define`  </span>
+</span><span class='line'><span class="c1">// @return {Array} `segments` multi-dimensional array[schedule][type] </span>
+</span><span class='line'><span class="c1">// with collection {EventsSegmentCollection} instances</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;underscore&#39;</span><span class="p">,</span><span class="s1">&#39;collections/events&#39;</span><span class="p">,</span><span class="s1">&#39;utils/baselib&#39;</span><span class="p">,</span><span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span>      <span class="nx">_</span><span class="p">,</span>           <span class="nx">eventsCollection</span><span class="p">,</span>    <span class="nx">baselib</span><span class="p">,</span>        <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">EventsSegmentCollection</span><span class="p">,</span> <span class="nx">types</span><span class="p">,</span> <span class="nx">schedules</span><span class="p">,</span> <span class="nx">segments</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Subclass for creating specific segments of a collection</span>
+</span><span class='line'>    <span class="nx">EventsSegmentCollection</span> <span class="o">=</span> <span class="nx">eventsCollection</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">model</span><span class="o">:</span> <span class="nx">eventsCollection</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Methods to filter collection and match schedule and/or type</span>
+</span><span class='line'>        <span class="nx">selectFilters</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">collection</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">models</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// ... </span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">models</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Create segmented collections from the events collection</span>
+</span><span class='line'>    <span class="nx">schedules</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;today&#39;</span><span class="p">,</span> <span class="s1">&#39;ending_soon&#39;</span> <span class="cm">/*, &#39;upcoming&#39; */</span> <span class="p">];</span>
+</span><span class='line'>    <span class="nx">types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Beauty&#39;</span><span class="p">,</span> <span class="s1">&#39;Getaways&#39;</span><span class="p">,</span> <span class="s1">&#39;Home&#39;</span><span class="p">,</span> <span class="s1">&#39;Kids&#39;</span><span class="p">,</span> <span class="s1">&#39;Men&#39;</span><span class="p">,</span> <span class="s1">&#39;Women&#39;</span><span class="p">,</span> <span class="s1">&#39;All&#39;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// segments are combinations of schedules and types, e.g. `today` and `Beauty`</span>
+</span><span class='line'>    <span class="nx">segments</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// iterate over schedules and types to build new collections by segments</span>
+</span><span class='line'>    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">schedules</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">schedule</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">segments</span><span class="p">[</span><span class="nx">schedule</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'>        <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">types</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">segments</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventsSegmentCollection</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s2">&quot;type&quot;</span> <span class="o">:</span> <span class="nx">type</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;schedule&quot;</span> <span class="o">:</span> <span class="nx">schedule</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">segments</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>The truncated module above returns a multi-dimensional "array[schedule][type]" using the extended constructor. This module is useful throughout the application where ever segments of the events are listed and presented in various formats whether in a menu, list or as graphic slides the data is common and already segmented as required for the business of the application.</p>
+
+<h3>Defining a module with non-JavaScript dependencies like a Mustache html template</h3>
+
+<p>The view module below needs an HTML template file written for use with the template library Mustache. The required template <code>'text!packages/header/templates/nav.html'</code> has the prefix <code>text!</code> which is a <a href="http://requirejs.org/docs/download.html#plugins" title="RequireJS text! plugin">plugin</a> to the RequireJS library.</p>
+
+<ul>
+<li><a href="http://mustache.github.com/" title="Mustache library">Mustache</a></li>
+<li><a href="https://github.com/janl/mustache.js" title="Mustache.js source code and documentation on github">mustache.js source</a></li>
+</ul>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>header nav view  (nav.js)</span> <a href='/downloads/code/javascript/packages/header/views/nav.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// header nav view </span>
+</span><span class='line'><span class="c1">// ---------------</span>
+</span><span class='line'><span class="c1">// @requires define</span>
+</span><span class='line'><span class="c1">// @return {NavView} view constructor object</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;underscore&#39;</span><span class="p">,</span><span class="s1">&#39;views/base&#39;</span><span class="p">,</span><span class="s1">&#39;text!packages/header/templates/nav.html&#39;</span><span class="p">,</span><span class="s1">&#39;mustache&#39;</span><span class="p">,</span><span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span>      <span class="nx">_</span><span class="p">,</span>           <span class="nx">BaseView</span><span class="p">,</span>    <span class="nx">navTemplate</span><span class="p">,</span>                              <span class="nx">Mustache</span><span class="p">,</span>  <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// global header view</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">NavView</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">NavView</span> <span class="o">=</span> <span class="nx">BaseView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;navView init&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="nx">navTemplate</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">NavView</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">initialize</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// ...</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">NavView</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Summary</h2>
+
+<p>Functions require() and define() on the head object (window) are created by the <a href="http://requirejs.org/" title="RequireJS site">RequireJS library</a> and are strategic in authoring modular and reusable code. The function <strong>require()</strong> is used in the main.js to kick off the application; main.js is referenced in our html file in a script object or could be using in an inline script as well. The call to require() has as the first argument an array of the required scripts which are referenced in the second argument's anonymous function definition which is used as a callback. When the requirements are ready they are passed to the function which lists the arguments by name giving reference to the returned objects of each required script. The <strong>define()</strong> function works the same way as require() using an array as the list of dependencies; however define() is called to <em>define</em> a module of code. the RequireJS library also has plugins to load non-JavaScript dependencies, e.g. Mustache template files, to reference the plugin use the prefix <em>text!</em>. All scripts in the Web application framework should use these two methods which provide the closures and scope for authoring modular code in JavaScript; it is not necessary to add any properties to the head (window) object.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Building a framework with Backbone.js]]></title>
+    <link href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/building-framework-with-backbone/2012/01/07/"/>
+    <updated>2012-01-07T20:00:00-08:00</updated>
+    <id>http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/building-framework-with-backbone/2012/01/building-framework-with-backbone</id>
+    <content type="html"><![CDATA[<p>Below is a collection of links for code documentation and learning about the preferred libraries for building a JavaScript web application. The libraries selected provide code organization, script/file loading, dependency management, utility library, DOM manipulation, and ajax support for asynchronous application development and interaction with a REST api.</p>
+
+<h2>Web book</h2>
+
+<p><strong>Backbone.js Fundamentals</strong> - <a href="https://github.com/addyosmani/backbone-fundamentals">https://github.com/addyosmani/backbone-fundamentals</a></p>
+
+<p>A creative-commons book on Backbone.js for beginners and advanced users
+alike. How to write modular JavaScript apps for desktop and mobile</p>
+
+<h2>Learning from the source</h2>
+
+<p><strong>Source code documentation</strong></p>
+
+<ul>
+<li><a href="http://documentcloud.github.com/backbone/">http://documentcloud.github.com/backbone/</a></li>
+<li><a href="http://documentcloud.github.com/backbone/docs/backbone.html">http://documentcloud.github.com/backbone/docs/backbone.html</a></li>
+<li><a href="http://documentcloud.github.com/underscore/">http://documentcloud.github.com/underscore/</a></li>
+<li><a href="http://requirejs.org/">http://requirejs.org/</a></li>
+<li><a href="http://requirejs.org/docs/whyamd.html">http://requirejs.org/docs/whyamd.html</a></li>
+<li><a href="http://mustache.github.com/">http://mustache.github.com/</a> | <a href="https://github.com/janl/mustache.js/">https://github.com/janl/mustache.js/</a></li>
+</ul>
+
+
+<!--more-->
+
+
+<p><strong>Code examples</strong></p>
+
+<ul>
+<li><a href="https://github.com/addyosmani/todomvc/tree/master/todo-example/backbone">https://github.com/addyosmani/todomvc/tree/master/todo-example/backbone</a></li>
+<li><a href="https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone">https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone</a></li>
+</ul>
+
+
+<p><strong>Demos</strong></p>
+
+<ul>
+<li><a href="http://addyosmani.github.com/todomvc/todo-example/backbone/index.html">http://addyosmani.github.com/todomvc/todo-example/backbone/index.html</a></li>
+</ul>
+
+
+<p><strong>Tutorials</strong></p>
+
+<ul>
+<li><a href="http://backbonetutorials.com/organizing-backbone-using-modules/">http://backbonetutorials.com/organizing-backbone-using-modules/</a></li>
+<li><a href="https://github.com/documentcloud/backbone/wiki/Tutorials,-blog-posts-and-example-sites">https://github.com/documentcloud/backbone/wiki/Tutorials,-blog-posts-and-example-sites</a></li>
+</ul>
+
+
+<p><strong>Videos</strong></p>
+
+<ul>
+<li><a href="http://peepcode.com/products/backbone-js">http://peepcode.com/products/backbone-js</a></li>
+<li><a href="http://backbonescreencasts.com/">http://backbonescreencasts.com/</a></li>
+</ul>
+
+
+<p><strong>Unit Testing</strong></p>
+
+<ul>
+<li><a href="https://github.com/pivotal/jasmine/wiki/Suites-and-specs">https://github.com/pivotal/jasmine/wiki/Suites-and-specs</a></li>
+<li><a href="http://pivotal.github.com/jasmine/jsdoc/symbols/jasmine.Matchers.html">http://pivotal.github.com/jasmine/jsdoc/symbols/jasmine.Matchers.html</a></li>
+<li><a href="https://github.com/pivotal/jasmine/wiki/Asynchronous-specs">https://github.com/pivotal/jasmine/wiki/Asynchronous-specs</a></li>
+<li><a href="http://sinonjs.org/">http://sinonjs.org/</a> | <a href="http://sinonjs.org/docs/">http://sinonjs.org/docs/</a></li>
+<li><a href="http://tinnedfruit.com/2011/03/03/testing-backbone-apps-with-jasmine-sinon.html">http://tinnedfruit.com/2011/03/03/testing-backbone-apps-with-jasmine-sinon.html</a></li>
+<li><a href="http://tinnedfruit.com/2011/03/25/testing-backbone-apps-with-jasmine-sinon-2.html">http://tinnedfruit.com/2011/03/25/testing-backbone-apps-with-jasmine-sinon-2.html</a></li>
+<li><a href="http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html">http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html</a></li>
+</ul>
+
+
+<h2>Community / Projects</h2>
+
+<p><strong>Apps</strong></p>
+
+<ul>
+<li><a href="http://nrabinowitz.github.com/gapvis/#index">http://nrabinowitz.github.com/gapvis/#index</a></li>
+</ul>
+
+
+<p><strong>Blog Posts</strong></p>
+
+<ul>
+<li><a href="http://googleancientplaces.wordpress.com/">http://googleancientplaces.wordpress.com/</a></li>
+<li><a href="http://www.netmagazine.com/tutorials/use-backbonejs-speed-interactions">http://www.netmagazine.com/tutorials/use-backbonejs-speed-interactions</a></li>
+</ul>
+
+
+<p><strong>Code</strong></p>
+
+<ul>
+<li><a href="https://github.com/zurb/flickrbomb">https://github.com/zurb/flickrbomb</a></li>
+</ul>
+
+
+<p><strong>Community</strong></p>
+
+<ul>
+<li><strong>Stackoverflow</strong> - <a href="http://stackoverflow.com/questions/tagged/backbone.js">http://stackoverflow.com/questions/tagged/backbone.js</a></li>
+<li><strong>irc</strong> - <code>#documentcloud</code> on irc.freenode.net</li>
+<li><strong>Forum</strong> - <a href="https://groups.google.com/forum/#!forum/backbonejs">https://groups.google.com/forum/#!forum/backbonejs</a></li>
+<li><strong>tweets</strong> - @documentcloud</li>
+</ul>
+
+
+<h3>jQuery Mobile</h3>
+
+<ul>
+<li><a href="http://jquerymobile.com/demos/1.0/">http://jquerymobile.com/demos/1.0/</a></li>
+<li><a href="http://jquerymobile.com/test/docs/api/themes.html">http://jquerymobile.com/test/docs/api/themes.html</a></li>
+<li><a href="http://docs.jquery.com/">http://docs.jquery.com/</a></li>
+</ul>
+
+
+<h2>Miscellaneous</h2>
+
+<p><strong>Similar MVC projects</strong></p>
+
+<ul>
+<li>Ember.JS - <a href="http://www.emberjs.com/">http://www.emberjs.com/</a></li>
+</ul>
+
+
+<p><strong>General JavaScript / jQuery learning...</strong></p>
+
+<ul>
+<li>Interactive way to learn about javascript... <a href="http://www.codecademy.com/">http://www.codecademy.com/</a></li>
+<li><a href="http://jqfundamentals.com/">http://jqfundamentals.com/</a></li>
+<li><a href="http://learn.appendto.com/">http://learn.appendto.com/</a></li>
+<li><a href="http://docs.jquery.com/Tutorials">http://docs.jquery.com/Tutorials</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

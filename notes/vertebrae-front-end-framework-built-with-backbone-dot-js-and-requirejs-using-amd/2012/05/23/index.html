@@ -1,0 +1,491 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Vertebrae front-end framework built with Backbone.js and RequireJS using AMD - Vertebrae framework</title>
+  <meta name="author" content="Bill Heaton">
+
+  
+  <meta name="description" content="Vertebrae provides AMD structure and additional objects for extending Backbone.js as an application framework. Github source : https://github.com/ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Vertebrae framework" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Vertebrae framework</a></h1>
+  
+    <h2>built with Backbone.js and RequireJS using AMD</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pixelhandler.github.com/vertebrae pixelhandler.github.com/vertebrae" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Vertebrae Front-end Framework Built With Backbone.js and RequireJS Using AMD</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-23T12:59:00-07:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>Vertebrae</strong> provides <em>AMD</em> structure and additional objects for extending <em>Backbone.js</em> as an application framework.</p>
+
+<ul>
+<li>Github source : <a href="https://github.com/hautelook/vertebrae">https://github.com/hautelook/vertebrae</a></li>
+</ul>
+
+
+<h3>The plan: build an application, mostly with open source libraries</h3>
+
+<p>Following a review of many MV* front-end frameworks/libraries, such as Ember, JavaScriptMVC, Spine, Knockout, and Backbone.js our team decided to begin building a framework with Backbone.js, RequireJS, Underscore.js, jQuery, Mustache.js with code organized in packages of (AMD) modules, see previous post: <a href="http://www.hautelooktech.com/2012/02/01/optimize-and-build-a-backbone-js-javascript-application-with-require-js-using-packages/" title="Organize Backbone.js application using packages">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>&#8230;</p>
+
+<h4>We needed to add some logic on top of the chosen stack of libraries</h4>
+
+<p>The libraries we selected provide: module loading, dependency management, application structure (for models, collections, views and routes), asynchronous interactions with API, various utilities and objects to manage asynchronous behaviors, e.g. (Promises) Deferreds, Callbacks. The remaining logic needed to complete the application include:</p>
+
+<ul>
+<li>An object (collection) to manage state(s) in the single-page application;</li>
+<li>A layout manager to present, arrange/transition and clear views, and</li>
+<li>Controllers which respond to routes, get/set application state, and hand off views and models/collections to layout manager.</li>
+</ul>
+
+
+<p>The project goals include:</p>
+
+<ul>
+<li>Modules for code organization (a module should have a single responsibility)</li>
+<li>MVC structure for separation of concerns</li>
+<li>Dependency management using a script loader</li>
+<li>Build tools for optimization in packages which should support various experiences in the app</li>
+<li>Well documented and actively used open source libraries</li>
+<li>Framework code should have unit tests, build framework by writing unit tests.</li>
+<li>Solutions for managing asynchronous behaviors, e.g. Promises</li>
+</ul>
+
+
+<p><em>We are using: RequireJS, Underscore.js, jQuery, Backbone.js, Mustache.js; and for BDD&#8230; Jasmine, Sinon, jQuery-Jasmine.</em></p>
+
+<h4>Solutions</h4>
+
+<p><strong>Application state manager</strong></p>
+
+<p>The application manager stores data in memory (collection) and also persists data in browser storage to provide a resource for storing and retrieving data/metadata. The application states collection also provides data (state) to reconstruct a page (layout view) based on previous interactions (e.g. selected tab, active views, etc.). The application state manager provides a strategy for resources to retrieve state for a common interface for localStorage, sessionStorage, or a cookie; also sets an <code>expires</code> property.</p>
+
+<p>Also, data used to bootstrap a page can be stored as well, e.g. user/visitor information (items in cart, etc.), data that is reused for many pages, interactions on a page that should be recalled when a user revisits the page.</p>
+
+<p><strong>Layout manager</strong></p>
+
+<p>The layout manager has one or many views as well as document (DOM) <code>destinations</code> for each (rendered) view. A page may transition between views, so the layout manager keeps track of view states, e.g. rendered, not-rendered, displayed, not-displayed. The layout manager can load and render (detached) views that a user/visitor is very likely to request, e.g. tab changes on page. The transition between view states is managed by this object. An entire layout may be cleared so that view objects and their bindings are removed, preparing these objects for garbage collection (preventing memory leaks). The layout manager also communicates view state with controller(s).</p>
+
+<p><strong>Controller</strong></p>
+
+<p>A controller object is called by a route handler function, is responsible for getting relevant state (application models), and does the work to construct a page (layout); also responsible for setting state when routes change. The controller passes dependent data (models/collections) and constructed view objects for a requested page to the layout manager. As a side-effect the use of controllers prevents the routes object from becoming bloated and tangled. A route should map to a controller which then kicks off the page view, keeping the route handling functions lean.</p>
+
+<h2>Behavior Driven Development -</h2>
+
+<p>We made the decision to develop the framework using behavior driven development. Jamsine is the test framework we selected, below are the specs that were used to discover the solutions for our need to have the additional logic we wanted to add on top of the open source stack of libraries&#8230;</p>
+
+<h3>Specs</h3>
+
+<p><strong>Application state manager specs</strong><br/>
+(an model object to manage state within the single-page application)</p>
+
+<p>should use options for persistent storage of JSON data<br/>
+should reference stored data with string name, e.g. route name<br/>
+should have expiration for data objects that are persisted in localStorage<br/>
+should store (in memory) reference to model/collection objects for reuse<br/>
+should be a singleton object<br/>
+should provide strategy for data retrieval (memory/storage/api)<br/>
+should store view state of page layouts</p>
+
+<p><strong>Layout manager specs</strong><br/>
+(presents, arranges, transitions and clears views)</p>
+
+<p>should use ‘destination’ property for location on dom to show each view
+should keep track of current state for view objects, e.g. not-rendered, shown, hidden
+should lazy/load or render hidden (detached) views within a layout
+should have show and close methods to render and display a view
+should manage transition between views within a layout scheme
+should close (destroy) managed views/bindings within a layout (e.g. on transition to new layout)
+should have access to view’s deferred object (returned on render) for asynchronous display
+should have option to display layout when all views’ deferreds are resolved or as ready</p>
+
+<p><strong>Controller specs</strong><br/>
+(gets/sets application state, and delegates work to a layout manager object, used within route handlers)</p>
+
+<p>should get data from application state manager object<br/>
+should initialize views/models with relevant data received from application state manager<br/>
+should call layout manager with arguments including relevant views/data<br/>
+should send data to manager when route changes to store view state or dependent data<br/>
+should receive data from view objects which publish change in view state</p>
+
+<h2>Views:</h2>
+
+<p>We studied many posts on the topic of Backbone.js and came up with a set of views that will support all the work we needed and provide some patterns to reuse in our application&#8230;</p>
+
+<p><strong><code>BaseView</code>, <code>CollectionView</code>, <code>SectionView</code>, <code>LayoutView</code> (Manages Sections)</strong></p>
+
+<p>All the views extend the BaseView which extends the Backbone.View object.</p>
+
+<h3>Base View</h3>
+
+<p>A view object to construct a standard view with common properties and utilties The base view extends Backbone.View adding methods for resolving deferreds,  rendering, decorating data just in time for rendering, adding child views to  form a composite of views under one view object, add a destroy method.</p>
+
+<h3>Collection View</h3>
+
+<p>Manages rendering many views with a collection. The CollectionView extends BaseView and is intended for rendering a collection. A item view is required for rendering within each iteration over the models. This was a great source for the CollectionView: <a href="http://liquidmedia.ca/blog/2011/02/lib-js-part-3/">http://liquidmedia.ca/blog/2011/02/lib-js-part-3/</a></p>
+
+<h3>Section View</h3>
+
+<p>View object to track view&#8217;s state &#8216;not-rendered&#8217;, &#8216;rendered&#8217;, &#8216;not-displayed&#8217;, &#8216;displayed&#8217;; can be mixed in to another view type, e.g. CollectionView.</p>
+
+<p>A section view is the required view object for a layout view which expects views to track their own state. This view may be extended as need. to use in a layout, perhaps adding the Section prototype properties to another view.</p>
+
+<h3>Layout Manager View</h3>
+
+<p>Presents, arranges, transitions and clears views</p>
+
+<p>The layout manager has one or many views as well as document (DOM)  destinations for each (rendered) view. A page may transition between  many views, so the layout manager keeps track of view states, e.g.  &#8216;not-rendered&#8217;, &#8216;rendered&#8217;, &#8216;not-displayed&#8217;, &#8216;displayed&#8217;.</p>
+
+<p>The layout manager can lazy load and render (detached) views that a member is very likely to request, e.g. tab changes on events page. The transition between view states is managed by this object. An entire layout may be cleared so that view objects and their bindings are removed, preparing these objects for garbage collection (preventing memory leaks). The layout manager also communicates view state with controller(s).</p>
+
+<h2>Models:</h2>
+
+<p><strong><code>BaseModel</code>, <code>ApplicationState</code></strong></p>
+
+<h3>Application State Model</h3>
+
+<p>A model object to manage state within the single-page application Attributes: {String} <code>name</code>, {Object} <code>data</code>, {String} <code>storage</code>, {Date} <code>expires</code></p>
+
+<p>All the models extend the BaseModel which extends the Backbone.Model object.</p>
+
+<h2>Collections</h2>
+
+<p><strong><code>BaseCollection</code>, <code>ApplicationStates</code></strong></p>
+
+<h3>Application State Collection</h3>
+
+<p>A collection object to reference various states in the application.</p>
+
+<p>The application manager stores data in memory and also persists data in browser storage to provide a resource for common data/metadata. Also provides data (state) to reconstruct the page views based on previous interactions (e.g. selected tab, applied filters). The application state manager provides a strategy for resources to retrieve state.</p>
+
+<p>All the collections extend the BaseCollection which extends the Backbone.Collection object.</p>
+
+<h2>Syncs:</h2>
+
+<p><strong>syncFactory, application-state, storageFactory</strong></p>
+
+<p>We have a sync to use localStorage, sessionStorage, or a cookie using the same interface. The application state manager (collection) uses a specific sync object for the browser storage options.</p>
+
+<h2>Utils:</h2>
+
+<p><strong>ajax-options, docCookies, debug, storage, shims, lib [checkType, duckTypeCheck, Channel (pub/sub), loadCss, formatCase, formatMoney]</strong></p>
+
+<p>We put any of our utilities into a library module.</p>
+
+<h2>Controller</h2>
+
+<p>A controller object should called within a route handler function, and may be responsible for getting relevant state (application models) to generate a page (layout), (also responsible for setting state when routes change). The controller passes dependent data (models/collections) and constructed view objects for a requested page to the layout manager. As a side-effect the use of controllers prevents the routes object from becoming bloated and tangled. A route should map to a controller which then kicks off the page view, keeping the route handling functions lean.</p>
+
+<h2>Facade</h2>
+
+<p>Vendor libraries and specific methods used in the framework are required in the facade, and referenced from the facade module in the views, models, collections, lib and other objects in the framework.</p>
+
+<h2>AMD - Asynchronous Module Definition</h2>
+
+<p>The the examples below show how we are using facade module as a dependency. RequireJS has various options for the syntax you can use to manage dependencies, below are a couple we use:</p>
+
+<pre><code>define(['facade','utils'], function (facade, utils) {
+
+    var ModuleName,
+        // References to objects nested in dependencies
+        Backbone = facade.Backbone,
+        $ = facade.$,
+        _ = facade._,
+        lib = utils.lib;
+
+    ModuleName = DO SOMETHING HERE
+
+    return ModuleName;
+});
+
+
+define(['require','facade','utils'], function (require) {
+
+    var ModuleName,
+        // Dependencies
+        facade = require('facade'),
+        utils = require('utils'),
+        // References to objects nested in dependencies
+        Backbone = facade.Backbone,
+        $ = facade.$,
+        _ = facade._,
+        lib = utils.lib;
+
+    ModuleName = DO SOMETHING HERE
+
+    return ModuleName;
+});
+</code></pre>
+
+<p>References:<br/>
+  * <a href="https://github.com/amdjs/amdjs-api/wiki/AMD" title="AMD spec">AMD spec</a>
+  * <a href="http://requirejs.org/docs/whyamd.html" title="RequireJS why AMD">RequireJS why AMD</a>
+  * <a href="http://requirejs.org/docs/whyamd.html#amd" title="RequireJS AMD">RequireJS AMD</a></p>
+
+<h2>Docs</h2>
+
+<p>View docs on the demo site, hosted on Heroku at:</p>
+
+<p><a href="http://vertebrae-framework.herokuapp.com/docs/">http://vertebrae-framework.herokuapp.com/docs/</a><br/>
+<a href="http://vertebrae-framework.herokuapp.com/models/docs/">http://vertebrae-framework.herokuapp.com/models/docs/</a><br/>
+<a href="http://vertebrae-framework.herokuapp.com/collections/docs/">http://vertebrae-framework.herokuapp.com/collections/docs/</a><br/>
+<a href="http://vertebrae-framework.herokuapp.com/syncs/docs/">http://vertebrae-framework.herokuapp.com/syncs/docs/</a><br/>
+<a href="http://vertebrae-framework.herokuapp.com/utils/docs/">http://vertebrae-framework.herokuapp.com/utils/docs/</a><br/>
+<a href="http://vertebrae-framework.herokuapp.com/views/docs/">http://vertebrae-framework.herokuapp.com/views/docs/</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Bill Heaton</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-23T12:59:00-07:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/notes/categories/vertebrae/'>vertebrae</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/" title="Previous Post: Hello World Code Demo using Layout Manager and Controller">&laquo; Hello World Code Demo using Layout Manager and Controller</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/">Vertebrae front-end framework built with Backbone.js and RequireJS using AMD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/">Hello World Code Demo using Layout Manager and Controller</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Backbone.js CollectionView to utilize a collection rather than a model</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Backbone.js and Mustache.js: Small views and templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes with custom library functions added to Backbone.js constructors</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Backbone Views using Mustache Templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File organization: building a framework using RequireJS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies managed with require() and define()</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Backbone.js : list of best practices</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/hautelook">@hautelook</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'hautelook',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("hautelook", 10, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/hautelook" class="twitter-follow-button" data-show-count="false">Follow @hautelook</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Bill Heaton -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

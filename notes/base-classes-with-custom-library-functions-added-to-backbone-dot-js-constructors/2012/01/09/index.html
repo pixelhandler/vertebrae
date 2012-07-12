@@ -1,0 +1,1424 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Base classes with custom library functions added to Backbone.js constructors - Vertebrae framework</title>
+  <meta name="author" content="Bill Heaton">
+
+  
+  <meta name="description" content="Authoring Code with Backbone.js with extendability in mind The main objective in choosing the Backbone.js library for our frontend framework is to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pixelhandler.github.com/vertebrae http://pixelhandler.github.com/vertebrae/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Vertebrae framework" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Vertebrae framework</a></h1>
+  
+    <h2>built with Backbone.js and RequireJS using AMD</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pixelhandler.github.com/vertebrae pixelhandler.github.com/vertebrae" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Base Classes With Custom Library Functions Added to Backbone.js Constructors</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-09T00:51:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Authoring Code with Backbone.js with extendability in mind</h2>
+
+<p>The main objective in choosing the <a href="http://documentcloud.github.com/backbone/" title="Backbone is an open-source component of DocumentCloud">Backbone.js</a> library for our frontend framework is to author code in an organized and repeatable manner, building an application &#8220;the Backbone way&#8221;. The benefits are that the community has contributed documenation, blogs, code examples, tutorials, videos and books so that building a JavaScript application with our framework should be straight forward (not too much magic under cover).</p>
+
+<p>However when building both the mobile and desktop applications or in the future we need added behavior recuired to provide a solution for the business requirements/needs of the Web application. Hence the need for an (abstract class) object as the <strong>base constructor</strong> for our framework. Each <strong>base</strong> object extends the appropriate Backbone constructor method: <a href="http://documentcloud.github.com/backbone/#Model" title="Backbone.Model">Backbone.Model</a>, <a href="http://documentcloud.github.com/backbone/#View" title="Backbone.View">Backbone.View</a>, <a href="http://documentcloud.github.com/backbone/#Collection" title="Backbone.Collection">Backbone.Collection</a> and <a href="http://documentcloud.github.com/backbone/#Router" title="Backbone.Router">Backbone.Router</a>.</p>
+
+<!--more-->
+
+
+<p>For example <a href="http://docs.jquery.com/Main_Page" title="jQuery documentation">jQuery</a> provides a &#8220;Deferred&#8221; constructor function &#8221;<a href="http://api.jquery.com/category/deferred-object/" title="Deferred Object: jQuery.Deferred()">jQuery.Deferred()</a>&#8221; based on the CommonJS Promises/A.</p>
+
+<blockquote><p>&#8220;introduces several enhancements to the way callbacks are managed and invoked. In particular, jQuery.Deferred() provides flexible ways to provide multiple callbacks, and these callbacks can be invoked regardless of whether the original callback dispatch has already occurred.&#8221; - <a href="http://api.jquery.com/category/deferred-object/" title="Deferred Object: jQuery.Deferred()">jQuery API: Deferred Object</a></p></blockquote>
+
+<h2>Base constructors which extend Backbone.js constructors</h2>
+
+<h3>Base Model</h3>
+
+<p>This object extends the Backbone.Model constructor adding methods for calling <code>__super__</code> and insuring that only a instance of a Backbone.Model&#8217;s initialization methods is called when calling <code>this.__super__.initialize.call(this);</code> within an instance. Backbone constructors and be further extend and utilize JavaScript prototypal inheritance so this <code>__super__</code> method is sugar for <code>this.constructor.prototype.initialize.call(this, attributes, options)</code> but insuring that null or undefined is not called but rather the initialize method of an ancestor of the Backbone instance object not a native JavaScript object&#8217;s constructor which does not have an initialize function. Also the base object has a property named &#8220;deferred&#8221; which will be an instance of the jQuery.Deferred object when the constructor is initialized. A deferred object is vary useful to modules that require a instance of the Backbone model that fetches data from our RESTful api. Or when extending/decorating a constructor with additional methods and adding more &#8220;done&#8221; callbacks</p>
+
+<figure class='code'><figcaption><span> (base.js)</span> <a href='/downloads/code/javascript/models/base.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Base Model  </span>
+</span><span class='line'><span class="c1">// -------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Requires `define`  </span>
+</span><span class='line'><span class="c1">// Return {BaseModel} object as constructor</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">facade</span><span class="p">,</span> <span class="nx">utils</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">BaseModel</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">_</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">lib</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">baselib</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">ajaxOptions</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ajaxOptions</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">debug</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Constructor `{BaseModel}` extends Backbone.Model.prototype</span>
+</span><span class='line'>    <span class="c1">// object literal argument to extend is the prototype for the BaseModel constructor</span>
+</span><span class='line'>    <span class="nx">BaseModel</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Param {Object} `attributes` set on model when creating an instance  </span>
+</span><span class='line'>        <span class="c1">// Param {Object} `options`  </span>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">attributes</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// debug.log(&quot;BaseModel init called&quot;);</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+</span><span class='line'>            <span class="c1">// Backbone.Model.prototype.initialize.call(this, arguments);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Property:** `request` - assign fetch return value to this.request property, </span>
+</span><span class='line'>        <span class="c1">// fetch returns (jQuery) ajax promise object</span>
+</span><span class='line'>        <span class="nx">request</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `fetch`</span>
+</span><span class='line'>        <span class="c1">// Wrap Backbone.Model.prototype.fetch with support for deferreds</span>
+</span><span class='line'>        <span class="nx">fetch</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">options</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetchSuccess</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">options</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetchError</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">ajaxOptions</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetch</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Default success and error handlers used with this.fetch() ...</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `fetchSuccess` - resolve the deferred here in success</span>
+</span><span class='line'>        <span class="nx">fetchSuccess</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">deferred</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">model</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">model</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">();</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>                <span class="nx">model</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `fetchError` - log response on error</span>
+</span><span class='line'>        <span class="nx">fetchError</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">model</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">();</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Primarily a tool for unit tests... Don&#39;t rely on calling this.isReady!!</span>
+</span><span class='line'>        <span class="nx">isReady</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `setOptions` - set urlRoot</span>
+</span><span class='line'>        <span class="nx">setOptions</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">urlRoot</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">urlRoot</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">urlRoot</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">truncateString</span><span class="o">:</span> <span class="nx">lib</span><span class="p">.</span><span class="nx">truncateString</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">BaseModel</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Other BASE objects borrowing the same implementation</h3>
+
+<figure class='code'><figcaption><span> (base.js)</span> <a href='/downloads/code/javascript/views/base.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+<span class='line-number'>180</span>
+<span class='line-number'>181</span>
+<span class='line-number'>182</span>
+<span class='line-number'>183</span>
+<span class='line-number'>184</span>
+<span class='line-number'>185</span>
+<span class='line-number'>186</span>
+<span class='line-number'>187</span>
+<span class='line-number'>188</span>
+<span class='line-number'>189</span>
+<span class='line-number'>190</span>
+<span class='line-number'>191</span>
+<span class='line-number'>192</span>
+<span class='line-number'>193</span>
+<span class='line-number'>194</span>
+<span class='line-number'>195</span>
+<span class='line-number'>196</span>
+<span class='line-number'>197</span>
+<span class='line-number'>198</span>
+<span class='line-number'>199</span>
+<span class='line-number'>200</span>
+<span class='line-number'>201</span>
+<span class='line-number'>202</span>
+<span class='line-number'>203</span>
+<span class='line-number'>204</span>
+<span class='line-number'>205</span>
+<span class='line-number'>206</span>
+<span class='line-number'>207</span>
+<span class='line-number'>208</span>
+<span class='line-number'>209</span>
+<span class='line-number'>210</span>
+<span class='line-number'>211</span>
+<span class='line-number'>212</span>
+<span class='line-number'>213</span>
+<span class='line-number'>214</span>
+<span class='line-number'>215</span>
+<span class='line-number'>216</span>
+<span class='line-number'>217</span>
+<span class='line-number'>218</span>
+<span class='line-number'>219</span>
+<span class='line-number'>220</span>
+<span class='line-number'>221</span>
+<span class='line-number'>222</span>
+<span class='line-number'>223</span>
+<span class='line-number'>224</span>
+<span class='line-number'>225</span>
+<span class='line-number'>226</span>
+<span class='line-number'>227</span>
+<span class='line-number'>228</span>
+<span class='line-number'>229</span>
+<span class='line-number'>230</span>
+<span class='line-number'>231</span>
+<span class='line-number'>232</span>
+<span class='line-number'>233</span>
+<span class='line-number'>234</span>
+<span class='line-number'>235</span>
+<span class='line-number'>236</span>
+<span class='line-number'>237</span>
+<span class='line-number'>238</span>
+<span class='line-number'>239</span>
+<span class='line-number'>240</span>
+<span class='line-number'>241</span>
+<span class='line-number'>242</span>
+<span class='line-number'>243</span>
+<span class='line-number'>244</span>
+<span class='line-number'>245</span>
+<span class='line-number'>246</span>
+<span class='line-number'>247</span>
+<span class='line-number'>248</span>
+<span class='line-number'>249</span>
+<span class='line-number'>250</span>
+<span class='line-number'>251</span>
+<span class='line-number'>252</span>
+<span class='line-number'>253</span>
+<span class='line-number'>254</span>
+<span class='line-number'>255</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Base View</span>
+</span><span class='line'><span class="c1">// ---------</span>
+</span><span class='line'><span class="c1">// A view object to construct a standard view with common properties and utilties</span>
+</span><span class='line'><span class="c1">// The base view extends Backbone.View adding methods for resolving deferreds, </span>
+</span><span class='line'><span class="c1">// rendering, decorating data just in time for rendering, adding child views to </span>
+</span><span class='line'><span class="c1">// form a composite of views under one view object, add a destroy method.</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Example use for a composite view utilizing addChildView, setOptions &amp; callbacks:</span>
+</span><span class='line'><span class="c1">// </span>
+</span><span class='line'><span class="c1">//     MyCompositeViewConstructor = BaseView.extend({</span>
+</span><span class='line'><span class="c1">//     </span>
+</span><span class='line'><span class="c1">//         template: myHTMLTemplate,</span>
+</span><span class='line'><span class="c1">//     </span>
+</span><span class='line'><span class="c1">//         initialize: function (options) {</span>
+</span><span class='line'><span class="c1">//             _.bindAll(this);</span>
+</span><span class='line'><span class="c1">//             this.setOptions();</span>
+</span><span class='line'><span class="c1">//             BaseView.prototype.initialize.call(this, options);</span>
+</span><span class='line'><span class="c1">//         },</span>
+</span><span class='line'><span class="c1">//     </span>
+</span><span class='line'><span class="c1">//         dataDecorator: function (data) {</span>
+</span><span class='line'><span class="c1">//             data.myExtraProperty = &#39;stuff I added just in time to render&#39;;</span>
+</span><span class='line'><span class="c1">//             return data;</span>
+</span><span class='line'><span class="c1">//         },</span>
+</span><span class='line'><span class="c1">//     </span>
+</span><span class='line'><span class="c1">//         setOptions: function () {</span>
+</span><span class='line'><span class="c1">//             var msg;</span>
+</span><span class='line'><span class="c1">//             if (!this.options || !this.options.childView) {</span>
+</span><span class='line'><span class="c1">//                 msg = &quot;MyCompositeViewConstructor requires a options.childView object&quot;;</span>
+</span><span class='line'><span class="c1">//                 throw new Error(msg);</span>
+</span><span class='line'><span class="c1">//             }</span>
+</span><span class='line'><span class="c1">//             this.addChildView();</span>
+</span><span class='line'><span class="c1">//         },</span>
+</span><span class='line'><span class="c1">//     </span>
+</span><span class='line'><span class="c1">//         addChildView: function () {</span>
+</span><span class='line'><span class="c1">//             var childView = this.options.childView, renderChildView;</span>
+</span><span class='line'><span class="c1">//     </span>
+</span><span class='line'><span class="c1">//             renderChildView = BaseView.prototype.addChildView(childView);</span>
+</span><span class='line'><span class="c1">//             this.callbacks.add(renderChildView);</span>
+</span><span class='line'><span class="c1">//         }</span>
+</span><span class='line'><span class="c1">//     });</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Requires `define`</span>
+</span><span class='line'><span class="c1">// Return `{BaseView}` constructor</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">facade</span><span class="p">,</span> <span class="nx">facade</span><span class="p">,</span> <span class="nx">utils</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">BaseView</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">_</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">_toHTML</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Deferred</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Callbacks</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Callbacks</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">lib</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">baselib</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">debug</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Constructor `{BaseView}` extends Backbone.Model.prototype</span>
+</span><span class='line'>    <span class="c1">// object literal argument to extend is the prototype for the BaseView constructor</span>
+</span><span class='line'>    <span class="nx">BaseView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `initialize`  </span>
+</span><span class='line'>        <span class="c1">// Param {Object} `options`  </span>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Deferred</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span> <span class="o">=</span> <span class="nx">Callbacks</span><span class="p">(</span><span class="s1">&#39;unique&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `setOptions`  </span>
+</span><span class='line'>        <span class="c1">// Param {Object} `options`  </span>
+</span><span class='line'>        <span class="c1">// handle options passed to initialize, e.g. required properties/errors</span>
+</span><span class='line'>        <span class="nx">setOptions</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">destination</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">destination</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">destination</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">template</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">template</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `render`  </span>
+</span><span class='line'>        <span class="c1">// Standarization of the task to render a view using a model &amp; template</span>
+</span><span class='line'>        <span class="c1">// Options available:  </span>
+</span><span class='line'>        <span class="c1">// - Method to add the resulting markiup to the dom  </span>
+</span><span class='line'>        <span class="c1">// - Callback to mutate the model&#39;s data after model.toJSON() called  </span>
+</span><span class='line'>        <span class="c1">//   - Merging data to template happens after dataDecorator is applied  </span>
+</span><span class='line'>        <span class="c1">// - Callbacks object can be filled with ancillerary work following render</span>
+</span><span class='line'>        <span class="c1">//   - E.g. callbacks list can trigger rendering of child views  </span>
+</span><span class='line'>        <span class="c1">// Param {String} `domInsertion` - gives option for adding result to dom  </span>
+</span><span class='line'>        <span class="c1">// Param {Function} `dataDecorator` - accepts arg for {Object} `data`  </span>
+</span><span class='line'>        <span class="c1">// Returns the same (mutated) {Object} `data`</span>
+</span><span class='line'>        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">domInsertion</span><span class="p">,</span> <span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">markup</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">confirmElement</span><span class="p">();</span>
+</span><span class='line'>            <span class="nx">dataDecorator</span> <span class="o">=</span> <span class="nx">dataDecorator</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">dataDecorator</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">markup</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">domInsertion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">domInsertionMethod</span><span class="p">(</span><span class="nx">domInsertion</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">[</span><span class="nx">domInsertion</span><span class="p">](</span><span class="nx">markup</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `resolve`  </span>
+</span><span class='line'>        <span class="c1">// Resolve the view&#39;s deferred object after all callbacks are fired once.</span>
+</span><span class='line'>        <span class="nx">resolve</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">())</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">);</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `confirmElement`  </span>
+</span><span class='line'>        <span class="c1">// A view needs an `el` property and `$el` too; a helper to check that this.el is OK.</span>
+</span><span class='line'>        <span class="nx">confirmElement</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">$el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;View has no this.el or this.options.el property defined.&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `toHTML`  </span>
+</span><span class='line'>        <span class="c1">// A wrapper for the task of merging a Mustache.js template with preprocessing</span>
+</span><span class='line'>        <span class="c1">// Handles the merging of JSON data from model with a HTML template {{vars}}</span>
+</span><span class='line'>        <span class="c1">// Prior to merging the template the data can be changed with dataDecorator  </span>
+</span><span class='line'>        <span class="c1">// Requires _toHTML an alias for the applications templating method  </span>
+</span><span class='line'>        <span class="c1">// Param {Function} `dataDecorator` - accepts and returns a {Object} `data`  </span>
+</span><span class='line'>        <span class="c1">// Param {Object} `partials` - see Mustache.js documentation.</span>
+</span><span class='line'>        <span class="nx">toHTML</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dataDecorator</span><span class="p">,</span> <span class="nx">partials</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">markup</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">args</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">data</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">dataDecorator</span> <span class="o">&amp;&amp;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">dataDecorator</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">data</span> <span class="o">=</span> <span class="nx">dataDecorator</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">template</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span> <span class="o">||</span> <span class="o">!</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;BaseView method toHTML called, but this.template or data is not defined.&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">markup</span> <span class="o">=</span> <span class="nx">_toHTML</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">partials</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">markup</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `domInsertionMethod` - used when rendering to add markup to dom  </span>
+</span><span class='line'>        <span class="c1">// Default is `html` however this is configurable to support :  </span>
+</span><span class='line'>        <span class="c1">//  - &#39;append&#39;, &#39;html&#39;, &#39;prepend&#39;, &#39;text&#39;</span>
+</span><span class='line'>        <span class="nx">domInsertionMethod</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">domInsertionMethod</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">defaultMethod</span> <span class="o">=</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">domInsertionMethods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;append&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;prepend&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">],</span>
+</span><span class='line'>                <span class="nx">domInsertion</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">domInsertionMethod</span> <span class="o">!==</span> <span class="nx">defaultMethod</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span><span class="nx">domInsertionMethod</span> <span class="o">&amp;&amp;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">domInsertionMethod</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">domInsertionMethods</span><span class="p">,</span> <span class="nx">domInsertionMethod</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nx">domInsertion</span> <span class="o">=</span> <span class="nx">domInsertionMethod</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">domInsertion</span> <span class="o">||</span> <span class="nx">defaultMethod</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `dataDecorator`  </span>
+</span><span class='line'>        <span class="c1">// No-op re-define as needed as hook to modify model data just before rendering</span>
+</span><span class='line'>        <span class="nx">dataDecorator</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">data</span><span class="p">;</span> <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Property:** {Object} `callbacks` - list of callbacks</span>
+</span><span class='line'>        <span class="c1">// Child views or render stages can be managed using jQuery Callbacks</span>
+</span><span class='line'>        <span class="c1">// this should be an Callbacks object for each instance, so the </span>
+</span><span class='line'>        <span class="c1">// initialize method sets the Callbacks object</span>
+</span><span class='line'>        <span class="nx">callbacks</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Property:** {Object} `deferred` - implements a jQuery.Deferred interface</span>
+</span><span class='line'>        <span class="c1">// Initialization or other criteria to resolve whether view is ready </span>
+</span><span class='line'>        <span class="c1">// can be handled with jQuery Deferred, this should be an deferred </span>
+</span><span class='line'>        <span class="c1">// object for each instance, the initialize method sets the </span>
+</span><span class='line'>        <span class="c1">// deferred instance.</span>
+</span><span class='line'>        <span class="nx">deferred</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Primarily a tool for unit tests... Don&#39;t rely on calling this.isReady!!</span>
+</span><span class='line'>        <span class="nx">isReady</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `addChildView`  </span>
+</span><span class='line'>        <span class="c1">// For a composite view this method can add multiple view objects</span>
+</span><span class='line'>        <span class="c1">// Setup child views which can be rendered or appended to another context</span>
+</span><span class='line'>        <span class="nx">addChildView</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">view</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">callbackFn</span><span class="p">,</span> <span class="nx">msg</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">view</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;baseView addChildView expects view object as first arg.&quot;</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">context</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">context</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">callbackFn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>                    <span class="nx">view</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+</span><span class='line'>                <span class="p">};</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">callbackFn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>                <span class="p">};</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">callbackFn</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `getOuterHtml` - utility fn  </span>
+</span><span class='line'>        <span class="c1">// Using outerHTML with any browser via jQuery fallback when not supported</span>
+</span><span class='line'>        <span class="nx">getOuterHtml</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">outerHTML</span><span class="p">)</span> <span class="o">?</span> <span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">outerHTML</span> <span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div/&gt;&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">clone</span><span class="p">()</span> <span class="p">).</span><span class="nx">html</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `destroy` - used to teardown a view object  </span>
+</span><span class='line'>        <span class="c1">// Best practice to avoid memory leaks is to remove references between objects</span>
+</span><span class='line'>        <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">key</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">removeSubscribers</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">removeSubscribers</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">destination</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">destination</span><span class="p">).</span><span class="nx">empty</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">delete</span> <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `addSubscribers`  </span>
+</span><span class='line'>        <span class="c1">// No-op re-define as needed, for Channel pub/sub or other event bindings</span>
+</span><span class='line'>        <span class="nx">addSubscribers</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `removeSubscribers`  </span>
+</span><span class='line'>        <span class="c1">// Re-define as needed used by this.destroy() to remove pub/sub bindings</span>
+</span><span class='line'>        <span class="nx">removeSubscribers</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">off</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">BaseView</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span> (base.js)</span> <a href='/downloads/code/javascript/collections/base.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Base Collection</span>
+</span><span class='line'><span class="c1">// ---------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Requires `define`  </span>
+</span><span class='line'><span class="c1">// Return {BaseCollection} object as constructor</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">facade</span><span class="p">,</span> <span class="nx">utils</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">BaseCollection</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">_</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">lib</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">baselib</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">ajaxOptions</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ajaxOptions</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">debug</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Constructor `{BaseCollection}` extends Backbone.Collection.prototype</span>
+</span><span class='line'>    <span class="c1">// object literal argument to extend is the prototype for the BaseCollection constructor</span>
+</span><span class='line'>    <span class="nx">BaseCollection</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `initialize`  </span>
+</span><span class='line'>        <span class="c1">// Param {Object} `models` - added during call to new BaseCollection([/*models*/])  </span>
+</span><span class='line'>        <span class="c1">// Param {Object} `options` - add a comparator</span>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">models</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;BaseCollection initialize...&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">cid</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cid</span> <span class="o">||</span> <span class="nx">_</span><span class="p">.</span><span class="nx">uniqueId</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+</span><span class='line'>            <span class="c1">// When overriding use: `Backbone.Collection.prototype.initialize.call(this, arguments);`</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Property:** `request` - assign fetch return value to this.request property, </span>
+</span><span class='line'>        <span class="c1">// fetch returns (jQuery) ajax promise object</span>
+</span><span class='line'>        <span class="nx">request</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `fetch`  </span>
+</span><span class='line'>        <span class="c1">// Wrap Backbone.Collection.prototype.fetch with support for deferreds</span>
+</span><span class='line'>        <span class="nx">fetch</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">options</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetchSuccess</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">options</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetchError</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">ajaxOptions</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetch</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">this</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Primarily a tool for unit tests... Don&#39;t rely on calling this.isReady!!</span>
+</span><span class='line'>        <span class="nx">isReady</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Default success and error handlers used with this.fetch() ...</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `fetchSuccess` - resolve the deferred here in success</span>
+</span><span class='line'>        <span class="nx">fetchSuccess</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// **Method:** `fetchError` - log response on error</span>
+</span><span class='line'>        <span class="nx">fetchError</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">BaseCollection</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Using a base constructor</h2>
+
+<figure class='code'><figcaption><span> (events.js)</span> <a href='/downloads/code/javascript/collections/events.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Events Collection  </span>
+</span><span class='line'><span class="c1">// -----------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// @requires `define`  </span>
+</span><span class='line'><span class="c1">// @return {BaseCollection} EventsCollection instance</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;underscore&#39;</span><span class="p">,</span><span class="s1">&#39;models&#39;</span><span class="p">,</span><span class="s1">&#39;collections/base&#39;</span><span class="p">,</span><span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span>      <span class="nx">_</span><span class="p">,</span>           <span class="nx">models</span><span class="p">,</span>  <span class="nx">BaseCollection</span><span class="p">,</span>    <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">EventsCollection</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">eventsModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">models</span><span class="p">.</span><span class="nx">EventsData</span><span class="p">(),</span>
+</span><span class='line'>        <span class="nx">Event</span> <span class="o">=</span> <span class="nx">models</span><span class="p">.</span><span class="nx">Event</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">EventsCollection</span> <span class="o">=</span> <span class="nx">BaseCollection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">model</span><span class="o">:</span> <span class="nx">Event</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">models</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">collection</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">data</span> <span class="o">=</span> <span class="nx">eventsModel</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nx">collection</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">EventsCollection</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">initialize</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>                <span class="nx">debug</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;EventsCollection initialized using eventsData.get(&#39;events&#39;).&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>            <span class="nx">data</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;events&quot;</span><span class="p">);</span>
+</span><span class='line'>                <span class="nx">collection</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">comparator</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">event</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">isReady</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="nx">eventsModel</span><span class="p">.</span><span class="nx">isReady</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">isResolved</span><span class="p">());</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">EventsCollection</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Extending a Collection instance by inheriting it&#8217;s constructor</h2>
+
+<figure class='code'><figcaption><span> (events-segments.js)</span> <a href='/downloads/code/javascript/collections/events-segments.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Events Segments Collection  </span>
+</span><span class='line'><span class="c1">// -----------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// @requires `define`  </span>
+</span><span class='line'><span class="c1">// @return {Array} `segments` multi-dimensional array[schedule][type] </span>
+</span><span class='line'><span class="c1">// with collection {EventsSegmentCollection} instances</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;underscore&#39;</span><span class="p">,</span><span class="s1">&#39;collections/events&#39;</span><span class="p">,</span><span class="s1">&#39;utils/baselib&#39;</span><span class="p">,</span><span class="s1">&#39;utils/debug&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">,</span>      <span class="nx">_</span><span class="p">,</span>           <span class="nx">eventsCollection</span><span class="p">,</span>    <span class="nx">baselib</span><span class="p">,</span>        <span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">EventsSegmentCollection</span><span class="p">,</span> <span class="nx">types</span><span class="p">,</span> <span class="nx">schedules</span><span class="p">,</span> <span class="nx">segments</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Subclass for creating specific segments of a collection</span>
+</span><span class='line'>    <span class="nx">EventsSegmentCollection</span> <span class="o">=</span> <span class="nx">eventsCollection</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">model</span><span class="o">:</span> <span class="nx">eventsCollection</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// @param `options` should have type and schedule properties to filter the collection by  </span>
+</span><span class='line'>        <span class="c1">// @param `models` is not really needed, (this is the args format Backbone uses)</span>
+</span><span class='line'>        <span class="c1">// when null/undefined is passed the model will filter the events collection using options param</span>
+</span><span class='line'>        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">models</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">schedule</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;EventsSegmentCollection expected options parameter with type and schedule properties.&#39;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="c1">// type and schedule properties are used to filter the collection</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">schedule</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">schedule</span><span class="p">;</span>
+</span><span class='line'>            <span class="c1">// use events collection models with falsy models argument, e.g. null</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="nx">models</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">selectFilters</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+</span><span class='line'>            <span class="c1">// set this inherited property as resolved</span>
+</span><span class='line'>            <span class="k">this</span><span class="p">.</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Methods to filter collection and match schedule and/or type</span>
+</span><span class='line'>        <span class="c1">// filter method is Backbone pointer to Underscore collection `filter` method</span>
+</span><span class='line'>        <span class="c1">// @see &lt;http://documentcloud.github.com/backbone/#Collection-Underscore-Methods&gt;</span>
+</span><span class='line'>        <span class="c1">// collection&#39;s properties `type` and `schedule` are setup during initialization </span>
+</span><span class='line'>        <span class="nx">selectFilters</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">collection</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">models</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;All&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">models</span> <span class="o">=</span> <span class="nx">eventsCollection</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="k">return</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">schedule</span> <span class="o">&amp;&amp;</span> <span class="nx">model</span><span class="p">.</span><span class="nx">schedule</span> <span class="o">===</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">schedule</span><span class="p">);</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">models</span> <span class="o">=</span> <span class="nx">eventsCollection</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">schedule</span> <span class="o">&amp;&amp;</span> <span class="nx">model</span><span class="p">.</span><span class="nx">schedule</span> <span class="o">===</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">schedule</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">types</span> <span class="o">&amp;&amp;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">collection</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">model</span><span class="p">.</span><span class="nx">types</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                            <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">return</span> <span class="nx">found</span><span class="p">;</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">models</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Create segmented collections from the events collection</span>
+</span><span class='line'>    <span class="c1">// e.g. &#39;events.today.Women&#39;, &#39;events.ending_soon.Home&#39;</span>
+</span><span class='line'>    <span class="c1">// events objects are expected to have type and schedule properties</span>
+</span><span class='line'>    <span class="c1">// the strings in the schedules and type array match values on the event properties</span>
+</span><span class='line'>    <span class="nx">schedules</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;today&#39;</span><span class="p">,</span> <span class="s1">&#39;ending_soon&#39;</span> <span class="cm">/*, &#39;upcoming&#39; */</span> <span class="p">];</span>
+</span><span class='line'>    <span class="nx">types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Beauty&#39;</span><span class="p">,</span> <span class="s1">&#39;Getaways&#39;</span><span class="p">,</span> <span class="s1">&#39;Home&#39;</span><span class="p">,</span> <span class="s1">&#39;Kids&#39;</span><span class="p">,</span> <span class="s1">&#39;Men&#39;</span><span class="p">,</span> <span class="s1">&#39;Women&#39;</span><span class="p">,</span> <span class="s1">&#39;All&#39;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// segments are combinations of schedules and types, e.g. `today` and `Beauty`</span>
+</span><span class='line'>    <span class="nx">segments</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// iterate over schedules and types to build new collections by segments</span>
+</span><span class='line'>    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">schedules</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">schedule</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">segments</span><span class="p">[</span><span class="nx">schedule</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'>        <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">types</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">segments</span><span class="p">[</span><span class="nx">schedule</span><span class="p">][</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventsSegmentCollection</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s2">&quot;type&quot;</span> <span class="o">:</span> <span class="nx">type</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;schedule&quot;</span> <span class="o">:</span> <span class="nx">schedule</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">segments</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Bill Heaton</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-09T00:51:00-08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/notes/categories/backbone-js/'>Backbone.js</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/notes/backbone-views-using-mustache-templates/2012/01/08/" title="Previous Post: Backbone Views using Mustache Templates">&laquo; Backbone Views using Mustache Templates</a>
+      
+      
+        <a class="basic-alignment right" href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/" title="next Post: Backbone.js and Mustache.js: Small views and templates">Backbone.js and Mustache.js: Small views and templates &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/notes/vertebrae-front-end-framework-built-with-backbone-dot-js-and-requirejs-using-amd/2012/05/23/">Vertebrae front-end framework built with Backbone.js and RequireJS using AMD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/hello-world-code-demo-using-layout-manager-and-controller/2012/04/30/">Hello World Code Demo using Layout Manager and Controller</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/optimize-and-build-a-backbone-dot-js-javascript-application-with-require-dot-js-using-packages/2012/01/09/">Optimize and Build a Backbone.js JavaScript application with Require.JS using Packages</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-collectionview-to-utilize-a-collection-rather-than-a-model/2012/01/09/">Backbone.js CollectionView to utilize a collection rather than a model</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-and-mustache-dot-js-small-views-and-templates/2012/01/09/">Backbone.js and Mustache.js: Small views and templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/base-classes-with-custom-library-functions-added-to-backbone-dot-js-constructors/2012/01/09/">Base classes with custom library functions added to Backbone.js constructors</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-views-using-mustache-templates/2012/01/08/">Backbone Views using Mustache Templates</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/file-organization-building-a-framework-using-requirejs/2012/01/08/">File organization: building a framework using RequireJS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/dependencies-managed-with-require-and-define/2012/01/08/">Dependencies managed with require() and define()</a>
+      </li>
+    
+      <li class="post">
+        <a href="/notes/backbone-dot-js-list-of-best-practices/2012/01/07/">Backbone.js : list of best practices</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/hautelook">@hautelook</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'hautelook',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("hautelook", 10, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/hautelook" class="twitter-follow-button" data-show-count="false">Follow @hautelook</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Bill Heaton -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
