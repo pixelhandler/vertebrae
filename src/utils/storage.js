@@ -75,7 +75,7 @@ define(["facade", "utils/cookies", "utils/debug"], function (facade, docCookies,
         // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
         // have an id of it's own.
         create: function (model) {
-            if (!model.id) model.id = model.attributes.id = guid();
+            if (!model.id) model.set(model.idAttribute, guid());
             this.data[model.id] = model;
             this.save();
             return model;
