@@ -10,8 +10,8 @@
         // Libraries
 
         'json2'        : 'vendor/json2',
-        'modernizr'    : 'vendor/modernizr',
-        'jquery'       : 'vendor/jquery-1.7.2.min',
+        'modernizr'    : 'vendor/modernizr-2.6.2.min',
+        'jquery'       : 'vendor/jquery-1.9.0.min',
         'zepto'        : 'vendor/zepto',
         'underscore'   : 'vendor/underscore',
         'mustache'     : 'vendor/mustache',

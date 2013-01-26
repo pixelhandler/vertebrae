@@ -12,7 +12,7 @@ require.config({
 
         'json2'        : '/vendor/json2',
         'modernizr'    : '/vendor/modernizr',
-        'jquery'       : '/vendor/jquery-1.7.2.min',
+        'jquery'       : '/vendor/jquery-1.9.0.min',
         'zepto'        : '/vendor/zepto',
         'underscore'   : '/vendor/underscore',
         'mustache'     : '/vendor/mustache',
@@ -67,6 +67,6 @@ require.config({
         }
     },
     priority: ['text', 'modernizr', 'json2', 'vendor', 'utils', 'facade', 'syncs', 'models', 'views', 'collections', 'controller'],
-    jquery: '1.7.2',
+    jquery: '1.9.0',
     waitSeconds: 30
 });

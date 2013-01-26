@@ -99,7 +99,7 @@ HL.addStyleSheetElem('/test/lib/jasmine.css');
 HL.addScriptElem('/test/lib/jasmine.js');
 HL.addScriptElem('/test/lib/jasmine-html.js');
 HL.addScriptElem('/test/lib/jasmine-jquery.js');
-HL.addScriptElem('/test/lib/sinon-1.3.4.js');
+HL.addScriptElem('/test/lib/sinon-1.5.2.js');
 
 // Setup Application Config (RequireJS main.js)
 HL.addRJSScriptElem('/main', '/vendor/require.js');
