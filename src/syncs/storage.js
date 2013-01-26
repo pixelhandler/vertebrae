@@ -86,7 +86,7 @@ define([
                 // Call action function (param) with model's context as this and continue with options calls
                 resp = fn.call(data, store, options);
                 if (resp) { 
-                    options.success(resp);
+                    options.success(data, resp, options);
                 } else {
                     options.error("Record not found");
                 }

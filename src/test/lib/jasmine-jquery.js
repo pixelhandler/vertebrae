@@ -59,7 +59,7 @@ var getJSONFixture = function(url) {
 }
 
 jasmine.spiedEventsKey = function (selector, eventName) {
-  return [$(selector).selector, eventName].toString()
+  return [jQuery(selector).selector, eventName].toString()
 }
 
 jasmine.getFixtures = function() {
@@ -282,9 +282,9 @@ jasmine.JQuery.browserTagCaseIndependentHtml = function(html) {
 }
 
 jasmine.JQuery.elementToString = function(element) {
-  var domEl = $(element).get(0)
+  var domEl = jQuery(element).get(0)
   if (domEl == undefined || domEl.cloneNode)
-    return jQuery('<div />').append($(element).clone()).html()
+    return jQuery('<div />').append(jQuery(element).clone()).html()
   else
     return element.toString()
 }
@@ -363,7 +363,7 @@ jasmine.JQuery.matchersClass = {}
     },
 
     toExist: function() {
-      return $(document).find(this.actual).length
+      return jQuery(document).find(this.actual).length
     },
 
     toHaveAttr: function(attributeName, expectedAttributeValue) {
@@ -389,7 +389,7 @@ jasmine.JQuery.matchersClass = {}
     },
 
     toHaveText: function(text) {
-      var trimmedText = $.trim(this.actual.text())
+      var trimmedText = jQuery.trim(this.actual.text())
       if (text && jQuery.isFunction(text.test)) {
         return text.test(trimmedText)
       } else {
@@ -423,7 +423,7 @@ jasmine.JQuery.matchersClass = {}
 
     toHandle: function(event) {
 
-      var events = $._data(this.actual.get(0), "events")
+      var events = jQuery._data(this.actual.get(0), "events")
 
       if(!events || !event || typeof event !== "string") {
         return false
@@ -448,7 +448,7 @@ jasmine.JQuery.matchersClass = {}
 
     // tests the existence of a specific event binding + handler
     toHandleWith: function(eventName, eventHandler) {
-      var stack = $._data(this.actual.get(0), "events")[eventName]
+      var stack = jQuery._data(this.actual.get(0), "events")[eventName]
       for (var i = 0; i < stack.length; i++) {
         if (stack[i].handler == eventHandler) return true
       }
@@ -468,10 +468,10 @@ jasmine.JQuery.matchersClass = {}
       if (this.actual
         && (this.actual instanceof jQuery
           || jasmine.isDomNode(this.actual))) {
-            this.actual = $(this.actual)
+            this.actual = jQuery(this.actual)
             var result = jQueryMatchers[methodName].apply(this, arguments)
             var element
-            if (this.actual.get && (element = this.actual.get()[0]) && !$.isWindow(element) && element.tagName !== "HTML")
+            if (this.actual.get && (element = this.actual.get()[0]) && !jQuery.isWindow(element) && element.tagName !== "HTML")
               this.actual = jasmine.JQuery.elementToString(this.actual)
             return result
           }

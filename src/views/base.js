@@ -112,7 +112,7 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
         resolve: function () {
             var view = this;
 
-            if (!view.deferred.state() === 'resolved') {
+            if (view.deferred.state() !== 'resolved') {
                 this.callbacks.add(view.deferred.resolve);
             } else {
                 if (this.callbacks.has(view.deferred.resolve)) {

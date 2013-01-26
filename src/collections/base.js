@@ -32,6 +32,8 @@ define(['facade', 'utils'], function (facade, utils) {
         // fetch returns (jQuery) ajax promise object
         request: null,
 
+        _idAttr: 'id',
+
         // **Method:** `fetch`  
         // Wrap Backbone.Collection.prototype.fetch with support for deferreds
         fetch: function (options) {

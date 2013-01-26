@@ -30,6 +30,7 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
         // **Attributes:**  
         // {String} `name`, {Object} `data`, {String} `storage`, {Date} `expires`
         model: ApplicationStateModel,
+        _idAttr: 'id',
 
         // **Method:** `initialize` - a Singleton  
         // Param {Object} `attributes` set on model when creating an instance  
@@ -72,7 +73,10 @@ define(['models', 'facade', 'utils'], function (models, facade, utils) {
         // Param {Object} `options` - passed through to add or updateModel functions
         addOrUpdate: function (model, options) {
             if (!this.isAlreadyStored(model)) {
-                this.storeReferenceName(model.name);
+                if (_.isUndefined(model.prototype)) {
+                    model = new this.model(model);
+                }
+                this.storeReferenceName(model.get('name'));
                 Backbone.Collection.prototype.add.call(this, model, options);
             } else {
                 this.updateModel(model, options);
