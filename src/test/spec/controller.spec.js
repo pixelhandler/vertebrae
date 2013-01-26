@@ -186,9 +186,9 @@ describe("Controller Suite", function() {
 
             // assert
             expect(top.isDisplayed()).toBeTruthy();
-            expect(top.deferred.isResolved()).toBeTruthy();
+            expect(top.deferred.state() === 'resolved').toBeTruthy();
             expect(bottom.isNotDisplayed()).toBeTruthy();
-            expect(bottom.deferred.isResolved()).toBeTruthy();
+            expect(bottom.deferred.state() === 'resolved').toBeTruthy();
         });
 
         it("should receive data from view objects which publish change in view state", function () {

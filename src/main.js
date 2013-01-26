@@ -11,7 +11,7 @@ require.config({
         // Libraries
 
         'json2'        : '/vendor/json2',
-        'modernizr'    : '/vendor/modernizr',
+        'modernizr'    : '/vendor/modernizr-2.6.2.min',
         'jquery'       : '/vendor/jquery-1.9.0.min',
         'zepto'        : '/vendor/zepto',
         'underscore'   : '/vendor/underscore',

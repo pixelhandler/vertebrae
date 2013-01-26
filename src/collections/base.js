@@ -53,9 +53,9 @@ define(['facade', 'utils'], function (facade, utils) {
         // Primarily a tool for unit tests... Don't rely on calling this.isReady!!
         isReady: function () {
             if (this.request) {
-                return this.request.isResolved();
+                return !!(this.request.state() === 'resolved');
             } else {
-                return this.deferred.isResolved();
+                return !!(this.deferred.state() === 'resolved');
             }
         },
 

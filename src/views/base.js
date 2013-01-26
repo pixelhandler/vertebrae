@@ -112,7 +112,7 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
         resolve: function () {
             var view = this;
 
-            if (!this.deferred.isResolved()) {
+            if (!view.deferred.state() === 'resolved') {
                 this.callbacks.add(view.deferred.resolve);
             } else {
                 if (this.callbacks.has(view.deferred.resolve)) {
@@ -193,7 +193,7 @@ define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
 
         // Primarily a tool for unit tests... Don't rely on calling this.isReady!!
         isReady: function () {
-            return this.deferred.isResolved();
+            return !!(this.deferred.state() === 'resolved');
         },
 
         // **Method:** `addChildView`  

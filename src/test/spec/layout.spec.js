@@ -242,7 +242,7 @@ describe("Layout Manager Suite", function() {
                 duckTypeCheck = lib.duckTypeCheck;
 
             deferredMethods = [
-                'always', 'done', 'fail', 'isRejected', 'isResolved', 'notify', 'notifyWith', 
+                'always', 'done', 'fail', 'notify', 'notifyWith', 
                 'pipe', 'progress', 'promise', 'reject', 'rejectWith', 'resolve', 
                 'resolveWith', 'state', 'then'
             ]; 
@@ -294,7 +294,7 @@ describe("Layout Manager Suite", function() {
             // assert
             expect(viewTop.isRendered()).toBeFalsy();
             expect(viewTop.isNotRendered()).toBeTruthy();
-            expect(viewTop.deferred.isResolved()).toBeFalsy();
+            expect(viewTop.deferred.state() === 'resolved').toBeFalsy();
 
             // act
             layoutWhenReady.render();
@@ -303,16 +303,16 @@ describe("Layout Manager Suite", function() {
             expect(viewTop.isRendered()).toBeFalsy();
             expect(viewTop.isDisplayed()).toBeTruthy();
             expect($('#content #top')).toHaveText('top view');
-            expect(viewTop.deferred.isResolved()).toBeTruthy();
+            expect(viewTop.deferred.state() === 'resolved').toBeTruthy();
 
             // tests for when resolved...
 
-            expect(viewBottom.deferred.isResolved()).toBeFalsy();
+            expect(viewBottom.deferred.state() === 'resolved').toBeFalsy();
 
             // act
             viewBottom.render();
             // assert
-            expect(viewBottom.deferred.isResolved()).toBeTruthy();
+            expect(viewBottom.deferred.state() === 'resolved').toBeTruthy();
 
             // act
             layoutWhenResolved.render();

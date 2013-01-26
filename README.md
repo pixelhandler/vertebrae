@@ -396,6 +396,9 @@ Or, view docs on the demo site hosted on heroku at:
 
 To generate the docs:
 
+* Docco uses Pygments install using `sudo easy_install pygments`
+* Install docco `npm install docco`
+
     cd src/
     docco application.js facade.js controller.js
 

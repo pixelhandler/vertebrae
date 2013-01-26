@@ -2,9 +2,10 @@
 
 <p>Wrapper for console to log messages without throwing errors,
 It's safe to leave debug.log calls in code.
-Also as a debugging tool the output can be put onto the dom</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Return {Object} <code>debug</code> for normal behavior or append during development</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+Also as a debugging tool the output can be put onto the dom</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Return {Object} <code>debug</code> for normal behavior or append during development</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;facade&#39;</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">facade</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">debug</span><span class="p">,</span> <span class="nx">append</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">debug</span><span class="p">,</span> <span class="nx">append</span><span class="p">,</span>
+        <span class="nx">$</span> <span class="o">=</span> <span class="nx">facade</span><span class="p">.</span><span class="nx">$</span><span class="p">;</span>
 
     <span class="nx">debug</span> <span class="o">=</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>debug enabled by single url param like ?debug</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">mode</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">return</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">console</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>(window.location.href.slice(window.location.href.indexOf('?') + 1) == "debug"));
@@ -30,6 +31,10 @@ Also as a debugging tool the output can be put onto the dom</p>             </td
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">HL</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">HL</span><span class="p">.</span><span class="nx">disableDebugMode</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">debug</span><span class="p">.</span><span class="nx">mode</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="p">};</span>
+    <span class="p">}</span>
 
     <span class="k">return</span> <span class="nx">debug</span><span class="p">;</span>
 <span class="p">});</span>

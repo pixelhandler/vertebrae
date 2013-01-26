@@ -47,7 +47,7 @@ function(facade,   views,   controlsTemplate,                     utils) {
         },
 
         handleCheckbox: function () {
-            if (this.deferred.isResolved()) {
+            if (this.deferred.state() === 'resolved') {
                 this.allCheckbox = this.allCheckbox || this.$("#toggle-all")[0];
                 this.allCheckbox.checked = !this.collection.remaining().length;
             }
