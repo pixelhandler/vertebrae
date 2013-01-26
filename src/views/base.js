@@ -42,7 +42,7 @@
 // Requires `define`
 // Return `{BaseView}` constructor
 
-define(['facade', 'facade', 'utils'], function (facade, facade, utils) {
+define(['facade', 'utils'], function (facade, utils) {
 
     var BaseView, 
         Backbone = facade.Backbone,
